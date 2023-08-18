@@ -1,10 +1,18 @@
-import { Col, Row, Button, Form, Input, Typography } from "antd";
+import { Col, Row, Button, Form, Input, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
 
 const LoginComponent = () => {
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+    const { username, password } = values;
+    Meteor.loginWithPassword({ username }, password, (err, res) => {
+      if (!err) {
+        message.success("Anmeldung erfolgreich!");
+      } else {
+        console.error("Error in loginWithPassword", err, res);
+        message.error("Anmeldung fehlgeschlagen!");
+      }
+    });
   };
   return (
     <Row justify="center" align="middle" style={{ height: "60%" }}>
