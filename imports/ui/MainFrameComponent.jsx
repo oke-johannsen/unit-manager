@@ -3,6 +3,7 @@ import { Button, Col, Layout, Row, message } from "antd";
 import { Meteor } from "meteor/meteor";
 import HeaderComponent from "./HeaderComponent";
 import { LogoutOutlined } from "@ant-design/icons";
+import UserDashboardComponent from "./UserDashboardComponent";
 const { Header, Footer, Sider, Content } = Layout;
 
 const MainFrameComponent = () => {
@@ -77,9 +78,11 @@ const MainFrameComponent = () => {
         </Row>
       </Sider>
       <Layout>
-        <Header style={headerStyle}>Header</Header>
-        <Content style={contentStyle}>Content</Content>
-        <Footer style={footerStyle}>Footer</Footer>
+        <Header style={headerStyle}></Header>
+        <Content style={contentStyle}>
+          <UserDashboardComponent />
+        </Content>
+        <Footer style={footerStyle}></Footer>
       </Layout>
     </Layout>
   );
