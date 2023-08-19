@@ -1,6 +1,7 @@
 import { Col, Row, Button, Form, Input, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import React from "react";
+import { Meteor } from "meteor/meteor";
 
 const LoginComponent = () => {
   const onFinish = (values) => {
@@ -69,13 +70,19 @@ const LoginComponent = () => {
           <Form.Item>
             <Row justify="space-between" align="middle" gutter={8}>
               <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                >
-                  Anmelden
-                </Button>
+                {Meteor.user() ? (
+                  <Button type="primary" onClick={() => Meteor.logout()}>
+                    Abmelden
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="login-form-button"
+                  >
+                    Anmelden
+                  </Button>
+                )}
               </Col>
               <Col flex="auto">
                 Oder <a href="">jetzt bewerben!</a>

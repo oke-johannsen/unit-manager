@@ -9,3 +9,7 @@ body {
   background-color: #000;
   color: #fff;
 }
+
+.ant-layout .ant-layout-sider-trigger {
+  background: #8b2929;
+}
