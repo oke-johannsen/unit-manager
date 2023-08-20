@@ -15,6 +15,12 @@ Meteor.startup(async () => {
         points: 10,
         name: "Oke Johansen",
         rank: "Developer",
+        squad: "Cyber-Sicherheit",
+        status: "active",
+        tier: 3,
+        squadPostion: "member",
+        inactivityPoints: 3,
+        securityClearance: 3,
       },
     });
   }
