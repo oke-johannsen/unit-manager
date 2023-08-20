@@ -1,8 +1,10 @@
 import { Col, Dropdown, Row, Table } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { MEMBER_TABLE_COLUMNS } from "./MEMBER_TABLE_COLUMNS";
+import UserCreateModal from "./UserCreateModal";
+import UserUpdateModal from "./UserUpdateModal";
 
 const MembersComponent = () => {
   const { users } = useTracker(() => {
@@ -19,11 +21,10 @@ const MembersComponent = () => {
         : null,
     };
   });
-  console.log(users);
+  const [openUserCreateModal, setOpenUserCreateModal] = useState(false);
+  const [openUserUpdateModal, setOpenUserUpdateModal] = useState(false);
+  const [rowSelection, setRowSelection] = useState(null);
   const data = users;
-  const onMenuClick = (e) => {
-    console.log("click", e);
-  };
   const items = [
     {
       key: "read",
@@ -32,10 +33,11 @@ const MembersComponent = () => {
     {
       key: "edit",
       label: "Bearbeiten",
+      onClick: () => setOpenUserUpdateModal(rowSelection.selectedRowKeys[0]),
     },
     {
-      key: "delete",
-      label: "Löschen",
+      key: "archive",
+      label: "Archivieren",
     },
   ];
   return (
@@ -51,9 +53,9 @@ const MembersComponent = () => {
               <Col>
                 <Dropdown.Button
                   type="primary"
+                  onClick={() => setOpenUserCreateModal(true)}
                   menu={{
                     items,
-                    onClick: onMenuClick,
                   }}
                 >
                   Erstellen
@@ -81,7 +83,18 @@ const MembersComponent = () => {
           }}
           rowSelection={{
             type: "checkbox",
+            onChange: (selectedRowKeys, selectedRows) => {
+              setRowSelection({ selectedRows, selectedRowKeys });
+            },
           }}
+        />
+        <UserCreateModal
+          openUserCreateModal={openUserCreateModal}
+          setOpenUserCreateModal={setOpenUserCreateModal}
+        />
+        <UserUpdateModal
+          openUserUpdateModal={openUserUpdateModal}
+          setOpenUserUpdateModal={setOpenUserUpdateModal}
         />
       </Col>
     </Row>

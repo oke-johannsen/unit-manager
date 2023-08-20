@@ -12,6 +12,11 @@ export const MEMBER_TABLE_COLUMNS = [
     key: "rank",
   },
   {
+    title: "Zugrhörigkeit",
+    dataIndex: "designation",
+    key: "designation",
+  },
+  {
     title: "Trupp",
     dataIndex: "squad",
     key: "squad",
