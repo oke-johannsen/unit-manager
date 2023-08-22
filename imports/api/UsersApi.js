@@ -21,6 +21,7 @@ if (Meteor.isServer) {
         securityClearance: payload.securityClearance,
         points: payload.points,
         inactivityPoints: payload.inactivityPoints,
+        status: "active",
       };
       Accounts.createUser({ username, email, password, profile });
     },
@@ -29,21 +30,10 @@ if (Meteor.isServer) {
       const userId = user._id;
       if (user) {
         delete payload._id;
-        const emails = payload.emails;
-        emails[0].address = payload.email;
+        console.log(payload);
         const modifier = {
-          username: payload.username,
-          emails: emails,
           profile: {
-            name: payload.name,
-            tier: payload.tier,
-            designation: payload.designation,
-            rank: payload.rank,
-            squad: payload.squad,
-            squadPosition: payload.squadPosition,
-            securityClearance: payload.securityClearance,
-            points: payload.points,
-            inactivityPoints: payload.inactivityPoints,
+            ...payload.profile,
           },
         };
         Meteor.users.update(userId, { $set: modifier });

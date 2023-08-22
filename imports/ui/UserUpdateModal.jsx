@@ -1,19 +1,81 @@
-import { Modal } from "antd";
-import React from "react";
+import { Modal, Tabs, message } from "antd";
+import React, { useState } from "react";
 import UserForm from "./UserForm";
+import { Meteor } from "meteor/meteor";
 
 const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
+  const [forms, setForms] = useState({});
+  const submitForms = () => {
+    Object.values(forms).forEach((values, index) => {
+      const user = Meteor.users.findOne(Object.keys(forms)[index]);
+      if (user) {
+        const profileData = {
+          ...user.profile,
+          name: values.name,
+          tier: values.tier,
+          designation: values.designation,
+          rank: values.rank,
+          squad: values.squad,
+          squadPosition: values.squadPosition,
+          securityClearance: values.securityClearance,
+          points: values.points,
+          inactivityPoints: values.inactivityPoints,
+        };
+        const payload = {
+          ...user,
+          profile: profileData,
+          _id: Object.keys(forms)[index],
+        };
+        Meteor.call(`users.update`, payload, (err, res) => {
+          if (!err) {
+            message.success(`Mitglied erfolgreich aktualisiert!`);
+            setOpenUserUpdateModal(false);
+          } else {
+            console.error(`Error in users.update`, err, res);
+            message.error(`Aktualisieren von Mitglied fehlgeschlagen!`);
+          }
+        });
+      }
+    });
+  };
   return (
     <Modal
       title="Mitglied bearbeiten"
       open={openUserUpdateModal}
       onCancel={() => setOpenUserUpdateModal(false)}
       footer={false}
+      destroyOnClose
     >
-      <UserForm
-        userId={openUserUpdateModal}
-        closeModal={() => setOpenUserUpdateModal(false)}
-      />
+      {openUserUpdateModal?.length > 1 ? (
+        <Tabs
+          items={
+            openUserUpdateModal &&
+            openUserUpdateModal?.map((userId) => {
+              return {
+                key: userId,
+                label: Meteor.users.findOne(userId)?.profile?.name,
+                children: (
+                  <UserForm
+                    userId={userId}
+                    closeModal={() => setOpenUserUpdateModal(false)}
+                    forms={forms}
+                    setForms={setForms}
+                    submitForms={submitForms}
+                  />
+                ),
+              };
+            })
+          }
+        />
+      ) : (
+        <UserForm
+          userId={openUserUpdateModal[0]}
+          closeModal={() => setOpenUserUpdateModal(false)}
+          forms={forms}
+          setForms={setForms}
+          submitForms={submitForms}
+        />
+      )}
     </Modal>
   );
 };

@@ -4,9 +4,9 @@ import { useTracker } from "meteor/react-meteor-data";
 import { AttendenceCollection } from "../api/AttendenceApi";
 import { Card, Col, Row, Statistic } from "antd";
 
-const UserDashboardComponent = () => {
+const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations } = useTracker(() => {
-    const user = Meteor.user();
+    const user = Meteor.users.findOne(userProp?._id);
     const sub = Meteor.subscribe("attendence.by.user", user?._id);
     if (sub.ready()) {
       return {
@@ -22,7 +22,7 @@ const UserDashboardComponent = () => {
       };
     }
   });
-  console.log(user, trainings, operations);
+
   const cardsArray = [
     {
       title: "Dienstgrad",
@@ -54,7 +54,14 @@ const UserDashboardComponent = () => {
     <Row>
       {cardsArray.map((card) => {
         return (
-          <Col key={card.title} span={6} style={{ paddingInline: "0.5rem" }}>
+          <Col
+            key={card.title}
+            lg={6}
+            md={12}
+            sm={24}
+            xs={24}
+            style={{ padding: "0.5rem" }}
+          >
             <Card
               title={card.title}
               children={card.children}

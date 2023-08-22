@@ -1,17 +1,21 @@
-import { Col, Dropdown, Row, Table } from "antd";
+import { Col, Dropdown, Row, Segmented, Table, message } from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { MEMBER_TABLE_COLUMNS } from "./MEMBER_TABLE_COLUMNS";
 import UserCreateModal from "./UserCreateModal";
 import UserUpdateModal from "./UserUpdateModal";
+import UserDisplayModal from "./UserDisplayModal";
+import UserArchiveModal from "./UsersArchiveModal";
 
 const MembersComponent = () => {
+  const [selected, setSelected] = useState("active");
   const { users } = useTracker(() => {
     const sub = Meteor.subscribe("users");
+    const status = selected === "active" ? { $ne: "inactive" } : "inactive";
     return {
       users: sub.ready()
-        ? Meteor.users.find().map((user) => {
+        ? Meteor.users.find({ "profile.status": status }).map((user) => {
             return {
               key: user._id,
               ...user,
@@ -23,21 +27,77 @@ const MembersComponent = () => {
   });
   const [openUserCreateModal, setOpenUserCreateModal] = useState(false);
   const [openUserUpdateModal, setOpenUserUpdateModal] = useState(false);
+  const [openUserDisplayModal, setOpenUserDisplayModal] = useState(false);
+  const [openUserArchiveModal, setOpenUserArchiveModal] = useState(false);
   const [rowSelection, setRowSelection] = useState(null);
+  const options = [
+    {
+      key: "active",
+      value: "active",
+      label: "Aktive Mitglieder",
+    },
+    {
+      key: "inactive",
+      value: "inactive",
+      label: "Inaktive Mitglieder",
+    },
+  ];
   const data = users;
   const items = [
     {
       key: "read",
       label: "Anzeigen",
+      onClick: () => {
+        if (rowSelection) {
+          setOpenUserDisplayModal(rowSelection.selectedRowKeys);
+        } else {
+          message.warning("Bitte wähle zuerst einen oder mehr Mitglieder aus!");
+        }
+      },
     },
-    {
+    selected === "active" && {
       key: "edit",
       label: "Bearbeiten",
-      onClick: () => setOpenUserUpdateModal(rowSelection.selectedRowKeys[0]),
+      onClick: () => {
+        if (rowSelection) {
+          setOpenUserUpdateModal(rowSelection.selectedRowKeys);
+        } else {
+          message.warning("Bitte wähle zuerst einen oder mehr Mitglieder aus!");
+        }
+      },
     },
-    {
+    selected === "active" && {
       key: "archive",
       label: "Archivieren",
+      onClick: () => {
+        if (rowSelection) {
+          setOpenUserArchiveModal(rowSelection.selectedRowKeys);
+        } else {
+          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
+        }
+      },
+    },
+    selected === "inactive" && {
+      key: "reactivate",
+      label: "Reaktivieren",
+      onClick: () => {
+        if (rowSelection) {
+          setOpenUserArchiveModal(rowSelection.selectedRowKeys);
+        } else {
+          message.warning("Bitte wähle zuerst einen oder mehr Mitglieder aus!");
+        }
+      },
+    },
+    selected === "inactive" && {
+      key: "delete",
+      label: "Löschen",
+      onClick: () => {
+        if (rowSelection) {
+          setOpenUserArchiveModal(rowSelection.selectedRowKeys);
+        } else {
+          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
+        }
+      },
     },
   ];
   return (
@@ -46,9 +106,23 @@ const MembersComponent = () => {
         <Table
           scroll={{ x: 150 }}
           title={() => (
-            <Row justify="space-between">
-              <Col>
-                <h3 style={{ margin: 0, padding: 0 }}>Mitgliederliste</h3>
+            <Row justify="space-between" align="middle">
+              <Col flex="auto">
+                <span
+                  style={{
+                    margin: "0 1.5rem 0 0",
+                    padding: 0,
+                    fontSize: 24,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Mitgliederliste
+                </span>
+                <Segmented
+                  options={options}
+                  selected={selected}
+                  onChange={setSelected}
+                />
               </Col>
               <Col>
                 <Dropdown.Button
@@ -95,6 +169,14 @@ const MembersComponent = () => {
         <UserUpdateModal
           openUserUpdateModal={openUserUpdateModal}
           setOpenUserUpdateModal={setOpenUserUpdateModal}
+        />
+        <UserDisplayModal
+          openUserDisplayModal={openUserDisplayModal}
+          setOpenUserDisplayModal={setOpenUserDisplayModal}
+        />
+        <UserArchiveModal
+          openUserArchiveModal={openUserArchiveModal}
+          setOpenUserArchiveModal={setOpenUserArchiveModal}
         />
       </Col>
     </Row>

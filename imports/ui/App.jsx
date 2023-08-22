@@ -24,8 +24,6 @@ export const App = () => {
       }
     : {};
 
-  console.log(user);
-
   return (
     <ConfigProvider
       theme={{

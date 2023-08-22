@@ -12,33 +12,9 @@ import {
 import React from "react";
 import { Meteor } from "meteor/meteor";
 
-const UserForm = ({ userId, closeModal }) => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    const payload = {
-      ...userData,
-      ...values,
-      _id: userId,
-    };
-    Meteor.call(
-      `users.${userId ? "update" : "create"}`,
-      payload,
-      (err, res) => {
-        if (!err) {
-          message.success(
-            `Mitglied erfolgreich ${userId ? "aktualisert" : "angelegt"}!`
-          );
-          closeModal();
-        } else {
-          console.error(`Error in ${userId ? "update" : "create"}`, err, res);
-          message.error(
-            `${
-              userId ? "Aktualisieren" : "Anlegen"
-            } von Mitglied fehlgeschlagen!`
-          );
-        }
-      }
-    );
+const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
+  const onFinish = () => {
+    submitForms(forms);
   };
   const onFinishFailed = (errorInfo) => {
     console.error("Failed:", errorInfo);
@@ -79,49 +55,57 @@ const UserForm = ({ userId, closeModal }) => {
         maxWidth: 600,
       }}
       onFinish={onFinish}
+      onValuesChange={(_changedValues, allValues) => {
+        const data = { ...forms };
+        data[userId || "new"] = allValues;
+        setForms(data);
+      }}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       initialValues={userData}
     >
-      <Divider>Account</Divider>
-      <Form.Item
-        label="Benutzername"
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: "Bitte Benutzernamen eintragen!",
-          },
-        ]}
-      >
-        <Input autoComplete="username" />
-      </Form.Item>
-
-      <Form.Item
-        label="E-Mail"
-        name="email"
-        rules={[
-          {
-            message: "Bitte E-Mail eintragen!",
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-
       {!userId && (
-        <Form.Item
-          label="Passwort"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "Bitte Passwort eintragen!",
-            },
-          ]}
-        >
-          <Input.Password autoComplete="current-password" />
-        </Form.Item>
+        <>
+          <Divider>Account</Divider>
+          <Form.Item
+            label="Benutzername"
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: "Bitte Benutzernamen eintragen!",
+              },
+            ]}
+          >
+            <Input autoComplete="username" />
+          </Form.Item>
+
+          <Form.Item
+            label="E-Mail"
+            name="email"
+            rules={[
+              {
+                required: true,
+                message: "Bitte E-Mail eintragen!",
+              },
+            ]}
+          >
+            <Input autoCapitalize="username" />
+          </Form.Item>
+
+          <Form.Item
+            label="Passwort"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Bitte Passwort eintragen!",
+              },
+            ]}
+          >
+            <Input.Password autoComplete="current-password" />
+          </Form.Item>
+        </>
       )}
 
       <Divider>Stammdaten</Divider>

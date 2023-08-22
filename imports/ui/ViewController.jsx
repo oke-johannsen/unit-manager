@@ -5,7 +5,7 @@ import MembersComponent from "./MemberComponent";
 const ViewController = ({ view }) => {
   switch (view) {
     case "dashboard":
-      return <UserDashboardComponent />;
+      return <UserDashboardComponent userProp={Meteor.user()} />;
     case "members":
       return <MembersComponent />;
     default:
