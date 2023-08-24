@@ -23,6 +23,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
         };
         const payload = {
           ...user,
+          username: values.username || user.username,
           profile: profileData,
           _id: Object.keys(forms)[index],
         };

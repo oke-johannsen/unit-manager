@@ -7,10 +7,12 @@ import {
   InputNumber,
   Row,
   Select,
-  message,
 } from "antd";
 import React from "react";
 import { Meteor } from "meteor/meteor";
+
+const PASSWORD_PATTER =
+  /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;
 
 const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   const onFinish = () => {
@@ -24,11 +26,9 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
     ? {
         ...user,
         ...user.profile,
-        email: user?.emails[0]?.address,
       }
     : {
         username: undefined,
-        email: undefined,
         password: undefined,
         name: undefined,
         tier: 3,
@@ -36,12 +36,21 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         designation: "KSK",
         squad: "Anwärter",
         squadPosition: "Mannschaft",
-        securityClearance: 0,
+        securityClearance: 1,
         points: 0,
         inactivityPoints: 0,
         trainings: 0,
         missions: 0,
       };
+
+  const checkUsernameForDuplicate = async (username) => {
+    const user = Meteor.users.findOne({ username });
+    if (user) {
+      throw new Error("duplicate found for " + username);
+    } else {
+      return true;
+    }
+  };
   return (
     <Form
       layout="vertical"
@@ -64,48 +73,54 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       autoComplete="off"
       initialValues={userData}
     >
+      <Divider>Account</Divider>
+      <Form.Item
+        label="Benutzername"
+        name="username"
+        rules={[
+          {
+            required: true,
+            message: "Bitte Benutzernamen eintragen!",
+          },
+          {
+            validator: async (_, username) => {
+              const user = Meteor.users.findOne({ username });
+              if (user) {
+                await Promise.reject(
+                  new Error(`${username} wird bereits verwendet!`)
+                );
+              } else {
+                await Promise.resolve();
+              }
+            },
+          },
+        ]}
+      >
+        <Input autoComplete="username" />
+      </Form.Item>
+
       {!userId && (
-        <>
-          <Divider>Account</Divider>
-          <Form.Item
-            label="Benutzername"
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: "Bitte Benutzernamen eintragen!",
-              },
-            ]}
-          >
-            <Input autoComplete="username" />
-          </Form.Item>
-
-          <Form.Item
-            label="E-Mail"
-            name="email"
-            rules={[
-              {
-                required: true,
-                message: "Bitte E-Mail eintragen!",
-              },
-            ]}
-          >
-            <Input autoCapitalize="username" />
-          </Form.Item>
-
-          <Form.Item
-            label="Passwort"
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Bitte Passwort eintragen!",
-              },
-            ]}
-          >
-            <Input.Password autoComplete="current-password" />
-          </Form.Item>
-        </>
+        <Form.Item
+          label="Passwort"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: "Bitte Passwort eintragen!",
+            },
+            {
+              min: 6,
+              message: "Dein Passwort muss aus mindestens 6 Zeichen bestehen!",
+            },
+            {
+              pattern: PASSWORD_PATTER,
+              message:
+                "Das Passwort muss aus min. 1 Großbuchstaben, 1 Kleinbuchstaben, 1 Sonderzeichen und 1 Zahl bestehen",
+            },
+          ]}
+        >
+          <Input.Password autoComplete="current-password" />
+        </Form.Item>
       )}
 
       <Divider>Stammdaten</Divider>

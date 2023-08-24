@@ -10,33 +10,34 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     "users.create": (payload) => {
-      const { username, password, email } = payload;
+      const { username, password } = payload;
       const profile = {
-        name: payload.name,
-        tier: payload.tier,
-        designation: payload.designation,
-        rank: payload.rank,
-        squad: payload.squad,
-        squadPosition: payload.squadPosition,
-        securityClearance: payload.securityClearance,
-        points: payload.points,
-        inactivityPoints: payload.inactivityPoints,
+        ...payload?.profile,
         status: "active",
       };
-      Accounts.createUser({ username, email, password, profile });
+      Accounts.createUser({ username, password, profile });
     },
     "users.update": (payload) => {
       const user = Meteor.users.findOne(payload._id);
       const userId = user._id;
+      console.log(payload);
       if (user) {
         delete payload._id;
-        console.log(payload);
         const modifier = {
+          username: payload.username || user.username,
           profile: {
             ...payload.profile,
           },
         };
         Meteor.users.update(userId, { $set: modifier });
+      } else {
+        return new Meteor.Error("Error 404", "user was not found", userId);
+      }
+    },
+    "users.remove": (userId) => {
+      const user = Meteor.users.findOne(userId);
+      if (user) {
+        Meteor.users.remove(user._id);
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);
       }

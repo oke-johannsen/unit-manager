@@ -7,6 +7,8 @@ import UserCreateModal from "./UserCreateModal";
 import UserUpdateModal from "./UserUpdateModal";
 import UserDisplayModal from "./UserDisplayModal";
 import UserArchiveModal from "./UsersArchiveModal";
+import UserReactivateModal from "./UserReactiveModal";
+import UserDeleteModal from "./UserDeleteModal";
 
 const MembersComponent = () => {
   const [selected, setSelected] = useState("active");
@@ -29,6 +31,8 @@ const MembersComponent = () => {
   const [openUserUpdateModal, setOpenUserUpdateModal] = useState(false);
   const [openUserDisplayModal, setOpenUserDisplayModal] = useState(false);
   const [openUserArchiveModal, setOpenUserArchiveModal] = useState(false);
+  const [openUserReactivateModal, setOpenUserReactivateModal] = useState(false);
+  const [openUserDeleteModal, setOpenUserDeleteModal] = useState(false);
   const [rowSelection, setRowSelection] = useState(null);
   const options = [
     {
@@ -43,15 +47,16 @@ const MembersComponent = () => {
     },
   ];
   const data = users;
+
   const items = [
     {
       key: "read",
       label: "Anzeigen",
       onClick: () => {
-        if (rowSelection) {
+        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
           setOpenUserDisplayModal(rowSelection.selectedRowKeys);
         } else {
-          message.warning("Bitte wähle zuerst einen oder mehr Mitglieder aus!");
+          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
         }
       },
     },
@@ -59,10 +64,10 @@ const MembersComponent = () => {
       key: "edit",
       label: "Bearbeiten",
       onClick: () => {
-        if (rowSelection) {
+        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
           setOpenUserUpdateModal(rowSelection.selectedRowKeys);
         } else {
-          message.warning("Bitte wähle zuerst einen oder mehr Mitglieder aus!");
+          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
         }
       },
     },
@@ -70,7 +75,7 @@ const MembersComponent = () => {
       key: "archive",
       label: "Archivieren",
       onClick: () => {
-        if (rowSelection) {
+        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
           setOpenUserArchiveModal(rowSelection.selectedRowKeys);
         } else {
           message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
@@ -81,10 +86,10 @@ const MembersComponent = () => {
       key: "reactivate",
       label: "Reaktivieren",
       onClick: () => {
-        if (rowSelection) {
-          setOpenUserArchiveModal(rowSelection.selectedRowKeys);
+        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+          setOpenUserReactivateModal(rowSelection.selectedRowKeys);
         } else {
-          message.warning("Bitte wähle zuerst einen oder mehr Mitglieder aus!");
+          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
         }
       },
     },
@@ -92,14 +97,15 @@ const MembersComponent = () => {
       key: "delete",
       label: "Löschen",
       onClick: () => {
-        if (rowSelection) {
-          setOpenUserArchiveModal(rowSelection.selectedRowKeys);
+        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+          setOpenUserDeleteModal(rowSelection.selectedRowKeys);
         } else {
           message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
         }
       },
     },
   ];
+  console.log("-->", rowSelection?.selectedRowKeys);
   return (
     <Row>
       <Col span={24}>
@@ -155,11 +161,42 @@ const MembersComponent = () => {
           style={{
             padding: "0.5rem",
           }}
+          onRow={(record) => {
+            return {
+              onClick: (event) => {
+                /*const temp = { ...rowSelection };
+                const rows = temp.selectedRows;
+                const indexInRows = rows?.findIndex(
+                  (row) => row.key === record.key
+                );
+                const rowKeys = temp.selectedRowKeys;
+                console.log({
+                  rows,
+                  rowKeys,
+                  indexInRows,
+                  key: record.key,
+                  record,
+                });
+                if (indexInRows > -1) {
+                  rows.splice(indexInRows, 1);
+                  rowKeys.splice(indexInRows, 1);
+                } else {
+                  rows.push(record);
+                  rowKeys.push(record.key);
+                }
+                setRowSelection({
+                  selectedRows: rows,
+                  selectedRowKeys: rowKeys,
+                });*/
+              },
+            };
+          }}
           rowSelection={{
             type: "checkbox",
             onChange: (selectedRowKeys, selectedRows) => {
               setRowSelection({ selectedRows, selectedRowKeys });
             },
+            selectedRowKeys: rowSelection?.selectedRowKeys || [],
           }}
         />
         <UserCreateModal
@@ -177,6 +214,14 @@ const MembersComponent = () => {
         <UserArchiveModal
           openUserArchiveModal={openUserArchiveModal}
           setOpenUserArchiveModal={setOpenUserArchiveModal}
+        />
+        <UserReactivateModal
+          openUserReactivateModal={openUserReactivateModal}
+          setOpenUserReactivateModal={setOpenUserReactivateModal}
+        />
+        <UserDeleteModal
+          openUserDeleteModal={openUserDeleteModal}
+          setOpenUserDeleteModal={setOpenUserDeleteModal}
         />
       </Col>
     </Row>

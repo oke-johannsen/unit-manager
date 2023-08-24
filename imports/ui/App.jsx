@@ -20,7 +20,7 @@ export const App = () => {
           "url('https://static.wixstatic.com/media/44674e_0585866da94e414aa9e5e04462d94ef3~mv2.png/v1/fill/w_1166,h_608,fp_0.50_0.50,q_90,usm_0.66_1.00_0.01,enc_auto/footer.png')",
         backgroundRepeat: "no-repeat",
         backgroundPositionY: "bottom",
-        backgroundSize: "contain",
+        backgroundSize: "cover",
       }
     : {};
 
