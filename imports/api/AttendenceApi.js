@@ -54,7 +54,6 @@ if (Meteor.isServer) {
   Meteor.methods({
     "attendence.create": (payload) => {
       const { userIds, type, date, promotedMembers } = payload;
-      console.log({ userIds, type, date, promotedMembers });
       setPromotionForUsers(promotedMembers, date);
       AttendenceCollection.insert(
         { userIds, type, date, promotedMembers },

@@ -88,7 +88,7 @@ const AttendenceModal = ({
             if (!err) {
               handleCancel();
             } else {
-              console.log(err, res);
+              console.error("Error in attendence.create", err, res);
             }
           }
         );

@@ -12,7 +12,6 @@ const AttendenceComponent = () => {
     const sub = Meteor.subscribe("attendence");
     const userSub = Meteor.subscribe("users");
     const status = selected === "training" ? { $ne: "mission" } : "mission";
-    console.log(AttendenceCollection.find({ type: status }).fetch());
     return {
       attendences: sub.ready()
         ? AttendenceCollection.find({ type: status }).map((attendence) => {

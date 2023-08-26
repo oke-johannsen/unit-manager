@@ -105,7 +105,6 @@ const MembersComponent = () => {
       },
     },
   ];
-  console.log("-->", rowSelection?.selectedRowKeys);
   return (
     <Row>
       <Col span={24}>
@@ -160,36 +159,6 @@ const MembersComponent = () => {
           loading={!data?.length == null}
           style={{
             padding: "0.5rem",
-          }}
-          onRow={(record) => {
-            return {
-              onClick: (event) => {
-                /*const temp = { ...rowSelection };
-                const rows = temp.selectedRows;
-                const indexInRows = rows?.findIndex(
-                  (row) => row.key === record.key
-                );
-                const rowKeys = temp.selectedRowKeys;
-                console.log({
-                  rows,
-                  rowKeys,
-                  indexInRows,
-                  key: record.key,
-                  record,
-                });
-                if (indexInRows > -1) {
-                  rows.splice(indexInRows, 1);
-                  rowKeys.splice(indexInRows, 1);
-                } else {
-                  rows.push(record);
-                  rowKeys.push(record.key);
-                }
-                setRowSelection({
-                  selectedRows: rows,
-                  selectedRowKeys: rowKeys,
-                });*/
-              },
-            };
           }}
           rowSelection={{
             type: "checkbox",
