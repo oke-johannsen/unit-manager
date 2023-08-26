@@ -43,12 +43,17 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         missions: 0,
       };
 
-  const checkUsernameForDuplicate = async (username) => {
-    const user = Meteor.users.findOne({ username });
-    if (user) {
-      throw new Error("duplicate found for " + username);
+  const checkUsernameForDuplicate = async (_, username) => {
+    const activeUser = Meteor.users.findOne(userId);
+    if (activeUser.username === username) {
+      await Promise.resolve();
     } else {
-      return true;
+      const user = Meteor.users.findOne({ username });
+      if (user) {
+        await Promise.reject(new Error(`${username} wird bereits verwendet!`));
+      } else {
+        await Promise.resolve();
+      }
     }
   };
   return (
@@ -83,16 +88,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             message: "Bitte Benutzernamen eintragen!",
           },
           {
-            validator: async (_, username) => {
-              const user = Meteor.users.findOne({ username });
-              if (user) {
-                await Promise.reject(
-                  new Error(`${username} wird bereits verwendet!`)
-                );
-              } else {
-                await Promise.resolve();
-              }
-            },
+            validator: checkUsernameForDuplicate,
           },
         ]}
       >

@@ -9,6 +9,9 @@ if (Meteor.isServer) {
   });
 
   Meteor.methods({
+    "user.byId": (userId) => {
+      return Meteor.users.findOne(userId);
+    },
     "users.create": (payload) => {
       const { username, password } = payload;
       const profile = {
@@ -20,7 +23,6 @@ if (Meteor.isServer) {
     "users.update": (payload) => {
       const user = Meteor.users.findOne(payload._id);
       const userId = user._id;
-      console.log(payload);
       if (user) {
         delete payload._id;
         const modifier = {

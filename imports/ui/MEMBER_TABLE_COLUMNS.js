@@ -12,7 +12,7 @@ export const MEMBER_TABLE_COLUMNS = [
     key: "rank",
   },
   {
-    title: "Zugrhörigkeit",
+    title: "Zugehörigkeit",
     dataIndex: "designation",
     key: "designation",
   },
@@ -25,6 +25,18 @@ export const MEMBER_TABLE_COLUMNS = [
     title: "Behlohnungspunkte",
     dataIndex: "points",
     key: "points",
+  },
+  {
+    title: "Letzte Beförderung",
+    dataIndex: "promotionHistory",
+    key: "promotionHistory",
+    render: (promotionHistory) => {
+      return promotionHistory && promotionHistory?.length
+        ? dayjs(promotionHistory[promotionHistory?.length - 1]).format(
+            "DD.MM.YYYY"
+          )
+        : undefined;
+    },
   },
   {
     title: "Betrittsdatum",

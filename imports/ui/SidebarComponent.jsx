@@ -1,4 +1,5 @@
 import {
+  CalendarOutlined,
   DashboardOutlined,
   LogoutOutlined,
   UserOutlined,
@@ -26,7 +27,14 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
       view: "members",
       icon: <UserOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
-        <span style={{ fontSize: 24, paddingBottom: 8 }}>Mitgliederliste</span>
+        <span style={{ fontSize: 24, paddingBottom: 8 }}>Mitglieder</span>
+      ),
+    },
+    {
+      view: "attendence",
+      icon: <CalendarOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
+      text: !collapsed && (
+        <span style={{ fontSize: 24, paddingBottom: 8 }}>Einsätze</span>
       ),
     },
   ];
@@ -35,7 +43,7 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
       style={siderStyle}
       onCollapse={() => setCollapsed(!collapsed)}
       collapsedWidth={95}
-      width={window.innerWidth < 768 ? "100vw" : "25vw"}
+      width={window.innerWidth < 768 ? "100vw" : 225}
       collapsed={collapsed}
       collapsible
     >
@@ -72,7 +80,7 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
           );
         })}
       </Row>
-      <Row style={{ height: "72.8vh" }}></Row>
+      <Row style={{ height: "67.8vh" }}></Row>
       <Row
         style={{
           padding: "1rem 0",
