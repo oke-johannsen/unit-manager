@@ -11,10 +11,15 @@ const AttendenceComponent = () => {
   const { attendences } = useTracker(() => {
     const sub = Meteor.subscribe("attendence");
     const userSub = Meteor.subscribe("users");
-    const status = selected === "training" ? { $ne: "mission" } : "mission";
+    const filter =
+      selected === "mission" || selected === "training"
+        ? { type: selected }
+        : {
+            $or: [{ type: "mission" }, { type: "training" }],
+          };
     return {
       attendences: sub.ready()
-        ? AttendenceCollection.find({ type: status }).map((attendence) => {
+        ? AttendenceCollection.find(filter).map((attendence) => {
             return {
               key: attendence._id,
               ...attendence,
@@ -42,6 +47,11 @@ const AttendenceComponent = () => {
       key: "training",
       value: "training",
       label: "Trainings",
+    },
+    {
+      key: "all",
+      value: "all",
+      label: "Alle",
     },
   ];
   const data = attendences;
@@ -155,6 +165,7 @@ const AttendenceComponent = () => {
         setOpenAttendenceDeleteModal={setOpenAttendenceDeleteModal}
         setOpenAttendenceDisplayModal={setOpenAttendenceDisplayModal}
         setOpenAttendenceUpdateModal={setOpenAttendenceUpdateModal}
+        rowSelection={rowSelection}
       />
     </Row>
   );

@@ -1,8 +1,10 @@
-import { Modal } from "antd";
-import React, { useState } from "react";
+import { Col, List, Modal, Row, Tabs } from "antd";
+import React, { useEffect, useState } from "react";
 import AttendenceForm from "./AttendenceForm";
 import dayjs from "dayjs";
 import { Meteor } from "meteor/meteor";
+import { AttendenceCollection } from "../api/AttendenceApi";
+import { useTracker } from "meteor/react-meteor-data";
 
 const AttendenceModal = ({
   openAttendenceCreateModal,
@@ -13,14 +15,8 @@ const AttendenceModal = ({
   setOpenAttendenceDeleteModal,
   setOpenAttendenceDisplayModal,
   setOpenAttendenceUpdateModal,
+  rowSelection,
 }) => {
-  const defaultFormValues = {
-    date: dayjs(),
-    type: "mission",
-    userIds: [],
-    promotedMembers: [],
-  };
-  const [form, setForm] = useState(defaultFormValues);
   const modalType = () => {
     let type;
     if (openAttendenceCreateModal) {
@@ -36,21 +32,54 @@ const AttendenceModal = ({
     }
     return type;
   };
+  const defaultFormValues = {
+    date: dayjs(),
+    type: "mission",
+    userIds: [],
+    promotedMembers: [],
+  };
+  const [form, setForm] = useState();
+  const { type, initialFormState } = useTracker(() => {
+    const type = modalType();
+    const initialFormState =
+      type === "insert"
+        ? defaultFormValues
+        : rowSelection?.selectedRowKeys?.map((id) => {
+            const attendence = AttendenceCollection.findOne(id);
+            return {
+              _id: attendence?._id,
+              date: dayjs(attendence?.date),
+              type: attendence?.type,
+              userIds: attendence?.userIds,
+              promotedMembers: attendence?.promotedMembers,
+            };
+          });
+    setForm(initialFormState);
+    return {
+      type,
+      initialFormState,
+    };
+  }, [
+    openAttendenceCreateModal,
+    openAttendenceDeleteModal,
+    openAttendenceDisplayModal,
+    openAttendenceUpdateModal,
+    rowSelection,
+  ]);
   const getTitle = () => {
     let title;
-    const type = modalType();
     switch (type) {
       case "insert":
         title = "Einsatz anlegen";
         break;
       case "update":
-        title = "Einsatz anlegen";
+        title = "Einsatz bearbeiten";
         break;
       case "delete":
-        title = "Einsatz anlegen";
+        title = "Einsatz löschen";
         break;
       case "display":
-        title = "Einsatz anlegen";
+        title = "Einsatz anzeigen";
         break;
       default:
         title = "";
@@ -58,15 +87,99 @@ const AttendenceModal = ({
     }
     return title;
   };
+  const [activeKey, setActiveKey] = useState(
+    form && form.length !== undefined && form[0]._id
+  );
+  const dataOptions =
+    (type === "update" || type === "display") &&
+    form &&
+    form.length !== undefined &&
+    form?.map((item) => {
+      const attendence = AttendenceCollection.findOne(item._id);
+      const name = attendence.type === "mission" ? "Mission " : "Training ";
+      return {
+        key: attendence?._id,
+        label: name + dayjs(attendence.date).format("DD.MM.YYYY"),
+        children: (
+          <AttendenceForm
+            rowSelection={rowSelection}
+            activeKey={attendence?._id}
+            type={type}
+            setForm={setForm}
+            form={form}
+            disabled={type === "display"}
+          />
+        ),
+      };
+    });
+  const buildName = (id) => {
+    const user = Meteor.users.findOne(id);
+    return user?.profile?.name;
+  };
   const getModalBody = () => {
     let body;
-    const type = modalType();
     switch (type) {
       case "insert":
-      case "update":
-      case "delete":
-      case "display":
         body = <AttendenceForm type={type} form={form} setForm={setForm} />;
+        break;
+      case "delete":
+        body = (
+          <List
+            itemLayout="horizontal"
+            dataSource={rowSelection?.selectedRowKeys}
+            renderItem={(item) => {
+              const attendence = AttendenceCollection.findOne(item);
+              return (
+                <List.Item key={item}>
+                  <List.Item.Meta
+                    title={`${
+                      attendence.type === "mission" ? "Mission" : "Training"
+                    }: ${dayjs(attendence.date).format("DD.MM.YYYY")}`}
+                    description={
+                      <Row>
+                        {attendence.userIds.length > 0 && (
+                          <Col span={24}>
+                            Teilnehmer:{" "}
+                            {attendence.userIds
+                              .map((item) => {
+                                return buildName(item);
+                              })
+                              .join(", ")}
+                          </Col>
+                        )}
+                        {attendence.promotedMembers.length > 0 && (
+                          <Col span={24}>
+                            Befördert:{" "}
+                            {attendence.promotedMembers
+                              .map((item) => {
+                                return buildName(item);
+                              })
+                              .join(", ")}
+                          </Col>
+                        )}
+                      </Row>
+                    }
+                  />
+                </List.Item>
+              );
+            }}
+          />
+        );
+        break;
+      case "update":
+      case "display":
+        body = (
+          <Tabs
+            activeKey={activeKey}
+            onChange={setActiveKey}
+            items={
+              dataOptions &&
+              dataOptions?.map((option) => {
+                return option;
+              })
+            }
+          />
+        );
         break;
       default:
         body = <></>;
@@ -75,7 +188,6 @@ const AttendenceModal = ({
     return body;
   };
   const handleOk = () => {
-    const type = modalType();
     switch (type) {
       case "insert":
         Meteor.call(
@@ -94,8 +206,42 @@ const AttendenceModal = ({
         );
         break;
       case "update":
+        if (form && form.length !== undefined) {
+          form.forEach((item) => {
+            const attendence = AttendenceCollection.findOne(item._id);
+            if (attendence) {
+              const id = attendence._id;
+              Meteor.call(
+                "attendence.update",
+                id,
+                {
+                  ...item,
+                  date: item?.date.toDate(),
+                },
+                (err, res) => {
+                  if (!err) {
+                    handleCancel();
+                  } else {
+                    console.error("Error in attendence.update", err, res);
+                  }
+                }
+              );
+            }
+          });
+        }
       case "delete":
+        rowSelection?.selectedRowKeys?.forEach((item) => {
+          Meteor.call("attendence.remove", item, (err, res) => {
+            if (!err) {
+              handleCancel();
+            } else {
+              console.error("Error in attendence.remove", err, res);
+            }
+          });
+        });
+        break;
       case "display":
+        handleCancel();
         break;
       default:
         break;
@@ -110,6 +256,28 @@ const AttendenceModal = ({
     setForm(defaultFormValues);
   };
 
+  const getOkText = () => {
+    let okText;
+    switch (type) {
+      case "insert":
+        okText = "Speichern";
+        break;
+      case "update":
+        okText = "Speichern";
+        break;
+      case "display":
+        okText = "Schließen";
+        break;
+      case "delete":
+        okText = "Löschen";
+        break;
+      default:
+        okText = "OK";
+        break;
+    }
+    return okText;
+  };
+
   return (
     <Modal
       open={
@@ -121,6 +289,8 @@ const AttendenceModal = ({
       onCancel={handleCancel}
       title={getTitle()}
       onOk={handleOk}
+      okText={getOkText()}
+      cancelText="Abbrechen"
       destroyOnClose
     >
       {getModalBody()}
