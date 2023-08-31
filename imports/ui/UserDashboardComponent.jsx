@@ -11,8 +11,8 @@ const UserDashboardComponent = ({ userProp }) => {
     if (sub.ready()) {
       return {
         user,
-        trainings: AttendenceCollection.find({ type: "training" }).fetch(),
-        operations: AttendenceCollection.find({ type: "operation" }).fetch(),
+        trainings: AttendenceCollection.find({ type: "training" }).count(),
+        operations: AttendenceCollection.find({ type: "mission" }).count(),
       };
     } else {
       return {
@@ -43,11 +43,11 @@ const UserDashboardComponent = ({ userProp }) => {
     },
     {
       title: "Trainings",
-      children: <Statistic value={trainings?.length || 0} />,
+      children: <Statistic value={trainings || 0} />,
     },
     {
       title: "Einsätze",
-      children: <Statistic value={operations?.length || 0} />,
+      children: <Statistic value={operations || 0} />,
     },
   ];
   return (

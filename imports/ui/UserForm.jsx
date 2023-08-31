@@ -242,6 +242,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
           </Form.Item>
         </Col>
       </Row>
+
       <Row justify="end" gutter={8} align="middle">
         <Col>
           <Button onClick={() => closeModal()}>Abbrechen</Button>

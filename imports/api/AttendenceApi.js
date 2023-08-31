@@ -84,6 +84,10 @@ if (Meteor.isServer) {
       );
     },
     "attendence.remove": (id) => {
+      const attendence = AttendenceCollection.findOne(id);
+      attendence?.promotedMembers?.forEach((userId) => {
+        updateUserPromotionHistory(userId, attendence?.date, true);
+      });
       AttendenceCollection.remove(id, (err, res) => {
         if (!err) {
           return true;

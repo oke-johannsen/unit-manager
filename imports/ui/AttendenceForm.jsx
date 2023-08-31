@@ -39,7 +39,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
     },
   ];
   const handleValuesChange = (allValues) => {
-    if ((type = "update")) {
+    if (type === "update") {
       const tempForm = [...form];
       const newForm = tempForm.map((item) => {
         if (item._id === allValues._id) {
