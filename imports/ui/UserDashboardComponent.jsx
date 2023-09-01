@@ -2,7 +2,8 @@ import React from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { AttendenceCollection } from "../api/AttendenceApi";
-import { Card, Col, Row, Statistic } from "antd";
+import { Card, Col, Row, Statistic, Tooltip } from "antd";
+import dayjs from "dayjs";
 
 const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations } = useTracker(() => {
@@ -11,8 +12,14 @@ const UserDashboardComponent = ({ userProp }) => {
     if (sub.ready()) {
       return {
         user,
-        trainings: AttendenceCollection.find({ type: "training" }).count(),
-        operations: AttendenceCollection.find({ type: "mission" }).count(),
+        trainings: AttendenceCollection.find(
+          { type: "training" },
+          { sort: { date: -1 } }
+        ).fetch(),
+        operations: AttendenceCollection.find(
+          { type: "mission" },
+          { sort: { date: -1 } }
+        ).fetch(),
       };
     } else {
       return {
@@ -43,11 +50,63 @@ const UserDashboardComponent = ({ userProp }) => {
     },
     {
       title: "Trainings",
-      children: <Statistic value={trainings || 0} />,
+      children: <Statistic value={trainings?.length || 0} />,
     },
     {
       title: "Einsätze",
-      children: <Statistic value={operations || 0} />,
+      children: <Statistic value={operations?.length || 0} />,
+    },
+    {
+      title: "Ausbildungen",
+      children: (
+        <Tooltip title={user?.profile?.skills?.join(", ")}>
+          <Statistic value={user?.profile?.skills?.length || 0} />
+        </Tooltip>
+      ),
+    },
+    {
+      title: "Letzte Beförderung",
+      children: (
+        <Statistic
+          value={
+            user?.profile?.promotionHistory?.length
+              ? dayjs(
+                  user?.profile?.promotionHistory[
+                    user?.profile?.promotionHistory?.length - 1
+                  ]
+                ).format("DD.MM.YYYY")
+              : "-"
+          }
+        />
+      ),
+    },
+    {
+      title: "Letzte Mission",
+      children: (
+        <Statistic
+          value={
+            operations?.length
+              ? dayjs(operations[operations?.length - 1].date).format(
+                  "DD.MM.YYYY"
+                )
+              : "-"
+          }
+        />
+      ),
+    },
+    {
+      title: "Letztes Training",
+      children: (
+        <Statistic
+          value={
+            trainings?.length
+              ? dayjs(trainings[trainings?.length - 1].date).format(
+                  "DD.MM.YYYY"
+                )
+              : "-"
+          }
+        />
+      ),
     },
   ];
   return (

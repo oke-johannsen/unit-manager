@@ -18,6 +18,7 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
           securityClearance: values.securityClearance,
           points: values.points,
           inactivityPoints: values.inactivityPoints,
+          skills: values.skills,
         };
         const payload = {
           username: values.username,

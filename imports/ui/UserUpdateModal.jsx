@@ -7,6 +7,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
   const [forms, setForms] = useState({});
   const submitForms = () => {
     Object.values(forms).forEach((values, index) => {
+      console.log(values);
       const user = Meteor.users.findOne(Object.keys(forms)[index]);
       if (user) {
         const profileData = {
@@ -20,6 +21,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
           securityClearance: values.securityClearance,
           points: values.points,
           inactivityPoints: values.inactivityPoints,
+          skills: values.skills,
         };
         const payload = {
           ...user,

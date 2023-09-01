@@ -7,9 +7,11 @@ import {
   InputNumber,
   Row,
   Select,
+  Tag,
 } from "antd";
 import React from "react";
 import { Meteor } from "meteor/meteor";
+import { SKILL_OPTIONS, getTagColorByValue } from "./ SKILL_OPTIONS";
 
 const PASSWORD_PATTER =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;
@@ -41,6 +43,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         inactivityPoints: 0,
         trainings: 0,
         missions: 0,
+        skills: [],
       };
 
   const checkUsernameForDuplicate = async (_, username) => {
@@ -56,6 +59,17 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       }
     }
   };
+
+  const tagRender = (item) => {
+    const { label, value } = item;
+    const color = getTagColorByValue(item.value);
+    return (
+      <Tag color={color} value={value}>
+        {label}
+      </Tag>
+    );
+  };
+
   return (
     <Form
       layout="vertical"
@@ -220,6 +234,10 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       </Row>
 
       <Divider>Organisatorisches</Divider>
+
+      <Form.Item label="Ausbildungen" name="skills">
+        <Select mode="multiple" tagRender={tagRender} options={SKILL_OPTIONS} />
+      </Form.Item>
 
       <Form.Item label="Sicherheitsstufe" name="securityClearance">
         <Select>

@@ -88,7 +88,7 @@ const AttendenceModal = ({
     return title;
   };
   const [activeKey, setActiveKey] = useState(
-    form && form.length !== undefined && form[0]._id
+    form && form.length !== undefined && form[0]?._id
   );
   const dataOptions =
     (type === "update" || type === "display") &&

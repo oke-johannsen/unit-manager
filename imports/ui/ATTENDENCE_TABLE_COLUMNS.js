@@ -1,5 +1,7 @@
+import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import { Meteor } from "meteor/meteor";
+import React from "react";
 
 export const ATTENDENCE_TABLE_COLUMNS = [
   {
@@ -19,9 +21,17 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     dataIndex: "userIds",
     key: "userIds",
     render: (userIds) => {
-      return userIds
-        ?.map((userId) => Meteor.users.findOne(userId)?.profile?.name)
-        .join(", ");
+      return (
+        <Tooltip
+          title={userIds
+            ?.map((userId) => Meteor.users.findOne(userId)?.profile?.name)
+            .join(", ")}
+        >
+          <span style={{ display: "block", width: "100%" }}>
+            {userIds?.length}
+          </span>
+        </Tooltip>
+      );
     },
   },
   {
@@ -29,9 +39,17 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     dataIndex: "promotedMembers",
     key: "promotedMembers",
     render: (promotedMembers) => {
-      return promotedMembers
-        ?.map((userId) => Meteor.users.findOne(userId)?.profile?.name)
-        .join(", ");
+      return (
+        <Tooltip
+          title={promotedMembers
+            ?.map((userId) => Meteor.users.findOne(userId)?.profile?.name)
+            .join(", ")}
+        >
+          <span style={{ display: "block", width: "100%" }}>
+            {promotedMembers?.length}
+          </span>
+        </Tooltip>
+      );
     },
   },
 ];

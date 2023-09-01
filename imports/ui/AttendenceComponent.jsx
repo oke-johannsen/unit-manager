@@ -1,4 +1,4 @@
-import { Col, Dropdown, Row, Segmented, Table, message } from "antd";
+import { Button, Col, Dropdown, Row, Segmented, Table, message } from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
@@ -92,13 +92,28 @@ const AttendenceComponent = () => {
       },
     },
   ];
+  const handleAddPoints = () => {
+    rowSelection?.selectedRowKeys?.forEach((item) => {
+      const attendence = AttendenceCollection.findOne(item);
+      if (attendence) {
+        attendence.userIds?.forEach((id) => {
+          const user = Meteor.users.findOne(id);
+          if (user) {
+            const newUser = { ...user };
+            newUser.profile.points = newUser.profile.points + 5;
+            Meteor.call("users.update", newUser);
+          }
+        });
+      }
+    });
+  };
   return (
     <Row>
       <Col span={24}>
         <Table
           scroll={{ x: 150 }}
           title={() => (
-            <Row justify="space-between" align="middle">
+            <Row gutter={16} justify="space-between" align="middle">
               <Col flex="auto">
                 <span
                   style={{
@@ -116,6 +131,11 @@ const AttendenceComponent = () => {
                   onChange={setSelected}
                 />
               </Col>
+              {rowSelection?.selectedRowKeys?.length > 0 && (
+                <Col>
+                  <Button onClick={handleAddPoints}>Punkte vergeben</Button>
+                </Col>
+              )}
               <Col>
                 <Dropdown.Button
                   type="primary"

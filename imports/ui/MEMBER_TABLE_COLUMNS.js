@@ -1,4 +1,6 @@
+import { Statistic, Tooltip } from "antd";
 import dayjs from "dayjs";
+import React from "react";
 
 export const MEMBER_TABLE_COLUMNS = [
   {
@@ -60,6 +62,18 @@ export const MEMBER_TABLE_COLUMNS = [
     title: "Trupp-Position",
     dataIndex: "squadPosition",
     key: "squadPosition",
+  },
+  {
+    title: "Ausbildungen",
+    dataIndex: "skills",
+    key: "skills",
+    render: (skills) => (
+      <Tooltip title={skills?.join(", ")}>
+        <span style={{ display: "block", width: "100%" }}>
+          {skills?.length || 0}
+        </span>
+      </Tooltip>
+    ),
   },
   {
     title: "Sicherheitsfreigabe",
