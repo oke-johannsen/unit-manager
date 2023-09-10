@@ -34,8 +34,8 @@ export const MEMBER_TABLE_COLUMNS = [
   },
   {
     title: "Trupp-Position",
-    dataIndex: "squadPostion",
-    key: "squadPostion",
+    dataIndex: "squadPosition",
+    key: "squadPosition",
   },
   {
     title: "Ausbildungen",
