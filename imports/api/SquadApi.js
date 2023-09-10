@@ -74,6 +74,7 @@ if (Meteor.isServer) {
       });
       SquadCollection.remove(id, (err, res) => {
         if (!err) {
+          updateSquadOfUsers(squad?.squadMember);
           return true;
         } else {
           console.error('Error in "SquadCollection.remove":', err, res);

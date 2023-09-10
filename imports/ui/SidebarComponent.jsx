@@ -85,33 +85,6 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
             })}
           </Row>
         </Col>
-        <Col span={24}>
-          <Button
-            style={{
-              height: "100%",
-              width: "100%",
-              display: "flex",
-              justifyContent: collapsed ? "center" : "flex-start",
-              alignItems: "center",
-            }}
-            type="ghost"
-            onClick={() =>
-              Meteor.logout((err, res) => {
-                if (!err) {
-                  message.success("Abmeldung erfolgreich!");
-                } else {
-                  message.error("Abmeldung fehgeschlagen!");
-                  console.error("Error in Meteor.logout", err, res);
-                }
-              })
-            }
-          >
-            <LogoutOutlined style={{ color: "#8b2929", fontSize: 32 }} />
-            {!collapsed && (
-              <span style={{ fontSize: 24, paddingBottom: 2 }}>Abmelden</span>
-            )}
-          </Button>
-        </Col>
       </Row>
     </Sider>
   );

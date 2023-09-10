@@ -43,7 +43,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         tier: 3,
         rank: "Unteroffizier",
         designation: "KSK",
-        squad: "Anwärter",
         squadPosition: "Mannschaft",
         securityClearance: 1,
         points: 0,

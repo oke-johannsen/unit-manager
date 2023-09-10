@@ -95,14 +95,12 @@ const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
                 return (
                   <Row style={{ width: "100%" }}>
                     <Col span={6}>{squad?.squadName}:</Col>
-                    {squad?.squadMember?.length && (
-                      <Col flex="auto">
-                        {squad?.squadMember?.length}{" "}
-                        {squad?.squadMember?.length === 1
-                          ? "Mitglied"
-                          : "Mitglieder"}
-                      </Col>
-                    )}
+                    <Col flex="auto">
+                      {squad?.squadMember?.length}{" "}
+                      {squad?.squadMember?.length === 1
+                        ? "Mitglied"
+                        : "Mitglieder"}
+                    </Col>
                   </Row>
                 );
               }}

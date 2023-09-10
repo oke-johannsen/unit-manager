@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Button, Col, Layout, Row } from "antd";
+import { Button, Col, Layout, Row, Tooltip } from "antd";
 import ViewController from "./ViewController";
 import SidebarComponent from "./SidebarComponent";
 import { Meteor } from "meteor/meteor";
 import PasswordResetModal from "./PasswordResetModal";
+import { LogoutOutlined, UnlockOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
 const headerStyle = {
   color: "#fff",
@@ -36,19 +37,65 @@ const MainFrameComponent = () => {
       />
       <Layout>
         <Header style={headerStyle}>
-          <Row justify="space-between">
+          <Row justify="space-between" align="middle">
             <Col style={{ fontSize: 24 }}>
               Willkommen {user?.profile?.name}!
             </Col>
             <Col>
-              <Button type="default" onClick={() => setOpen(true)}>
-                Passwort ändern
-              </Button>
-              <PasswordResetModal
-                open={open}
-                setOpen={setOpen}
-                userId={user?._id}
-              />
+              <Row gutter={16} align="middle">
+                <Col>
+                  <Button
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    type="ghost"
+                    onClick={() => setOpen(true)}
+                  >
+                    <Tooltip title="Passwort ändern">
+                      <UnlockOutlined
+                        style={{ color: "#8b2929", fontSize: 32 }}
+                      />
+                    </Tooltip>
+                  </Button>
+                  <PasswordResetModal
+                    open={open}
+                    setOpen={setOpen}
+                    userId={user?._id}
+                  />
+                </Col>
+                <Col>
+                  <Button
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    type="ghost"
+                    onClick={() =>
+                      Meteor.logout((err, res) => {
+                        if (!err) {
+                          message.success("Abmeldung erfolgreich!");
+                        } else {
+                          message.error("Abmeldung fehgeschlagen!");
+                          console.error("Error in Meteor.logout", err, res);
+                        }
+                      })
+                    }
+                  >
+                    <Tooltip title="Abmelden">
+                      <LogoutOutlined
+                        style={{ color: "#8b2929", fontSize: 32 }}
+                      />
+                    </Tooltip>
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Header>

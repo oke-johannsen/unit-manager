@@ -135,7 +135,7 @@ const SquadsComponent = () => {
             padding: "0.5rem",
           }}
           rowSelection={
-            securityClearance > 2
+            securityClearance > 3
               ? {
                   type: "checkbox",
                   onChange: (selectedRowKeys, selectedRows) => {
@@ -148,11 +148,13 @@ const SquadsComponent = () => {
           onRow={(record, index) => {
             return {
               onClick: () => {
-                if (securityClearance < 3) {
+                if (securityClearance < 4) {
                   setRowSelection({
                     selectedRows: [record],
                     selectedRowKeys: [record.key],
                   });
+                  setTitle("Trupp anzeigen");
+                  setFormDisabled(true);
                   setOpen(true);
                 }
               },
