@@ -13,24 +13,21 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     "logging.create": (payload) => {
-      const { before, after, key } = payload;
-      LoggingCollection.insert(
-        { key, before, after, userId: Meteor.user()?._id },
-        (err, res) => {
-          if (!err) {
-            return true;
-          } else {
-            console.error('Error in "LoggingCollection.insert":', err, res);
-            return false;
-          }
+      const { before, after, key, userId } = payload;
+      LoggingCollection.insert({ key, before, after, userId }, (err, res) => {
+        if (!err) {
+          return true;
+        } else {
+          console.error('Error in "LoggingCollection.insert":', err, res);
+          return false;
         }
-      );
+      });
     },
     "logging.update": (id, payload) => {
-      const { before, after, key } = payload;
+      const { before, after, key, userId } = payload;
       LoggingCollection.update(
         id,
-        { $set: { key, before, after, userId: Meteor.user()?._id } },
+        { $set: { key, before, after, userId } },
         (err, res) => {
           if (!err) {
             return true;

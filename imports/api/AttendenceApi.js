@@ -28,7 +28,7 @@ const setPromotionForUsers = (promotedMembers, date, attendenceId) => {
 
 const updateUserPromotionHistory = (userId, date, remove) => {
   const user = Meteor.users.findOne(userId);
-  if (user?.profile) {
+  if (user && user?.profile) {
     const promotionHistory = [...(user.profile.promotionHistory || [])];
     if (remove) {
       const index = promotionHistory.indexOf(date);
@@ -58,7 +58,13 @@ if (Meteor.isServer) {
       Meteor.call("logging.create", {
         key: "attendence.create",
         before: null,
-        after: { userIds, type, date, promotedMembers },
+        after: {
+          userIds,
+          type,
+          date,
+          promotedMembers,
+        },
+        userId: Meteor.user()?._id,
       });
       AttendenceCollection.insert(
         { userIds, type, date, promotedMembers },
@@ -78,7 +84,14 @@ if (Meteor.isServer) {
       Meteor.call("logging.create", {
         key: "attendence.update",
         before: AttendenceCollection.findOne(id),
-        after: { _id: id, userIds, type, date, promotedMembers },
+        after: {
+          id,
+          userIds,
+          type,
+          date,
+          promotedMembers,
+        },
+        userId: Meteor.user()?._id,
       });
       AttendenceCollection.update(
         id,
@@ -98,9 +111,9 @@ if (Meteor.isServer) {
       attendence?.promotedMembers?.forEach((userId) => {
         updateUserPromotionHistory(userId, attendence?.date, true);
       });
-      Meteor.call("logging.remove", {
-        key: "attendence.update",
-        before: AttendenceCollection.findOne(id),
+      Meteor.call("logging.create", {
+        key: "attendence.remove",
+        before: attendence,
         after: null,
       });
       AttendenceCollection.remove(id, (err, res) => {

@@ -117,7 +117,7 @@ const AttendenceComponent = () => {
     });
   };
   const getAverageParticipants = () => {
-    if (attendences.length) {
+    if (attendences?.length) {
       const { totalParticipants, totalEntries } = attendences.reduce(
         (accumulator, entry) => {
           accumulator.totalParticipants += entry.userIds.length;

@@ -22,6 +22,7 @@ if (Meteor.isServer) {
         key: "users.create",
         before: null,
         after: { username, profile },
+        userId: Meteor.user()?._id,
       });
       Accounts.createUser({ username, password, profile });
     },
@@ -40,6 +41,7 @@ if (Meteor.isServer) {
           key: "users.update",
           before: user,
           after: { modifier },
+          userId: Meteor.user()?._id,
         });
         Meteor.users.update(userId, { $set: modifier });
       } else {
@@ -53,6 +55,7 @@ if (Meteor.isServer) {
           key: "users.remove",
           before: user,
           after: null,
+          userId: Meteor.user()?._id,
         });
         Meteor.users.remove(user._id);
       } else {
