@@ -189,6 +189,7 @@ const MembersComponent = () => {
                   ) : (
                     <Dropdown.Button
                       type="primary"
+                      onClick={() => setOpenAttendenceCreateModal(true)}
                       menu={{
                         items,
                       }}
