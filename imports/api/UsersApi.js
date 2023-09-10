@@ -1,7 +1,24 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
+import { SquadCollection } from "./SquadApi";
 
 export const UsersCollection = Meteor.users;
+
+const updateSquadsBasedOnUser = (userId, squadId, remove = false) => {
+  const user = Meteor.users.findOne(userId);
+  if (user) {
+    const members = SquadCollection.findOne(squadId)?.squadMember || [];
+    if (squadId && members?.indexOf(squadId) === -1 && !remove) {
+      members?.push(userId);
+    } else {
+      const index = members?.indexOf(user.squad);
+      members?.splice(index, 1);
+    }
+    SquadCollection.update(squadId || user.squad, {
+      $set: { squadMember: members },
+    });
+  }
+};
 
 if (Meteor.isServer) {
   Meteor.publish("users", function (filter = { "profile.status": "active" }) {
@@ -9,6 +26,9 @@ if (Meteor.isServer) {
   });
 
   Meteor.methods({
+    updateSquadsBasedOnUser: (userId, squadId) => {
+      updateSquadsBasedOnUser(userId, squadId);
+    },
     "user.byId": (userId) => {
       return Meteor.users.findOne(userId);
     },
@@ -24,6 +44,7 @@ if (Meteor.isServer) {
         after: { username, profile },
         userId: Meteor.user()?._id,
       });
+
       Accounts.createUser({ username, password, profile });
     },
     "users.update": (payload) => {
@@ -43,6 +64,9 @@ if (Meteor.isServer) {
           after: { modifier },
           userId: Meteor.user()?._id,
         });
+        if (user.profile?.squad !== modifier.profile.squad) {
+          updateSquadsBasedOnUser(userId, modifier?.profile?.squad);
+        }
         Meteor.users.update(userId, { $set: modifier });
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);
@@ -57,6 +81,7 @@ if (Meteor.isServer) {
           after: null,
           userId: Meteor.user()?._id,
         });
+        updateSquadsBasedOnUser(user._id, user?.profile?.squad, true);
         Meteor.users.remove(user._id);
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);

@@ -27,6 +27,19 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
         };
         Meteor.call(`users.create`, payload, (err, res) => {
           if (!err) {
+            const { username, profile } = payload;
+            const squadId = profile?.squad;
+            const userId = Meteor.users.findOne({ username })?._id;
+            Meteor.call(
+              "updateSquadsBasedOnUser",
+              userId,
+              squadId,
+              (err, res) => {
+                if (err) {
+                  console.error(err, res);
+                }
+              }
+            );
             message.success(`Mitglied erfolgreich angelegt!`);
             setOpenUserCreateModal(false);
           } else {
