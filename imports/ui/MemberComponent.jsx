@@ -1,4 +1,13 @@
-import { Col, Dropdown, Row, Segmented, Table, message } from "antd";
+import {
+  Button,
+  Col,
+  Dropdown,
+  Row,
+  Segmented,
+  Statistic,
+  Table,
+  message,
+} from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
@@ -9,6 +18,7 @@ import UserDisplayModal from "./UserDisplayModal";
 import UserArchiveModal from "./UsersArchiveModal";
 import UserReactivateModal from "./UserReactiveModal";
 import UserDeleteModal from "./UserDeleteModal";
+import PasswordResetModal from "./PasswordResetModal";
 
 const MembersComponent = () => {
   const [selected, setSelected] = useState("active");
@@ -33,6 +43,7 @@ const MembersComponent = () => {
   const [openUserArchiveModal, setOpenUserArchiveModal] = useState(false);
   const [openUserReactivateModal, setOpenUserReactivateModal] = useState(false);
   const [openUserDeleteModal, setOpenUserDeleteModal] = useState(false);
+  const [openPasswordResetModal, setOpenPasswordResetModal] = useState(false);
   const [rowSelection, setRowSelection] = useState(null);
   const options = [
     {
@@ -47,7 +58,7 @@ const MembersComponent = () => {
     },
   ];
   const data = users;
-
+  const securityClearance = Meteor.user()?.profile?.securityClearance;
   const items = [
     {
       key: "read",
@@ -71,42 +82,77 @@ const MembersComponent = () => {
         }
       },
     },
-    selected === "active" && {
-      key: "archive",
-      label: "Archivieren",
-      onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setOpenUserArchiveModal(rowSelection.selectedRowKeys);
-        } else {
-          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
-        }
+    selected === "active" &&
+      securityClearance > 3 && {
+        key: "archive",
+        label: "Archivieren",
+        onClick: () => {
+          if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+            setOpenUserArchiveModal(rowSelection.selectedRowKeys);
+          } else {
+            message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
+          }
+        },
       },
-    },
-    selected === "inactive" && {
-      key: "reactivate",
-      label: "Reaktivieren",
-      onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setOpenUserReactivateModal(rowSelection.selectedRowKeys);
-        } else {
-          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
-        }
+    selected === "inactive" &&
+      securityClearance > 3 && {
+        key: "reactivate",
+        label: "Reaktivieren",
+        onClick: () => {
+          if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+            setOpenUserReactivateModal(rowSelection.selectedRowKeys);
+          } else {
+            message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
+          }
+        },
       },
-    },
-    selected === "inactive" && {
-      key: "delete",
-      label: "Löschen",
+    selected === "inactive" &&
+      securityClearance > 3 && {
+        key: "delete",
+        label: "Löschen",
+        onClick: () => {
+          if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+            setOpenUserDeleteModal(rowSelection.selectedRowKeys);
+          } else {
+            message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
+          }
+        },
+      },
+    securityClearance > 3 && {
+      key: "resetPassword",
+      label: "Passwort ändern",
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setOpenUserDeleteModal(rowSelection.selectedRowKeys);
+          if (rowSelection?.selectedRowKeys?.length > 1) {
+            message.warning("Bitte wähle nur ein Mitglied aus!");
+          } else {
+            setOpenPasswordResetModal(rowSelection.selectedRowKeys);
+          }
         } else {
-          message.warning("Bitte wähle zuerst ein oder mehr Mitglieder aus!");
+          message.warning("Bitte wähle zuerst ein Mitglied aus!");
         }
       },
     },
   ];
   return (
     <Row>
+      {selected === "active" && (
+        <Col span={24}>
+          <Row style={{ padding: "0.5rem" }}>
+            <Col span={12}>
+              <Statistic title="Mitgliederanzahl" value={users?.length || 0} />
+            </Col>
+            <Col span={8}>
+              <Statistic
+                title="Tier-3 Operator"
+                value={
+                  users?.filter((user) => user?.profile?.tier === 3)?.length
+                }
+              />
+            </Col>
+          </Row>
+        </Col>
+      )}
       <Col span={24}>
         <Table
           scroll={{ x: 150 }}
@@ -129,17 +175,29 @@ const MembersComponent = () => {
                   onChange={setSelected}
                 />
               </Col>
-              <Col>
-                <Dropdown.Button
-                  type="primary"
-                  onClick={() => setOpenUserCreateModal(true)}
-                  menu={{
-                    items,
-                  }}
-                >
-                  Erstellen
-                </Dropdown.Button>
-              </Col>
+              {securityClearance > 1 && (
+                <Col>
+                  {securityClearance < 3 ? (
+                    <Dropdown.Button
+                      type="primary"
+                      menu={{
+                        items,
+                      }}
+                    >
+                      Aktionen
+                    </Dropdown.Button>
+                  ) : (
+                    <Dropdown.Button
+                      type="primary"
+                      menu={{
+                        items,
+                      }}
+                    >
+                      Erstellen
+                    </Dropdown.Button>
+                  )}
+                </Col>
+              )}
             </Row>
           )}
           columns={MEMBER_TABLE_COLUMNS}
@@ -160,13 +218,26 @@ const MembersComponent = () => {
           style={{
             padding: "0.5rem",
           }}
-          rowSelection={{
-            type: "checkbox",
-            onChange: (selectedRowKeys, selectedRows) => {
-              setRowSelection({ selectedRows, selectedRowKeys });
-            },
-            selectedRowKeys: rowSelection?.selectedRowKeys || [],
+          onRow={(record, index) => {
+            return {
+              onClick: () => {
+                if (securityClearance === 1) {
+                  setOpenUserDisplayModal([record._id]);
+                }
+              },
+            };
           }}
+          rowSelection={
+            securityClearance > 1
+              ? {
+                  type: "checkbox",
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    setRowSelection({ selectedRows, selectedRowKeys });
+                  },
+                  selectedRowKeys: rowSelection?.selectedRowKeys || [],
+                }
+              : false
+          }
         />
         <UserCreateModal
           openUserCreateModal={openUserCreateModal}
@@ -191,6 +262,11 @@ const MembersComponent = () => {
         <UserDeleteModal
           openUserDeleteModal={openUserDeleteModal}
           setOpenUserDeleteModal={setOpenUserDeleteModal}
+        />
+        <PasswordResetModal
+          open={openPasswordResetModal}
+          setOpen={setOpenPasswordResetModal}
+          userId={rowSelection?.selectedRowKeys[0]}
         />
       </Col>
     </Row>

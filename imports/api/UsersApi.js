@@ -18,6 +18,11 @@ if (Meteor.isServer) {
         ...payload?.profile,
         status: "active",
       };
+      Meteor.call("logging.create", {
+        key: "users.create",
+        before: null,
+        after: { username, profile },
+      });
       Accounts.createUser({ username, password, profile });
     },
     "users.update": (payload) => {
@@ -31,6 +36,11 @@ if (Meteor.isServer) {
             ...payload.profile,
           },
         };
+        Meteor.call("logging.create", {
+          key: "users.update",
+          before: user,
+          after: { modifier },
+        });
         Meteor.users.update(userId, { $set: modifier });
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);
@@ -39,7 +49,20 @@ if (Meteor.isServer) {
     "users.remove": (userId) => {
       const user = Meteor.users.findOne(userId);
       if (user) {
+        Meteor.call("logging.create", {
+          key: "users.remove",
+          before: user,
+          after: null,
+        });
         Meteor.users.remove(user._id);
+      } else {
+        return new Meteor.Error("Error 404", "user was not found", userId);
+      }
+    },
+    "set.password": (userId, newPassword, options = { logout: true }) => {
+      const user = Meteor.users.findOne(userId);
+      if (user) {
+        Accounts.setPassword(user._id, newPassword, options);
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);
       }

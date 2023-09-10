@@ -15,26 +15,27 @@ import { Meteor } from "meteor/meteor";
 const { Sider } = Layout;
 
 const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
+  const securityClearance = Meteor.user()?.profile?.securityClearance;
   const options = [
     {
       view: "dashboard",
       icon: <DashboardOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
-        <span style={{ fontSize: 24, paddingBottom: 8 }}>Dashboard</span>
+        <span style={{ fontSize: 24, paddingBottom: 2 }}>Dashboard</span>
       ),
     },
     {
       view: "members",
       icon: <UserOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
-        <span style={{ fontSize: 24, paddingBottom: 8 }}>Mitglieder</span>
+        <span style={{ fontSize: 24, paddingBottom: 2 }}>Mitglieder</span>
       ),
     },
     {
       view: "attendence",
       icon: <CalendarOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
-        <span style={{ fontSize: 24, paddingBottom: 8 }}>Einsätze</span>
+        <span style={{ fontSize: 24, paddingBottom: 2 }}>Einsätze</span>
       ),
     },
   ];
@@ -109,7 +110,9 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
             }
           >
             <LogoutOutlined style={{ color: "#8b2929", fontSize: 32 }} />
-            {!collapsed && <span style={{ fontSize: 24 }}>Abmelden</span>}
+            {!collapsed && (
+              <span style={{ fontSize: 24, paddingBottom: 2 }}>Abmelden</span>
+            )}
           </Button>
         </Col>
       </Row>

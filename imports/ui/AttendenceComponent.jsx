@@ -1,4 +1,13 @@
-import { Button, Col, Dropdown, Row, Segmented, Table, message } from "antd";
+import {
+  Button,
+  Col,
+  Dropdown,
+  Row,
+  Segmented,
+  Statistic,
+  Table,
+  message,
+} from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
@@ -56,7 +65,7 @@ const AttendenceComponent = () => {
   ];
   const data = attendences;
   const errorText = "Bitte wähle zuerst ein oder mehr Einsätze aus!";
-
+  const securityClearance = Meteor.user()?.profile?.securityClearance;
   const items = [
     {
       key: "read",
@@ -80,7 +89,7 @@ const AttendenceComponent = () => {
         }
       },
     },
-    {
+    securityClearance > 3 && {
       key: "delete",
       label: "Löschen",
       onClick: () => {
@@ -107,8 +116,40 @@ const AttendenceComponent = () => {
       }
     });
   };
+  const getAverageParticipants = () => {
+    if (attendences) {
+      const { totalParticipants, totalEntries } = attendences.reduce(
+        (accumulator, entry) => {
+          accumulator.totalParticipants += entry.userIds.length;
+          accumulator.totalEntries += 1;
+          return accumulator;
+        },
+        { totalParticipants: 0, totalEntries: 0 }
+      );
+      const averageParticipants = totalParticipants / totalEntries;
+      return averageParticipants;
+    } else {
+      return 0;
+    }
+  };
   return (
     <Row>
+      <Col span={24}>
+        <Row style={{ padding: "0.5rem" }}>
+          <Col span={12}>
+            <Statistic
+              title={selected === "mission" ? "Missionen" : "Trainings"}
+              value={attendences?.length || 0}
+            />
+          </Col>
+          <Col span={8}>
+            <Statistic
+              title="Durchschnittliche Teilnehmerzahl"
+              value={getAverageParticipants()}
+            />
+          </Col>
+        </Row>
+      </Col>
       <Col span={24}>
         <Table
           scroll={{ x: 150 }}
@@ -131,22 +172,25 @@ const AttendenceComponent = () => {
                   onChange={setSelected}
                 />
               </Col>
-              {rowSelection?.selectedRowKeys?.length > 0 && (
+              {rowSelection?.selectedRowKeys?.length > 0 &&
+                securityClearance > 3 && (
+                  <Col>
+                    <Button onClick={handleAddPoints}>Punkte vergeben</Button>
+                  </Col>
+                )}
+              {securityClearance > 2 && (
                 <Col>
-                  <Button onClick={handleAddPoints}>Punkte vergeben</Button>
+                  <Dropdown.Button
+                    type="primary"
+                    onClick={() => setOpenAttendenceCreateModal(true)}
+                    menu={{
+                      items,
+                    }}
+                  >
+                    Erstellen
+                  </Dropdown.Button>
                 </Col>
               )}
-              <Col>
-                <Dropdown.Button
-                  type="primary"
-                  onClick={() => setOpenAttendenceCreateModal(true)}
-                  menu={{
-                    items,
-                  }}
-                >
-                  Erstellen
-                </Dropdown.Button>
-              </Col>
             </Row>
           )}
           columns={ATTENDENCE_TABLE_COLUMNS}
@@ -167,12 +211,29 @@ const AttendenceComponent = () => {
           style={{
             padding: "0.5rem",
           }}
-          rowSelection={{
-            type: "checkbox",
-            onChange: (selectedRowKeys, selectedRows) => {
-              setRowSelection({ selectedRows, selectedRowKeys });
-            },
-            selectedRowKeys: rowSelection?.selectedRowKeys || [],
+          rowSelection={
+            securityClearance > 2
+              ? {
+                  type: "checkbox",
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    setRowSelection({ selectedRows, selectedRowKeys });
+                  },
+                  selectedRowKeys: rowSelection?.selectedRowKeys || [],
+                }
+              : false
+          }
+          onRow={(record, index) => {
+            return {
+              onClick: () => {
+                if (securityClearance < 3) {
+                  setRowSelection({
+                    selectedRows: [record],
+                    selectedRowKeys: [record.key],
+                  });
+                  setOpenAttendenceDisplayModal([record._id]);
+                }
+              },
+            };
           }}
         />
       </Col>

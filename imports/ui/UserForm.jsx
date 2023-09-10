@@ -48,7 +48,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
 
   const checkUsernameForDuplicate = async (_, username) => {
     const activeUser = Meteor.users.findOne(userId);
-    if (activeUser.username === username) {
+    if (activeUser?.username === username) {
       await Promise.resolve();
     } else {
       const user = Meteor.users.findOne({ username });
@@ -70,6 +70,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
     );
   };
 
+  const securityClearance = Meteor.user()?.profile?.securityClearance;
   return (
     <Form
       layout="vertical"
@@ -106,7 +107,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
           },
         ]}
       >
-        <Input autoComplete="username" />
+        <Input autoComplete="username" disabled={securityClearance < 4} />
       </Form.Item>
 
       {!userId && (
@@ -125,7 +126,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             {
               pattern: PASSWORD_PATTER,
               message:
-                "Das Passwort muss aus min. 1 Großbuchstaben, 1 Kleinbuchstaben, 1 Sonderzeichen und 1 Zahl bestehen",
+                "Das Passwort muss aus min. 1 Großbuchstaben, 1 Kleinbuchstaben, 1 Sonderzeichen und 1 Zahl bestehen!",
             },
           ]}
         >
@@ -147,12 +148,12 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               },
             ]}
           >
-            <Input />
+            <Input disabled={securityClearance < 3} />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item label="Tier" name="tier">
-            <Select>
+            <Select disabled={securityClearance < 4}>
               <Select.Option value={3}>3</Select.Option>
               <Select.Option value={2}>2</Select.Option>
               <Select.Option value={1}>1</Select.Option>
@@ -164,7 +165,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Row gutter={8}>
         <Col span={12}>
           <Form.Item label="Zugehörigkeit" name="designation">
-            <Select>
+            <Select disabled={securityClearance < 3}>
               <Select.Option value="KSK">KSK</Select.Option>
               <Select.Option value="KSM">KSM</Select.Option>
               <Select.Option value="Luftwaffe">Luftwaffe</Select.Option>
@@ -173,7 +174,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         </Col>
         <Col span={12}>
           <Form.Item label="Dienstgrad" name="rank">
-            <Select>
+            <Select disabled={securityClearance < 3}>
               <Select.Option value="Unteroffizier">Unteroffizier</Select.Option>
               <Select.Option value="Bootsmann">Bootsmann</Select.Option>
               <Select.Option value="Feldwebel">Feldwebel</Select.Option>
@@ -215,14 +216,18 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Row gutter={8}>
         <Col span={12}>
           <Form.Item label="Trupp" name="squad">
-            <Select>
+            <Select disabled={securityClearance < 4}>
               <Select.Option value="Anwärter">Anwärter</Select.Option>
+              <Select.Option value="Alpha">Alpha</Select.Option>
+              <Select.Option value="Bravo">Bravo</Select.Option>
+              <Select.Option value="Charlie">Charlie</Select.Option>
+              <Select.Option value="Variabel">Variabel</Select.Option>
             </Select>
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item label="Trupp-Position" name="squadPosition">
-            <Select>
+            <Select disabled={securityClearance < 4}>
               <Select.Option value="Mannschaft">Mannschaft</Select.Option>
               <Select.Option value="Stv. Truppführer">
                 Stv. Truppführer
@@ -236,11 +241,16 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Divider>Organisatorisches</Divider>
 
       <Form.Item label="Ausbildungen" name="skills">
-        <Select mode="multiple" tagRender={tagRender} options={SKILL_OPTIONS} />
+        <Select
+          mode="multiple"
+          tagRender={tagRender}
+          options={SKILL_OPTIONS}
+          disabled={securityClearance < 2}
+        />
       </Form.Item>
 
       <Form.Item label="Sicherheitsstufe" name="securityClearance">
-        <Select>
+        <Select disabled={securityClearance < 4}>
           <Select.Option value="1">1</Select.Option>
           <Select.Option value="2">2</Select.Option>
           <Select.Option value="3">3</Select.Option>
@@ -251,12 +261,18 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Row gutter={8}>
         <Col span={12}>
           <Form.Item label="Belohnungspunkte" name="points">
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={securityClearance < 4}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item label="Inaktivitätspunkte" name="inactivityPoints">
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={securityClearance < 3}
+            />
           </Form.Item>
         </Col>
       </Row>

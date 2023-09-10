@@ -55,6 +55,11 @@ if (Meteor.isServer) {
     "attendence.create": (payload) => {
       const { userIds, type, date, promotedMembers } = payload;
       setPromotionForUsers(promotedMembers, date);
+      Meteor.call("logging.create", {
+        key: "attendence.create",
+        before: null,
+        after: { userIds, type, date, promotedMembers },
+      });
       AttendenceCollection.insert(
         { userIds, type, date, promotedMembers },
         (err, res) => {
@@ -70,6 +75,11 @@ if (Meteor.isServer) {
     "attendence.update": (id, payload) => {
       const { userIds, type, date, promotedMembers } = payload;
       setPromotionForUsers(promotedMembers, date, id);
+      Meteor.call("logging.create", {
+        key: "attendence.update",
+        before: AttendenceCollection.findOne(id),
+        after: { _id: id, userIds, type, date, promotedMembers },
+      });
       AttendenceCollection.update(
         id,
         { $set: { userIds, type, date, promotedMembers } },
@@ -87,6 +97,11 @@ if (Meteor.isServer) {
       const attendence = AttendenceCollection.findOne(id);
       attendence?.promotedMembers?.forEach((userId) => {
         updateUserPromotionHistory(userId, attendence?.date, true);
+      });
+      Meteor.call("logging.remove", {
+        key: "attendence.update",
+        before: AttendenceCollection.findOne(id),
+        after: null,
       });
       AttendenceCollection.remove(id, (err, res) => {
         if (!err) {

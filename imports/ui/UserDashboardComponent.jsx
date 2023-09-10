@@ -45,24 +45,16 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "Belohnungspunkte",
-      children: <Statistic value={user?.profile?.points || 0} />,
-    },
-    {
-      title: "Trainings",
-      children: <Statistic value={trainings?.length || 0} />,
-    },
-    {
-      title: "Einsätze",
-      children: <Statistic value={operations?.length || 0} />,
-    },
-    {
       title: "Ausbildungen",
       children: (
         <Tooltip title={user?.profile?.skills?.join(", ")}>
           <Statistic value={user?.profile?.skills?.length || 0} />
         </Tooltip>
       ),
+    },
+    {
+      title: "Belohnungspunkte",
+      children: <Statistic value={user?.profile?.points || 0} />,
     },
     {
       title: "Letzte Beförderung",
@@ -81,7 +73,11 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "Letzte Mission",
+      title: "Einsätze",
+      children: <Statistic value={operations?.length || 0} />,
+    },
+    {
+      title: "Letzter Einsatz",
       children: (
         <Statistic
           value={
@@ -93,6 +89,10 @@ const UserDashboardComponent = ({ userProp }) => {
           }
         />
       ),
+    },
+    {
+      title: "Trainings",
+      children: <Statistic value={trainings?.length || 0} />,
     },
     {
       title: "Letztes Training",

@@ -1,4 +1,4 @@
-import { Col, List, Modal, Row, Tabs } from "antd";
+import { Col, List, Modal, Row, Tabs, message } from "antd";
 import React, { useEffect, useState } from "react";
 import AttendenceForm from "./AttendenceForm";
 import dayjs from "dayjs";
@@ -198,8 +198,10 @@ const AttendenceModal = ({
           },
           (err, res) => {
             if (!err) {
+              message.success("Einsatz erfolgreich angelegt!");
               handleCancel();
             } else {
+              message.error("Etwas ist schiefgelaufen!");
               console.error("Error in attendence.create", err, res);
             }
           }
@@ -219,15 +221,15 @@ const AttendenceModal = ({
                   date: item?.date.toDate(),
                 },
                 (err, res) => {
-                  if (!err) {
-                    handleCancel();
-                  } else {
+                  if (err) {
                     console.error("Error in attendence.update", err, res);
                   }
                 }
               );
             }
           });
+          message.success("Die ausgewählten Einsätze wurden aktualisiert!");
+          handleCancel();
         }
       case "delete":
         rowSelection?.selectedRowKeys?.forEach((item) => {
@@ -239,6 +241,7 @@ const AttendenceModal = ({
             }
           });
         });
+        message.success("Die ausgewählten Einsätze wurden gelöscht!");
         break;
       case "display":
         handleCancel();
