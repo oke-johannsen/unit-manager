@@ -4,8 +4,8 @@ import { Accounts } from "meteor/accounts-base";
 export const UsersCollection = Meteor.users;
 
 if (Meteor.isServer) {
-  Meteor.publish("users", function () {
-    return UsersCollection.find();
+  Meteor.publish("users", function (filter = { "profile.status": "active" }) {
+    return UsersCollection.find(filter);
   });
 
   Meteor.methods({

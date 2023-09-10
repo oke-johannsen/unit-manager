@@ -12,6 +12,7 @@ import {
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import { SKILL_OPTIONS, getTagColorByValue } from "./ SKILL_OPTIONS";
+import { SquadCollection } from "../api/SquadApi";
 
 const PASSWORD_PATTER =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;
@@ -23,6 +24,12 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   const onFinishFailed = (errorInfo) => {
     console.error("Failed:", errorInfo);
   };
+  squadOptions = SquadCollection.find().map((squad) => {
+    return {
+      value: squad._id,
+      label: squad.squadName,
+    };
+  });
   const user = Meteor.users.findOne(userId);
   const userData = user
     ? {
@@ -216,13 +223,10 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Row gutter={8}>
         <Col span={12}>
           <Form.Item label="Trupp" name="squad">
-            <Select disabled={securityClearance < 4}>
-              <Select.Option value="Anwärter">Anwärter</Select.Option>
-              <Select.Option value="Alpha">Alpha</Select.Option>
-              <Select.Option value="Bravo">Bravo</Select.Option>
-              <Select.Option value="Charlie">Charlie</Select.Option>
-              <Select.Option value="Variabel">Variabel</Select.Option>
-            </Select>
+            <Select
+              disabled={securityClearance < 4}
+              options={squadOptions || []}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>

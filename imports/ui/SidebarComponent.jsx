@@ -2,6 +2,7 @@ import {
   CalendarOutlined,
   DashboardOutlined,
   LogoutOutlined,
+  TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Button, Col, Layout, Row } from "antd";
@@ -15,13 +16,19 @@ import { Meteor } from "meteor/meteor";
 const { Sider } = Layout;
 
 const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
-  const securityClearance = Meteor.user()?.profile?.securityClearance;
   const options = [
     {
       view: "dashboard",
       icon: <DashboardOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
         <span style={{ fontSize: 24, paddingBottom: 2 }}>Dashboard</span>
+      ),
+    },
+    {
+      view: "squads",
+      icon: <TeamOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
+      text: !collapsed && (
+        <span style={{ fontSize: 24, paddingBottom: 2 }}>Trupps</span>
       ),
     },
     {
@@ -48,46 +55,36 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
       collapsed={collapsed}
       collapsible
     >
-      <Row justify="center">
+      <Row gutter={[0, 16]} justify="center" align="top">
         <Col>
           <HeaderComponent />
         </Col>
-      </Row>
-      <Row
-        style={{
-          justifyContent: "center",
-        }}
-      >
-        {options.map((option) => {
-          return (
-            <Col span={24} style={{ height: "5vh" }} key={option.view}>
-              <Button
-                style={{
-                  height: "100%",
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: collapsed ? "center" : "flex-start",
-                  alignItems: "center",
-                }}
-                type="ghost"
-                onClick={() => {
-                  setView(option.view);
-                }}
-              >
-                {option.icon}
-                {option.text}
-              </Button>
-            </Col>
-          );
-        })}
-      </Row>
-      <Row style={{ height: "67.8vh" }}></Row>
-      <Row
-        style={{
-          padding: "1rem 0",
-          alignItems: "end",
-        }}
-      >
+        <Col span={24}>
+          <Row gutter={[0, 16]}>
+            {options.map((option) => {
+              return (
+                <Col span={24} key={option.view}>
+                  <Button
+                    style={{
+                      height: "100%",
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: collapsed ? "center" : "flex-start",
+                      alignItems: "center",
+                    }}
+                    type="ghost"
+                    onClick={() => {
+                      setView(option.view);
+                    }}
+                  >
+                    {option.icon}
+                    {option.text}
+                  </Button>
+                </Col>
+              );
+            })}
+          </Row>
+        </Col>
         <Col span={24}>
           <Button
             style={{

@@ -1,6 +1,7 @@
 import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import React from "react";
+import { SquadCollection } from "../api/SquadApi";
 
 export const MEMBER_TABLE_COLUMNS = [
   {
@@ -27,6 +28,9 @@ export const MEMBER_TABLE_COLUMNS = [
     title: "Trupp",
     dataIndex: "squad",
     key: "squad",
+    render: (squad) => {
+      return SquadCollection.findOne(squad)?.squadName || "-";
+    },
   },
   {
     title: "Trupp-Position",

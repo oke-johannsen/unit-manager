@@ -23,7 +23,8 @@ import PasswordResetModal from "./PasswordResetModal";
 const MembersComponent = () => {
   const [selected, setSelected] = useState("active");
   const { users } = useTracker(() => {
-    const sub = Meteor.subscribe("users");
+    const sub = Meteor.subscribe("users", {});
+    const squadSub = Meteor.subscribe("squads");
     const status = selected === "active" ? { $ne: "inactive" } : "inactive";
     return {
       users: sub.ready()
@@ -35,6 +36,7 @@ const MembersComponent = () => {
             };
           })
         : null,
+      squadsReady: squadSub.ready(),
     };
   });
   const [openUserCreateModal, setOpenUserCreateModal] = useState(false);

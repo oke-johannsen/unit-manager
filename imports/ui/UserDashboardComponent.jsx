@@ -4,10 +4,12 @@ import { useTracker } from "meteor/react-meteor-data";
 import { AttendenceCollection } from "../api/AttendenceApi";
 import { Card, Col, Row, Statistic, Tooltip } from "antd";
 import dayjs from "dayjs";
+import { SquadCollection } from "../api/SquadApi";
 
 const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations } = useTracker(() => {
     const user = Meteor.users.findOne(userProp?._id);
+    const squadSub = Meteor.subscribe("squads");
     const sub = Meteor.subscribe("attendence.by.user", user?._id);
     if (sub.ready()) {
       return {
@@ -40,7 +42,9 @@ const UserDashboardComponent = ({ userProp }) => {
           <Col span={8}>Rang:</Col>
           <Col span={16}>{user?.profile?.rank || "-"}</Col>
           <Col span={8}>Trupp:</Col>
-          <Col span={16}>{user?.profile?.squad || "-"}</Col>
+          <Col span={16}>
+            {SquadCollection.findOne(user?.profile?.squad)?.squadName || "-"}
+          </Col>
         </Row>
       ),
     },
