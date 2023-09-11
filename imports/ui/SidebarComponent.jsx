@@ -1,7 +1,7 @@
 import {
+  AppstoreOutlined,
+  AuditOutlined,
   CalendarOutlined,
-  DashboardOutlined,
-  LogoutOutlined,
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -19,7 +19,7 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
   const options = [
     {
       view: "dashboard",
-      icon: <DashboardOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
+      icon: <AppstoreOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
         <span style={{ fontSize: 24, paddingBottom: 2 }}>Dashboard</span>
       ),
@@ -43,6 +43,13 @@ const SidebarComponent = ({ setView, collapsed, setCollapsed }) => {
       icon: <CalendarOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
       text: !collapsed && (
         <span style={{ fontSize: 24, paddingBottom: 2 }}>Einsätze</span>
+      ),
+    },
+    Meteor.user()?.profile?.securityClearance > 2 && {
+      view: "recruitment",
+      icon: <AuditOutlined style={{ fontSize: 32, color: "#8b2929" }} />,
+      text: !collapsed && (
+        <span style={{ fontSize: 24, paddingBottom: 2 }}>Bewerbungen</span>
       ),
     },
   ];

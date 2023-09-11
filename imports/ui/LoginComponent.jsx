@@ -1,9 +1,11 @@
 import { Col, Row, Button, Form, Input, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import React from "react";
+import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
+import RecruitingModal from "./RecruitingModal";
 
 const LoginComponent = () => {
+  const [open, setOpen] = useState(false);
   const onFinish = (values) => {
     const { username, password } = values;
     Meteor.loginWithPassword({ username }, password, (err, res) => {
@@ -18,6 +20,7 @@ const LoginComponent = () => {
   return (
     <Row justify="center" align="middle" style={{ height: "60%" }}>
       <Col
+        id="login-container"
         xs={20}
         sm={20}
         md={16}
@@ -90,12 +93,13 @@ const LoginComponent = () => {
                 )}
               </Col>
               <Col flex="auto">
-                Oder <a href="">jetzt bewerben!</a>
+                Oder <a onClick={() => setOpen(true)}>jetzt bewerben!</a>
               </Col>
             </Row>
           </Form.Item>
         </Form>
       </Col>
+      <RecruitingModal open={open} setOpen={setOpen} />
     </Row>
   );
 };

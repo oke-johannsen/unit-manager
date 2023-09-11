@@ -50,7 +50,7 @@ const MainFrameComponent = () => {
               }}
               flex="auto"
             >
-              {`Willkommen ${user?.profile?.name}!`}
+              {`Willkommen, ${user?.profile?.name}!`}
             </Col>
             <Col>
               <Row gutter={16} align="middle">

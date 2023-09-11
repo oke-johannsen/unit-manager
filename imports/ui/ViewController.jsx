@@ -3,6 +3,7 @@ import UserDashboardComponent from "./UserDashboardComponent";
 import MembersComponent from "./MemberComponent";
 import AttendenceComponent from "./AttendenceComponent";
 import SquadsComponent from "./SquadsComponent";
+import RecruitmentComponent from "./RecruitmentComponent";
 
 const ViewController = ({ view }) => {
   switch (view) {
@@ -14,6 +15,8 @@ const ViewController = ({ view }) => {
       return <AttendenceComponent />;
     case "squads":
       return <SquadsComponent />;
+    case "recruitment":
+      return <RecruitmentComponent />;
     default:
       return <>Error: 404</>;
   }

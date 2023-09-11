@@ -127,7 +127,7 @@ const AttendenceComponent = () => {
         { totalParticipants: 0, totalEntries: 0 }
       );
       const averageParticipants = totalParticipants / totalEntries;
-      return averageParticipants;
+      return Math.floor(averageParticipants);
     } else {
       return 0;
     }

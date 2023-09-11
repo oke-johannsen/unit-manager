@@ -71,6 +71,7 @@ if (Meteor.isServer) {
         key: "squad.remove",
         before: squad,
         after: null,
+        userId: Meteor.user()?._id,
       });
       SquadCollection.remove(id, (err, res) => {
         if (!err) {

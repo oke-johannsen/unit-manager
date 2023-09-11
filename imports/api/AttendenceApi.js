@@ -115,6 +115,7 @@ if (Meteor.isServer) {
         key: "attendence.remove",
         before: attendence,
         after: null,
+        userId: Meteor.user()?._id,
       });
       AttendenceCollection.remove(id, (err, res) => {
         if (!err) {

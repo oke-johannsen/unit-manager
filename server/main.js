@@ -3,6 +3,7 @@ import "../imports/api/UsersApi";
 import "../imports/api/AttendenceApi";
 import "../imports/api/LoggingApi";
 import "../imports/api/SquadApi";
+import "../imports/api/RecruitmentsApi";
 import { UsersCollection } from "../imports/api/UsersApi";
 import { Accounts } from "meteor/accounts-base";
 
