@@ -56,6 +56,10 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
                 value: "KSK",
               },
               {
+                label: "KSM",
+                value: "KSM",
+              },
+              {
                 label: "Luftwaffe",
                 value: "Luftwaffe",
               },
