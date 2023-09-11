@@ -94,7 +94,9 @@ const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
                 const squad = SquadCollection.findOne(item);
                 return (
                   <Row style={{ width: "100%" }}>
-                    <Col span={6}>{squad?.squadName}:</Col>
+                    <Col xs={12} sm={12} md={8} lg={8} xl={4} xxl={4}>
+                      {squad?.squadName}:
+                    </Col>
                     <Col flex="auto">
                       {squad?.squadMember?.length}{" "}
                       {squad?.squadMember?.length === 1
@@ -151,6 +153,7 @@ const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
       cancelText="Abbrechen"
       onCancel={() => setOpen(false)}
       footer={formDisabled ? false : undefined}
+      centered={window.innerWidth < 768}
       destroyOnClose
     >
       {getModalContent()}

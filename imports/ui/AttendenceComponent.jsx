@@ -142,7 +142,7 @@ const AttendenceComponent = () => {
               value={attendences?.length || 0}
             />
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <Statistic
               title="Durchschnittliche Teilnehmerzahl"
               value={getAverageParticipants()}
@@ -154,23 +154,29 @@ const AttendenceComponent = () => {
         <Table
           scroll={{ x: 150 }}
           title={() => (
-            <Row gutter={16} justify="space-between" align="middle">
+            <Row gutter={[16, 16]} justify="space-between" align="middle">
               <Col flex="auto">
-                <span
-                  style={{
-                    margin: "0 1.5rem 0 0",
-                    padding: 0,
-                    fontSize: 24,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Einstatzliste
-                </span>
-                <Segmented
-                  options={options}
-                  selected={selected}
-                  onChange={setSelected}
-                />
+                <Row gutter={[16, 16]} align="middle">
+                  <Col>
+                    <span
+                      style={{
+                        margin: "0 1.5rem 0 0",
+                        padding: 0,
+                        fontSize: 24,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Einstatzliste
+                    </span>
+                  </Col>
+                  <Col>
+                    <Segmented
+                      options={options}
+                      selected={selected}
+                      onChange={setSelected}
+                    />
+                  </Col>
+                </Row>
               </Col>
               {rowSelection?.selectedRowKeys?.length > 0 &&
                 securityClearance > 3 && (

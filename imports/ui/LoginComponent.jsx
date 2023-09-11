@@ -18,7 +18,12 @@ const LoginComponent = () => {
   return (
     <Row justify="center" align="middle" style={{ height: "60%" }}>
       <Col
-        span={12}
+        xs={20}
+        sm={20}
+        md={16}
+        lg={16}
+        xl={12}
+        xxl={12}
         style={{
           padding: "2rem",
           border: "1px solid grey",

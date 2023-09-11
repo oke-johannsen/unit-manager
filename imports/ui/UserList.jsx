@@ -11,7 +11,11 @@ const UserList = ({ dataSource }) => {
         const user = Meteor.users.findOne(item);
         return (
           <Row style={{ width: "100%" }}>
-            {user?.profile?.rank && <Col span={6}>{user?.profile?.rank}:</Col>}
+            {user?.profile?.rank && (
+              <Col xs={12} sm={12} md={8} lg={8} xl={4} xxl={4}>
+                {user?.profile?.rank}:
+              </Col>
+            )}
             <Col flex="auto">{user?.profile?.name}</Col>
           </Row>
         );

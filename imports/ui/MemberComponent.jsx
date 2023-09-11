@@ -51,12 +51,12 @@ const MembersComponent = () => {
     {
       key: "active",
       value: "active",
-      label: "Aktive Mitglieder",
+      label: "Aktiv",
     },
     {
       key: "inactive",
       value: "inactive",
-      label: "Inaktive Mitglieder",
+      label: "Inaktiv",
     },
   ];
   const data = users;
@@ -144,7 +144,7 @@ const MembersComponent = () => {
             <Col span={12}>
               <Statistic title="Mitgliederanzahl" value={users?.length || 0} />
             </Col>
-            <Col span={8}>
+            <Col span={12}>
               <Statistic
                 title="Tier-3 Operator"
                 value={
@@ -159,23 +159,34 @@ const MembersComponent = () => {
         <Table
           scroll={{ x: 150 }}
           title={() => (
-            <Row justify="space-between" align="middle">
+            <Row gutter={[16, 16]} justify="space-between" align="middle">
               <Col flex="auto">
-                <span
-                  style={{
-                    margin: "0 1.5rem 0 0",
-                    padding: 0,
-                    fontSize: 24,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Mitgliederliste
-                </span>
-                <Segmented
-                  options={options}
-                  selected={selected}
-                  onChange={setSelected}
-                />
+                <Row gutter={[16, 16]} align="middle">
+                  <Col>
+                    <span
+                      style={{
+                        margin: "0 1.5rem 0 0",
+                        padding: 0,
+                        fontSize: 24,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Mitgliederliste
+                    </span>
+                  </Col>
+                  <Col
+                    style={{
+                      width: window.innerWidth < 768 ? "100%" : "initial",
+                    }}
+                  >
+                    <Segmented
+                      options={options}
+                      selected={selected}
+                      onChange={setSelected}
+                      block={window.innerWidth < 768}
+                    />
+                  </Col>
+                </Row>
               </Col>
               {securityClearance > 1 && (
                 <Col>

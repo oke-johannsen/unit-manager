@@ -294,6 +294,7 @@ const AttendenceModal = ({
       onOk={handleOk}
       okText={getOkText()}
       cancelText="Abbrechen"
+      centered={window.innerWidth < 768}
       destroyOnClose
     >
       {getModalBody()}

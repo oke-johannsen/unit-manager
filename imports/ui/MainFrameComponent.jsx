@@ -8,7 +8,7 @@ import { LogoutOutlined, UnlockOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
 const headerStyle = {
   color: "#fff",
-  height: 85,
+  height: window.innerWidth < 768 ? "auto" : 85,
   lineHeight: "85px",
   backgroundColor: "#000",
   paddingInline: "0.5rem",
@@ -35,11 +35,18 @@ const MainFrameComponent = () => {
         collapsed={collapsed}
         setCollapsed={setCollapsed}
       />
-      <Layout>
+      <Layout style={{ display: !collapsed ? "none" : "block" }}>
         <Header style={headerStyle}>
           <Row justify="space-between" align="middle">
-            <Col style={{ fontSize: 24 }}>
-              Willkommen {user?.profile?.name}!
+            <Col
+              style={{
+                fontSize: window.innerWidth < 768 ? "1.2rem" : "1.5rem",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+              flex="auto"
+            >
+              {`Willkommen ${user?.profile?.name}!`}
             </Col>
             <Col>
               <Row gutter={16} align="middle">

@@ -55,8 +55,9 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
       title="Mitglied anlegen"
       open={openUserCreateModal}
       onCancel={() => setOpenUserCreateModal(false)}
-      destroyOnClose
       footer={false}
+      centered={window.innerWidth < 768}
+      destroyOnClose
     >
       <UserForm
         closeModal={() => setOpenUserCreateModal(false)}

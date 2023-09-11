@@ -44,6 +44,7 @@ const PasswordResetModal = ({ open, setOpen, userId }) => {
       onOk={handleOk}
       okText="Speichern"
       open={open}
+      centered={window.innerWidth < 768}
     >
       <form>
         <input
