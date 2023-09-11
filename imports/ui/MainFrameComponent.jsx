@@ -35,7 +35,11 @@ const MainFrameComponent = () => {
         collapsed={collapsed}
         setCollapsed={setCollapsed}
       />
-      <Layout style={{ display: !collapsed ? "none" : "block" }}>
+      <Layout
+        style={{
+          display: !collapsed && window.innerWidth < 768 ? "none" : "block",
+        }}
+      >
         <Header style={headerStyle}>
           <Row justify="space-between" align="middle">
             <Col
