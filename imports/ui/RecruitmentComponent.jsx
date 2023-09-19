@@ -36,7 +36,7 @@ const RecruitmentComponent = () => {
               <Col>
                 <Segmented
                   value={selected}
-                  onChange={(e) => console.log(e)}
+                  onChange={setSelected}
                   options={[
                     { value: "open", label: "Offen" },
                     { value: "closed", label: "Abgeschlossen" },

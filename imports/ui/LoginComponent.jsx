@@ -31,7 +31,7 @@ const LoginComponent = () => {
           padding: "2rem",
           border: "1px solid grey",
           borderRadius: 8,
-          background: "#000",
+          background: "#080808",
         }}
       >
         <Typography>

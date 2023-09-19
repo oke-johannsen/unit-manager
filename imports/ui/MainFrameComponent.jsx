@@ -7,39 +7,29 @@ import PasswordResetModal from "./PasswordResetModal";
 import { LogoutOutlined, UnlockOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
 const headerStyle = {
-  color: "#fff",
-  height: window.innerWidth < 768 ? "auto" : 85,
-  lineHeight: "85px",
-  backgroundColor: "#000",
+  height: window.innerWidth < 768 ? "auto" : 90,
+  lineHeight: "90px",
+  backgroundColor: "transparent",
   paddingInline: "0.5rem",
 };
 const contentStyle = {
-  color: "#fff",
-  backgroundColor: "#000",
+  color: "#d1d1d1",
+  borderTop: "5px solid #698eae",
+  padding: "11px 16px",
 };
 const footerStyle = {
   textAlign: "center",
-  color: "#fff",
-  backgroundColor: "#000",
 };
 
 const MainFrameComponent = () => {
-  const [collapsed, setCollapsed] = useState(true);
   const [view, setView] = useState("dashboard");
   const [open, setOpen] = useState(false);
   const user = Meteor.user();
   return (
     <Layout style={{ height: "100%" }}>
-      <SidebarComponent
-        setView={setView}
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-      />
-      <Layout
-        style={{
-          display: !collapsed && window.innerWidth < 768 ? "none" : "block",
-        }}
-      >
+      <div id="header-background" />
+      <SidebarComponent setView={setView} />
+      <Layout>
         <Header style={headerStyle}>
           <Row justify="space-between" align="middle">
             <Col
@@ -68,7 +58,7 @@ const MainFrameComponent = () => {
                   >
                     <Tooltip title="Passwort ändern">
                       <UnlockOutlined
-                        style={{ color: "#8b2929", fontSize: 32 }}
+                        style={{ color: "#D1D1D1", fontSize: 32 }}
                       />
                     </Tooltip>
                   </Button>
@@ -101,7 +91,7 @@ const MainFrameComponent = () => {
                   >
                     <Tooltip title="Abmelden">
                       <LogoutOutlined
-                        style={{ color: "#8b2929", fontSize: 32 }}
+                        style={{ color: "#D1D1D1", fontSize: 32 }}
                       />
                     </Tooltip>
                   </Button>

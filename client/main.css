@@ -1,15 +1,31 @@
 :root,
 * {
   box-sizing: border-box;
+  font-family: "Rajdhani", sans-serif;
 }
 
 body {
   padding: 0;
   margin: 0;
-  background-color: #000;
-  color: #fff;
+  background-color: #080808;
+  color: #d1d1d1;
 }
 
-.ant-layout .ant-layout-sider-trigger {
-  background: #8b2929;
+.sider-button:hover {
+  color: #d1d1d1 !important;
+  transition: ease-in-out 0.3s;
+}
+
+.sider-button:hover svg {
+  font-size: 72px !important;
+}
+
+#header-background {
+  position: absolute;
+  height: 90px;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-image: url("/images/bg_map.webp");
+  background-size: cover;
 }
