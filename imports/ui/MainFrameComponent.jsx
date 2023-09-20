@@ -6,33 +6,32 @@ import { Meteor } from "meteor/meteor";
 import PasswordResetModal from "./PasswordResetModal";
 import { LogoutOutlined, UnlockOutlined } from "@ant-design/icons";
 const { Header, Content, Footer } = Layout;
-const headerStyle = {
-  height: window.innerWidth < 768 ? "auto" : 90,
-  lineHeight: "90px",
-  backgroundColor: "transparent",
-  paddingInline: "0.5rem",
-};
-const contentStyle = {
-  color: "#d1d1d1",
-  borderTop: "5px solid #698eae",
-  padding: "11px 16px",
-};
-const footerStyle = {
-  textAlign: "center",
-};
 
 const MainFrameComponent = () => {
   const [view, setView] = useState("dashboard");
   const [open, setOpen] = useState(false);
   const user = Meteor.user();
+  const headerStyle = {
+    height: window.innerWidth < 768 ? "auto" : 90,
+    lineHeight: "90px",
+    paddingInline: "0.5rem",
+  };
+  const contentStyle = {
+    color: "#d1d1d1",
+    borderTop: "7px solid #698eae",
+    padding: "11px 16px",
+  };
+  const footerStyle = {
+    textAlign: "center",
+  };
   return (
     <Layout style={{ height: "100%" }}>
-      <div id="header-background" />
       <SidebarComponent setView={setView} />
       <Layout>
         <Header style={headerStyle}>
           <Row justify="space-between" align="middle">
             <Col
+              className="layer-2"
               style={{
                 fontSize: window.innerWidth < 768 ? "1.2rem" : "1.5rem",
                 overflow: "hidden",
@@ -42,7 +41,7 @@ const MainFrameComponent = () => {
             >
               {`Willkommen, ${user?.profile?.name}!`}
             </Col>
-            <Col>
+            <Col className="layer-2">
               <Row gutter={16} align="middle">
                 <Col>
                   <Button
@@ -56,7 +55,7 @@ const MainFrameComponent = () => {
                     type="ghost"
                     onClick={() => setOpen(true)}
                   >
-                    <Tooltip title="Passwort ändern">
+                    <Tooltip title="Passwort ändern" className="layer-2">
                       <UnlockOutlined
                         style={{ color: "#D1D1D1", fontSize: 32 }}
                       />
@@ -89,7 +88,7 @@ const MainFrameComponent = () => {
                       })
                     }
                   >
-                    <Tooltip title="Abmelden">
+                    <Tooltip title="Abmelden" className="layer-2">
                       <LogoutOutlined
                         style={{ color: "#D1D1D1", fontSize: 32 }}
                       />

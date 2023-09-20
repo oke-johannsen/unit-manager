@@ -14,16 +14,6 @@ export const App = () => {
     };
   });
 
-  const backgroundSettings = !user
-    ? {
-        backgroundImage:
-          "url('https://static.wixstatic.com/media/44674e_0585866da94e414aa9e5e04462d94ef3~mv2.png/v1/fill/w_1166,h_608,fp_0.50_0.50,q_90,usm_0.66_1.00_0.01,enc_auto/footer.png')",
-        backgroundRepeat: "no-repeat",
-        backgroundPositionY: "bottom",
-        backgroundSize: "cover",
-      }
-    : {};
-
   return (
     <ConfigProvider
       theme={{
@@ -33,25 +23,26 @@ export const App = () => {
           fontSize: 16,
           fontFamily: "'Rajdhani', sans-serif",
           borderRadius: 6,
-          wireframe: true,
+          wireframe: false,
         },
         algorithm: theme.darkAlgorithm,
       }}
     >
+      <div id="header-background" />
+      <div id="glowing-line" />
       <Row>
         <Col span={24} style={{ height: "100vh" }}>
           {user ? (
             <MainFrameComponent />
           ) : (
             <Row>
-              <Col span={24} style={{ height: "5vh" }}>
+              <Col span={24} style={{ height: 90 }}>
                 <HeaderComponent />
               </Col>
               <Col
                 span={24}
                 style={{
-                  height: "95vh",
-                  ...backgroundSettings,
+                  height: "calc(100vh - 90px)",
                 }}
               >
                 <LoginComponent />

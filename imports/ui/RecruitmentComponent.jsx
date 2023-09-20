@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { RecruitmentCollection } from "../api/RecruitmentsApi";
-import { Col, List, Row, Segmented } from "antd";
+import { Col, List, Row, Segmented, message } from "antd";
 
 const RecruitmentComponent = () => {
   const [selected, setSelected] = useState("open");
@@ -26,10 +26,15 @@ const RecruitmentComponent = () => {
   console.log(selected);
   return (
     <List
+      className="recruitment-list"
       header={
         <Row justify="space-between" align="middle">
           <Col>
-            <h2 style={{ margin: 0 }}>Bewerbungen</h2>
+            <span
+              style={{ fontSize: 24, fontFamily: "'Bebas Neue', sans-serif" }}
+            >
+              Bewerbungen
+            </span>
           </Col>
           <Col>
             <Row align="middle" gutter={16}>
@@ -55,8 +60,45 @@ const RecruitmentComponent = () => {
           <List.Item
             key={item.key}
             actions={[
-              <a>{selected === "open" ? "Abschließen" : "Wiedereröffnen"}</a>,
-              <a>Löschen</a>,
+              <a
+                onClick={() => {
+                  Meteor.call(
+                    "recruitment.update",
+                    item.key,
+                    {
+                      status: selected === "open" ? "closed" : "open",
+                    },
+                    (err, res) => {
+                      if (!err) {
+                        message.success("Bewerbung erfolgreich verschoben!");
+                      } else {
+                        console.error("error in recruitment.remove", err, res);
+                        message.error(
+                          "Es was ist schief gelaufen, bitte versuche es erneut!"
+                        );
+                      }
+                    }
+                  );
+                }}
+              >
+                {selected === "open" ? "Abschließen" : "Wiedereröffnen"}
+              </a>,
+              <a
+                onClick={() => {
+                  Meteor.call("recruitment.remove", item.key, (err, res) => {
+                    if (!err) {
+                      message.success("Bewerbung erfolgreich gelöscht!");
+                    } else {
+                      console.error("error in recruitment.remove", err, res);
+                      message.error(
+                        "Es was ist schief gelaufen, bitte versuche es erneut!"
+                      );
+                    }
+                  });
+                }}
+              >
+                Löschen
+              </a>,
             ]}
           >
             <List.Item.Meta

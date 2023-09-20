@@ -86,7 +86,7 @@ const SquadsComponent = () => {
                     margin: "0 1.5rem 0 0",
                     padding: 0,
                     fontSize: 24,
-                    fontWeight: "bold",
+                    fontFamily: "'Bebas Neue', sans-serif",
                   }}
                 >
                   Truppliste

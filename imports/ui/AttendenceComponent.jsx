@@ -135,14 +135,14 @@ const AttendenceComponent = () => {
   return (
     <Row>
       <Col span={24}>
-        <Row style={{ padding: "0.5rem" }}>
-          <Col span={12}>
+        <Row style={{ padding: "0.5rem" }} gutter={16}>
+          <Col>
             <Statistic
               title={selected === "mission" ? "Missionen" : "Trainings"}
               value={attendences?.length || 0}
             />
           </Col>
-          <Col span={12}>
+          <Col>
             <Statistic
               title="Durchschnittliche Teilnehmerzahl"
               value={getAverageParticipants()}
@@ -163,7 +163,7 @@ const AttendenceComponent = () => {
                         margin: "0 1.5rem 0 0",
                         padding: 0,
                         fontSize: 24,
-                        fontWeight: "bold",
+                        fontFamily: "'Bebas Neue', sans-serif",
                       }}
                     >
                       Einstatzliste

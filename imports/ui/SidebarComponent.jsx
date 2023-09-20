@@ -6,10 +6,6 @@ import {
 import { Button, Col, Divider, Layout, Row } from "antd";
 import React from "react";
 import HeaderComponent from "./HeaderComponent";
-const siderStyle = {
-  color: "#d1d1d1",
-  backgroundColor: "transparent",
-};
 import { Meteor } from "meteor/meteor";
 import AUSBILDER_SVG from "./AUSBILDER_SVG";
 import MEMBER_SVG from "./MEMBER_SVG";
@@ -17,10 +13,13 @@ import TRUPPS_SVG from "./TRUPPS_SVG";
 const { Sider } = Layout;
 
 const SidebarComponent = ({ setView }) => {
+  const siderStyle = {
+    color: "#d1d1d1",
+  };
   const options = [
     {
       view: "dashboard",
-      icon: <AppstoreFilled style={{ fontSize: 64, color: "inherit" }} />,
+      icon: <AppstoreFilled style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -36,7 +35,7 @@ const SidebarComponent = ({ setView }) => {
     },
     {
       view: "members",
-      icon: <MEMBER_SVG style={{ fontSize: 64, color: "inherit" }} />,
+      icon: <MEMBER_SVG style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -52,7 +51,7 @@ const SidebarComponent = ({ setView }) => {
     },
     {
       view: "squads",
-      icon: <TRUPPS_SVG style={{ fontSize: 64, color: "inherit" }} />,
+      icon: <TRUPPS_SVG style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -68,7 +67,7 @@ const SidebarComponent = ({ setView }) => {
     },
     {
       view: "attendence",
-      icon: <CalendarOutlined style={{ fontSize: 64, color: "inherit" }} />,
+      icon: <CalendarOutlined style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -84,7 +83,7 @@ const SidebarComponent = ({ setView }) => {
     },
     Meteor.user()?.profile?.securityClearance > 2 && {
       view: "recruitment",
-      icon: <AuditOutlined style={{ fontSize: 64, color: "inherit" }} />,
+      icon: <AuditOutlined style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -100,7 +99,7 @@ const SidebarComponent = ({ setView }) => {
     },
     Meteor.user()?.profile?.securityClearance > 2 && {
       view: "trainers",
-      icon: <AUSBILDER_SVG style={{ fontSize: 64, color: "inherit" }} />,
+      icon: <AUSBILDER_SVG style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -109,7 +108,7 @@ const SidebarComponent = ({ setView }) => {
             color: "inherit",
           }}
         >
-          AUSBILDER
+          AUSBILDUNGEN
         </span>
       ),
       color: "#b32f2f",
@@ -117,13 +116,18 @@ const SidebarComponent = ({ setView }) => {
   ];
   return (
     <Sider style={siderStyle} width={150}>
-      <Row justify="center" align="top">
-        <Col>
+      <Row justify="center" align="top" style={{ height: "100%" }}>
+        <Col className="layer-2">
           <HeaderComponent />
         </Col>
         <Col
           span={24}
-          style={{ borderTop: "5px solid #698eae", paddingTop: 16 }}
+          style={{
+            borderTop: "7px solid #698eae",
+            paddingTop: 16,
+            background: "#80808",
+            height: "calc(100% - 90px)",
+          }}
         >
           <Row gutter={[0, 16]}>
             {options.map((option, index) => {

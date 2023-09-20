@@ -128,6 +128,7 @@ const UserDashboardComponent = ({ userProp }) => {
             <Card
               title={card.title}
               children={card.children}
+              bordered={false}
               style={{ height: "100%" }}
             />
           </Col>

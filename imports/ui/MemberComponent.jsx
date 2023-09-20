@@ -140,11 +140,11 @@ const MembersComponent = () => {
     <Row>
       {selected === "active" && (
         <Col span={24}>
-          <Row style={{ padding: "0.5rem" }}>
-            <Col span={12}>
+          <Row style={{ padding: "0.5rem" }} gutter={16}>
+            <Col>
               <Statistic title="Mitgliederanzahl" value={users?.length || 0} />
             </Col>
-            <Col span={12}>
+            <Col>
               <Statistic
                 title="Tier-3 Operator"
                 value={
@@ -168,7 +168,7 @@ const MembersComponent = () => {
                         margin: "0 1.5rem 0 0",
                         padding: 0,
                         fontSize: 24,
-                        fontWeight: "bold",
+                        fontFamily: "'Bebas Neue', sans-serif",
                       }}
                     >
                       Mitgliederliste
