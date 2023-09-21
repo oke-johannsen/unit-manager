@@ -91,6 +91,7 @@ export const LOG_COLUMNS = [
     dataIndex: "timestamp",
     key: "timestamp",
     sorter: (a, b) => a.timestamp > b.timestamp,
-    render: (timestamp) => dayjs(timestamp).format("DD.MM.YYYY HH:mm"),
+    render: (timestamp) =>
+      timestamp ? dayjs(timestamp).format("DD.MM.YYYY HH:mm") : "-",
   },
 ];
