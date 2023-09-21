@@ -29,7 +29,18 @@ const LogComponent = () => {
             style={{ padding: "0.5rem" }}
             dataSource={loggings}
             columns={LOG_COLUMNS}
-            pagination={loggings?.length > 10 ? { pageSize: 10 } : false}
+            pagination={
+              loggings?.length > 10
+                ? {
+                    pageSize: 10,
+                    responsive: true,
+                    showTotal: () => (
+                      <span>{`Insgegsamt: ${loggings.length} Logs`}</span>
+                    ),
+                    showSizeChanger: false,
+                  }
+                : false
+            }
           />
         </Spin>
       </Col>
