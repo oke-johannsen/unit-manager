@@ -1,4 +1,4 @@
-import { AppstoreFilled } from "@ant-design/icons";
+import { AppstoreFilled, HddFilled } from "@ant-design/icons";
 import { Button, Col, Divider, Layout, Row } from "antd";
 import React from "react";
 import HeaderComponent from "./HeaderComponent";
@@ -96,7 +96,7 @@ const SidebarComponent = ({ setView }) => {
       color: "#545a83",
     },
     Meteor.user()?.profile?.securityClearance > 2 && {
-      view: "trainers",
+      view: "skills",
       icon: <AUSBILDER_SVG style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
@@ -110,6 +110,22 @@ const SidebarComponent = ({ setView }) => {
         </span>
       ),
       color: "#b32f2f",
+    },
+    Meteor.user()?.profile?.securityClearance > 3 && {
+      view: "logging",
+      icon: <HddFilled style={{ fontSize: 48, color: "inherit" }} />,
+      text: (
+        <span
+          style={{
+            fontSize: 18,
+            fontFamily: "'Bebas Neue', sans-serif",
+            color: "inherit",
+          }}
+        >
+          Logs
+        </span>
+      ),
+      color: "#AAA",
     },
   ];
   return (

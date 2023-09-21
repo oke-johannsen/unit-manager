@@ -79,7 +79,7 @@ if (Meteor.isServer) {
       );
     },
     "attendence.update": (id, payload) => {
-      const { userIds, type, date, promotedMembers } = payload;
+      const { userIds, type, date, promotedMembers, spentPoints } = payload;
       setPromotionForUsers(promotedMembers, date, id);
       Meteor.call("logging.create", {
         key: "attendence.update",
@@ -90,12 +90,13 @@ if (Meteor.isServer) {
           type,
           date,
           promotedMembers,
+          spentPoints,
         },
         userId: Meteor.user()?._id,
       });
       AttendenceCollection.update(
         id,
-        { $set: { userIds, type, date, promotedMembers } },
+        { $set: { userIds, type, date, promotedMembers, spentPoints } },
         (err, res) => {
           if (!err) {
             return true;

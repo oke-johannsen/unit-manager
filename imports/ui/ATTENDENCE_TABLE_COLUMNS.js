@@ -15,6 +15,7 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     dataIndex: "type",
     key: "type",
     render: (type) => (type === "mission" ? "Mission" : "Training"),
+    sorter: (a, b) => a.type.localeCompare(b.type),
   },
   {
     title: "Teilnehmer",
@@ -33,6 +34,7 @@ export const ATTENDENCE_TABLE_COLUMNS = [
         </Tooltip>
       );
     },
+    sorter: (a, b) => a.userIds?.length - b.userIds?.length,
   },
   {
     title: "Beförderte Mitglieder",
@@ -51,5 +53,6 @@ export const ATTENDENCE_TABLE_COLUMNS = [
         </Tooltip>
       );
     },
+    sorter: (a, b) => a.promotedMembers?.length - b.promotedMembers?.length,
   },
 ];

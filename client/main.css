@@ -26,7 +26,9 @@ body {
 .dashboard-card .ant-card-head {
   font-family: "Bebas Neue", sans-serif;
   font-weight: 500;
+  border-bottom: none;
 }
+
 .dashboard-card.even .ant-card-head {
   background: #222222;
 }

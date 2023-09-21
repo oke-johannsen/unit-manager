@@ -39,7 +39,7 @@ const UserDashboardComponent = ({ userProp }) => {
         <Row>
           <Col span={8}>Name:</Col>
           <Col span={16}>{user?.profile?.name || "-"}</Col>
-          <Col span={8}>Rang:</Col>
+          <Col span={8}>Dienstgrad:</Col>
           <Col span={16}>{user?.profile?.rank || "-"}</Col>
           <Col span={8}>Trupp:</Col>
           <Col span={16}>

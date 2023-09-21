@@ -17,13 +17,11 @@ const RecruitmentComponent = () => {
         };
       }
     );
-    console.log(recruitment);
     return {
       ready: sub.ready() && subRecruitments.ready(),
       recruitment,
     };
   }, [selected]);
-  console.log(selected);
   return (
     <List
       className="recruitment-list"

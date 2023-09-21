@@ -104,14 +104,24 @@ const AttendenceComponent = () => {
   const handleAddPoints = () => {
     rowSelection?.selectedRowKeys?.forEach((item) => {
       const attendence = AttendenceCollection.findOne(item);
-      if (attendence) {
+      if (attendence.spentPoints !== true) {
         attendence.userIds?.forEach((id) => {
           const user = Meteor.users.findOne(id);
           if (user) {
             const newUser = { ...user };
-            newUser.profile.points = newUser.profile.points + 5;
+            newUser.profile.points =
+              newUser?.profile?.points +
+              (attendence.type === "mission" ? 5 : 10);
             Meteor.call("users.update", newUser);
           }
+        });
+        const { userIds, type, date, promotedMembers } = attendence;
+        Meteor.call("attendence.update", attendence._id, {
+          userIds,
+          type,
+          date,
+          promotedMembers,
+          spentPoints: true,
         });
       }
     });

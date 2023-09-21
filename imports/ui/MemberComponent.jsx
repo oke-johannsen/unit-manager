@@ -25,6 +25,7 @@ const MembersComponent = () => {
   const { users } = useTracker(() => {
     const sub = Meteor.subscribe("users", {});
     const squadSub = Meteor.subscribe("squads");
+    const skillsSub = Meteor.subscribe("skills");
     const status = selected === "active" ? { $ne: "inactive" } : "inactive";
     return {
       users: sub.ready()
@@ -37,6 +38,7 @@ const MembersComponent = () => {
           })
         : null,
       squadsReady: squadSub.ready(),
+      skillsSub: skillsSub.ready(),
     };
   });
   const [openUserCreateModal, setOpenUserCreateModal] = useState(false);

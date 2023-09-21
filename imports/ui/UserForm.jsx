@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Col,
   Divider,
@@ -11,25 +12,43 @@ import {
 } from "antd";
 import React from "react";
 import { Meteor } from "meteor/meteor";
-import { SKILL_OPTIONS, getTagColorByValue } from "./ SKILL_OPTIONS";
 import { SquadCollection } from "../api/SquadApi";
+import { SkillsCollection } from "../api/SkillsApi";
+import { useTracker } from "meteor/react-meteor-data";
 
 const PASSWORD_PATTER =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;
 
 const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
+  const { skillsOptions, squadOptions } = useTracker(() => {
+    Meteor.subscribe("skills");
+    return {
+      skillsOptions: SkillsCollection.find().map((skill) => {
+        return {
+          value: skill._id,
+          label: (
+            <span>
+              <Badge color={skill.color || "#ccc"} /> {skill.name}
+            </span>
+          ),
+          name: skill.name,
+          color: skill.color || "#ccc",
+        };
+      }),
+      squadOptions: SquadCollection.find().map((squad) => {
+        return {
+          value: squad._id,
+          label: squad.squadName,
+        };
+      }),
+    };
+  }, []);
   const onFinish = () => {
     submitForms(forms);
   };
   const onFinishFailed = (errorInfo) => {
     console.error("Failed:", errorInfo);
   };
-  squadOptions = SquadCollection.find().map((squad) => {
-    return {
-      value: squad._id,
-      label: squad.squadName,
-    };
-  });
   const user = Meteor.users.findOne(userId);
   const userData = user
     ? {
@@ -67,11 +86,12 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   };
 
   const tagRender = (item) => {
-    const { label, value } = item;
-    const color = getTagColorByValue(item.value);
+    const skill = skillsOptions?.filter(
+      (option) => option.value === item.value
+    )[0];
     return (
-      <Tag color={color} value={value}>
-        {label}
+      <Tag color={skill?.color} value={skill.value}>
+        {skill.name}
       </Tag>
     );
   };
@@ -247,7 +267,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         <Select
           mode="multiple"
           tagRender={tagRender}
-          options={SKILL_OPTIONS}
+          options={skillsOptions || []}
           disabled={securityClearance < 2}
         />
       </Form.Item>

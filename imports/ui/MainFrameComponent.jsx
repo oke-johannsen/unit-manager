@@ -100,7 +100,7 @@ const MainFrameComponent = () => {
           </Row>
         </Header>
         <Content style={contentStyle}>
-          <ViewController view={view} />
+          <ViewController view={view} setView={setView} />
         </Content>
         <Footer style={footerStyle}></Footer>
       </Layout>
