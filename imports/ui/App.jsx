@@ -18,8 +18,8 @@ export const App = () => {
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: "#5f1d1d",
-          colorInfo: "#5f1d1d",
+          colorPrimary: "#842121",
+          colorInfo: "#842121",
           fontSize: 16,
           fontFamily: "'Rajdhani', sans-serif",
           borderRadius: 6,

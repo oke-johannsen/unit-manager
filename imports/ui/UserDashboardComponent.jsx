@@ -34,7 +34,7 @@ const UserDashboardComponent = ({ userProp }) => {
 
   const cardsArray = [
     {
-      title: "Dienstgrad",
+      title: "PERSONALDATEN",
       children: (
         <Row>
           <Col span={8}>Name:</Col>
@@ -49,7 +49,7 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "Ausbildungen",
+      title: "AUSBILDUNGEN",
       children: (
         <Tooltip title={user?.profile?.skills?.join(", ")}>
           <Statistic value={user?.profile?.skills?.length || 0} />
@@ -57,11 +57,11 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "Belohnungspunkte",
+      title: "BELOHNUNGSPUNKTE",
       children: <Statistic value={user?.profile?.points || 0} />,
     },
     {
-      title: "Letzte Beförderung",
+      title: "LETZTE BEFÖRDERUNGEN",
       children: (
         <Statistic
           value={
@@ -77,11 +77,11 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "Einsätze",
+      title: "EINSÄTZE",
       children: <Statistic value={operations?.length || 0} />,
     },
     {
-      title: "Letzter Einsatz",
+      title: "LETZTER EINSATZ",
       children: (
         <Statistic
           value={
@@ -95,11 +95,11 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "Trainings",
+      title: "TRAINING",
       children: <Statistic value={trainings?.length || 0} />,
     },
     {
-      title: "Letztes Training",
+      title: "LETZTES TRAINING",
       children: (
         <Statistic
           value={
@@ -115,7 +115,7 @@ const UserDashboardComponent = ({ userProp }) => {
   ];
   return (
     <Row>
-      {cardsArray.map((card) => {
+      {cardsArray.map((card, index) => {
         return (
           <Col
             key={card.title}
@@ -126,6 +126,7 @@ const UserDashboardComponent = ({ userProp }) => {
             style={{ padding: "0.5rem" }}
           >
             <Card
+              className={`dashboard-card ${index % 2 === 0 ? " even" : " odd"}`}
               title={card.title}
               children={card.children}
               bordered={false}
