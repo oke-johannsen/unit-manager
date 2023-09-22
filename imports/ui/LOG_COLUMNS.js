@@ -7,7 +7,8 @@ export const LOG_COLUMNS = [
     dataIndex: "userId",
     key: "userId",
     render: (userId) => {
-      return Meteor.users.findOne(userId)?.profile?.name || "-";
+      const user = Meteor.users.findOne(userId);
+      return user ? user.username + " / " + user.profile?.name : "deleted-user";
     },
     sorter: (a, b) =>
       Meteor.users

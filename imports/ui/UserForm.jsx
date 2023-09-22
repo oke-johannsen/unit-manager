@@ -19,6 +19,26 @@ import { useTracker } from "meteor/react-meteor-data";
 const PASSWORD_PATTER =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;
 
+const rankOptions = [
+  { value: "Unteroffizier", label: "Unteroffizier" },
+  { value: "Feldwebel", label: "Feldwebel" },
+  { value: "Oberbootsmann", label: "Oberbootsmann" },
+  { value: "Oberfeldwebel", label: "Oberfeldwebel" },
+  { value: "Hauptbootsmann", label: "Hauptbootsmann" },
+  { value: "Hauptfeldwebel", label: "Hauptfeldwebel" },
+  { value: "Stabsbootsmann", label: "Stabsbootsmann" },
+  { value: "Stabsfeldwebel", label: "Stabsfeldwebel" },
+  { value: "Oberstabsbootsmann", label: "Oberstabsbootsmann" },
+  { value: "Oberstabsfeldwebel", label: "Oberstabsfeldwebel" },
+  { value: "Leutnant zur See", label: "Leutnant zur See" },
+  { value: "Leutnant", label: "Leutnant" },
+  { value: "Oberleutnant zur See", label: "Oberleutnant zur See" },
+  { value: "Oberleutnant", label: "Oberleutnant" },
+  { value: "Kapitänleutnant", label: "Kapitänleutnant" },
+  { value: "Hauptmann", label: "Hauptmann" },
+  { value: "Major", label: "Major" },
+];
+
 const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   const { skillsOptions, squadOptions } = useTracker(() => {
     Meteor.subscribe("skills");
@@ -89,10 +109,12 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
     const skill = skillsOptions?.filter(
       (option) => option.value === item.value
     )[0];
-    return (
-      <Tag color={skill?.color} value={skill.value}>
-        {skill.name}
+    return skill ? (
+      <Tag color={skill?.color} value={skill?.value}>
+        {skill?.name}
       </Tag>
+    ) : (
+      item?.value
     );
   };
 
@@ -179,7 +201,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         </Col>
         <Col span={12}>
           <Form.Item label="Tier" name="tier">
-            <Select disabled={securityClearance < 4}>
+            <Select disabled={securityClearance < 3}>
               <Select.Option value={3}>3</Select.Option>
               <Select.Option value={2}>2</Select.Option>
               <Select.Option value={1}>1</Select.Option>
@@ -200,41 +222,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         </Col>
         <Col span={12}>
           <Form.Item label="Dienstgrad" name="rank">
-            <Select disabled={securityClearance < 3}>
-              <Select.Option value="Unteroffizier">Unteroffizier</Select.Option>
-              <Select.Option value="Bootsmann">Bootsmann</Select.Option>
-              <Select.Option value="Feldwebel">Feldwebel</Select.Option>
-              <Select.Option value="Oberbootsmann">Oberbootsmann</Select.Option>
-              <Select.Option value="Oberfeldwebel">Oberfeldwebel</Select.Option>
-              <Select.Option value="Hauptfeldwebel">
-                Hauptfeldwebel
-              </Select.Option>
-              <Select.Option value="Stabsbootsmann">
-                Stabsbootsmann
-              </Select.Option>
-              <Select.Option value="Stabsfeldwebel">
-                Stabsfeldwebel
-              </Select.Option>
-              <Select.Option value="Oberstabsbootsmann">
-                Oberstabsbootsmann
-              </Select.Option>
-              <Select.Option value="Oberstabsfeldwebel">
-                Oberstabsfeldwebel
-              </Select.Option>
-              <Select.Option value="Leutnant zur See">
-                Leutnant zur See
-              </Select.Option>
-              <Select.Option value="Leutnant">Leutnant</Select.Option>
-              <Select.Option value="Oberleutnant zur See">
-                Oberleutnant zur See
-              </Select.Option>
-              <Select.Option value="Oberleutnant">Oberleutnant</Select.Option>
-              <Select.Option value="Kapitänleutnant">
-                Kapitänleutnant
-              </Select.Option>
-              <Select.Option value="Hauptmann">Hauptmann</Select.Option>
-              <Select.Option value="Major">Major</Select.Option>
-            </Select>
+            <Select disabled={securityClearance < 3} options={rankOptions} />
           </Form.Item>
         </Col>
       </Row>
@@ -243,14 +231,14 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         <Col span={12}>
           <Form.Item label="Trupp" name="squad">
             <Select
-              disabled={securityClearance < 4}
+              disabled={securityClearance < 3}
               options={squadOptions || []}
             />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item label="Trupp-Position" name="squadPosition">
-            <Select disabled={securityClearance < 4}>
+            <Select disabled={securityClearance < 3}>
               <Select.Option value="Mannschaft">Mannschaft</Select.Option>
               <Select.Option value="Stv. Truppführer">
                 Stv. Truppführer

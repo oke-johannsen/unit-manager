@@ -148,7 +148,13 @@ const AttendenceComponent = () => {
         <Row style={{ padding: "0.5rem" }} gutter={16}>
           <Col>
             <Statistic
-              title={selected === "mission" ? "Missionen" : "Trainings"}
+              title={
+                selected === "mission"
+                  ? "Missionen"
+                  : selected === "trainings"
+                  ? "Trainings"
+                  : "Einsätze"
+              }
               value={attendences?.length || 0}
             />
           </Col>

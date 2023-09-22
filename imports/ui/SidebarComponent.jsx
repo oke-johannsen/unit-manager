@@ -79,54 +79,68 @@ const SidebarComponent = ({ setView }) => {
       ),
       color: "#4a873b",
     },
-    Meteor.user()?.profile?.securityClearance > 2 && {
-      view: "recruitment",
-      icon: <BEWERBUNGEN_SVG style={{ fontSize: 48, color: "inherit" }} />,
-      text: (
-        <span
-          style={{
-            fontSize: 18,
-            fontFamily: "'Bebas Neue', sans-serif",
-            color: "inherit",
-          }}
-        >
-          BEWERBUNGEN
-        </span>
-      ),
-      color: "#545a83",
-    },
-    Meteor.user()?.profile?.securityClearance > 2 && {
-      view: "skills",
-      icon: <AUSBILDER_SVG style={{ fontSize: 48, color: "inherit" }} />,
-      text: (
-        <span
-          style={{
-            fontSize: 18,
-            fontFamily: "'Bebas Neue', sans-serif",
-            color: "inherit",
-          }}
-        >
-          AUSBILDUNGEN
-        </span>
-      ),
-      color: "#b32f2f",
-    },
-    Meteor.user()?.profile?.securityClearance > 3 && {
-      view: "logging",
-      icon: <HddFilled style={{ fontSize: 48, color: "inherit" }} />,
-      text: (
-        <span
-          style={{
-            fontSize: 18,
-            fontFamily: "'Bebas Neue', sans-serif",
-            color: "inherit",
-          }}
-        >
-          Logs
-        </span>
-      ),
-      color: "#AAA",
-    },
+    ...(Meteor.user()?.profile?.securityClearance > 2
+      ? [
+          {
+            view: "recruitment",
+            icon: (
+              <BEWERBUNGEN_SVG style={{ fontSize: 48, color: "inherit" }} />
+            ),
+            text: (
+              <span
+                style={{
+                  fontSize: 18,
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  color: "inherit",
+                }}
+              >
+                BEWERBUNGEN
+              </span>
+            ),
+            color: "#545a83",
+          },
+        ]
+      : []),
+    ...(Meteor.user()?.profile?.securityClearance > 2
+      ? [
+          {
+            view: "skills",
+            icon: <AUSBILDER_SVG style={{ fontSize: 48, color: "inherit" }} />,
+            text: (
+              <span
+                style={{
+                  fontSize: 18,
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  color: "inherit",
+                }}
+              >
+                AUSBILDUNGEN
+              </span>
+            ),
+            color: "#b32f2f",
+          },
+        ]
+      : []),
+    ...(Meteor.user()?.profile?.securityClearance > 3
+      ? [
+          {
+            view: "logging",
+            icon: <HddFilled style={{ fontSize: 48, color: "inherit" }} />,
+            text: (
+              <span
+                style={{
+                  fontSize: 18,
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  color: "inherit",
+                }}
+              >
+                Logs
+              </span>
+            ),
+            color: "#AAA",
+          },
+        ]
+      : []),
   ];
   return (
     <Sider style={siderStyle} width={150}>

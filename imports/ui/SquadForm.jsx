@@ -67,10 +67,24 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           />
         </Form.Item>
         <Form.Item label="Truppmitglieder" name="squadMember">
-          <Select name="squadMember" mode="multiple" options={userOptions} />
+          <Select
+            name="squadMember"
+            mode="multiple"
+            options={userOptions.map((opt) => ({
+              ...opt,
+              key: "multi-" + opt.value,
+            }))}
+          />
         </Form.Item>
         <Form.Item label="Truppführung" name="squadLead">
-          <Select name="squadLead" options={userOptions} />
+          <Select
+            allowClear
+            name="squadLead"
+            options={userOptions.map((opt) => ({
+              ...opt,
+              key: "single-" + opt.value,
+            }))}
+          />
         </Form.Item>
         <Form.Item label="Spezialisierung" name="speciality">
           <Input.TextArea

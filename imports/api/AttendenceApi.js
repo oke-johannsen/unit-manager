@@ -3,47 +3,48 @@ import { Mongo } from "meteor/mongo";
 
 export const AttendenceCollection = new Mongo.Collection("attendence");
 
-const setPromotionForUsers = (promotedMembers, date, attendenceId) => {
-  if (attendenceId) {
-    const attendence = AttendenceCollection.findOne(attendenceId);
-    if (attendence) {
-      const promotedMembersBefore = attendence.promotedMembers;
-      promotedMembers.forEach((userId) => {
-        if (!promotedMembersBefore.includes(userId)) {
-          updateUserPromotionHistory(userId, date, false);
-        }
-      });
-      promotedMembersBefore.forEach((userId) => {
-        if (!promotedMembers.includes(userId)) {
-          updateUserPromotionHistory(userId, date, true);
-        }
-      });
-    }
-  } else {
-    promotedMembers?.forEach((userId) => {
-      updateUserPromotionHistory(userId, date, false);
-    });
-  }
-};
-
-const updateUserPromotionHistory = (userId, date, remove) => {
-  const user = Meteor.users.findOne(userId);
-  if (user && user?.profile) {
-    const promotionHistory = [...(user.profile.promotionHistory || [])];
-    if (remove) {
-      const index = promotionHistory.indexOf(date);
-      promotionHistory.splice(index, 1);
-    } else {
-      promotionHistory.push(date);
-    }
-    promotionHistory.sort((a, b) => a - b);
-    Meteor.users.update(userId, {
-      $set: { "profile.promotionHistory": promotionHistory },
-    });
-  }
-};
-
 if (Meteor.isServer) {
+  const setPromotionForUsers = (promotedMembers, date, attendenceId) => {
+    if (attendenceId) {
+      const attendence = AttendenceCollection.findOne(attendenceId);
+      if (attendence) {
+        const promotedMembersBefore = attendence.promotedMembers;
+        promotedMembers.forEach((userId) => {
+          if (!promotedMembersBefore.includes(userId)) {
+            updateUserPromotionHistory(userId, date, false);
+          }
+        });
+        promotedMembersBefore.forEach((userId) => {
+          if (!promotedMembers.includes(userId)) {
+            updateUserPromotionHistory(userId, date, true);
+          }
+        });
+      }
+    } else {
+      promotedMembers?.forEach((userId) => {
+        updateUserPromotionHistory(userId, date, false);
+      });
+    }
+  };
+
+  const updateUserPromotionHistory = (userId, date, remove) => {
+    const user = Meteor.users.findOne(userId);
+    if (user && user?.profile) {
+      const promotionHistory = [...(user.profile.promotionHistory || [])];
+      if (remove) {
+        const index = promotionHistory.indexOf(date);
+        promotionHistory.splice(index, 1);
+      } else {
+        promotionHistory.push(date);
+      }
+      promotionHistory.sort((a, b) => a - b);
+      const newProfile = user.profile;
+      newProfile.promotionHistory = promotionHistory;
+      Meteor.users.update(userId, {
+        $set: { profile: newProfile },
+      });
+    }
+  };
   Meteor.publish("attendence.by.user", function (userId) {
     return AttendenceCollection.find({ userIds: userId });
   });

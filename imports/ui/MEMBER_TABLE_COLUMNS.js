@@ -2,13 +2,14 @@ import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import React from "react";
 import { SquadCollection } from "../api/SquadApi";
+import { sortByRank } from "./SORTER_LIB";
 
 export const MEMBER_TABLE_COLUMNS = [
   {
     title: "Dienstgrad",
     dataIndex: "rank",
     key: "rank",
-    sorter: (a, b) => a.rank.localeCompare(b.rank),
+    sorter: (a, b) => sortByRank(a.rank, b.rank),
   },
   {
     title: "Name",

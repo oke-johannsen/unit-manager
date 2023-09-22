@@ -12,7 +12,7 @@ const UserList = ({ dataSource }) => {
         return (
           <Row style={{ width: "100%" }}>
             {user?.profile?.rank && (
-              <Col xs={12} sm={12} md={8} lg={8} xl={4} xxl={4}>
+              <Col xs={12} sm={12} md={8} lg={8} xl={6} xxl={6}>
                 {user?.profile?.rank}:
               </Col>
             )}

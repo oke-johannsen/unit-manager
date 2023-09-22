@@ -3,19 +3,28 @@ import { Mongo } from "meteor/mongo";
 
 export const SquadCollection = new Mongo.Collection("squad");
 
-const updateSquadOfUsers = (squadMember, squadId) => {
-  const userIds = Meteor.users
-    .find({ _id: { $in: squadMember } })
-    .map((user) => user._id);
-  userIds.forEach((userId) => {
-    Meteor.users.update(userId, { $set: { "profile.squad": squadId } });
-  });
-};
-
 if (Meteor.isServer) {
   Meteor.publish("squads", function () {
     return SquadCollection.find({});
   });
+
+  const updateSquadOfUsers = (squadMember, squadId) => {
+    const users = Meteor.users.find({ _id: { $in: squadMember } }).fetch();
+    users.forEach((user) => {
+      const newProfile = user.profile;
+      newProfile.squadId = squadId;
+      Meteor.users.update(user._id, { $set: { profile: newProfile } });
+    });
+  };
+
+  const updateUsersBasedOnSquad = (squadId) => {
+    const users = Meteor.users.find({ "profile.squad": squadId }).fetch();
+    users.forEach((user) => {
+      const newProfile = user.profile;
+      delete newProfile.squad;
+      Meteor.users.update(user._id, { $set: { profile: newProfile } });
+    });
+  };
 
   Meteor.methods({
     "squad.create": (payload) => {
@@ -75,7 +84,7 @@ if (Meteor.isServer) {
       });
       SquadCollection.remove(id, (err, res) => {
         if (!err) {
-          updateSquadOfUsers(squad?.squadMember);
+          updateUsersBasedOnSquad(squad._id);
           return true;
         } else {
           console.error('Error in "SquadCollection.remove":', err, res);

@@ -96,7 +96,7 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
                 return (
                   <Row style={{ width: "100%" }} align="middle" gutter={8}>
                     <Col>
-                      <Badge color={skill.color || "#ccc"} />
+                      <Badge color={skill?.color || "#ccc"} />
                     </Col>
                     <Col>{skill?.name}:</Col>
                     <Col flex="auto">

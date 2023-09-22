@@ -1,4 +1,4 @@
-import { Col, List, Modal, Row } from "antd";
+import { Col, Modal, Row } from "antd";
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import UserList from "./UserList";
@@ -21,7 +21,7 @@ const UserDeleteModal = ({ openUserDeleteModal, setOpenUserDeleteModal }) => {
       onCancel={() => setOpenUserDeleteModal(false)}
       onOk={deleteUsers}
       cancelText="Abbrechen"
-      title="Mitglieder auf aktiv setzen"
+      title="Mitglieder löschen"
       centered={window.innerWidth < 768}
     >
       <Row>
