@@ -185,7 +185,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Divider>Stammdaten</Divider>
 
       <Row gutter={8}>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item
             label="Name"
             name="name"
@@ -199,7 +199,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             <Input disabled={securityClearance < 3} />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Tier" name="tier">
             <Select disabled={securityClearance < 3}>
               <Select.Option value={3}>3</Select.Option>
@@ -211,7 +211,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       </Row>
 
       <Row gutter={8}>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Zugehörigkeit" name="designation">
             <Select disabled={securityClearance < 3}>
               <Select.Option value="KSK">KSK</Select.Option>
@@ -220,7 +220,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             </Select>
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Dienstgrad" name="rank">
             <Select disabled={securityClearance < 3} options={rankOptions} />
           </Form.Item>
@@ -228,7 +228,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       </Row>
 
       <Row gutter={8}>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Trupp" name="squad">
             <Select
               disabled={securityClearance < 3}
@@ -236,7 +236,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Trupp-Position" name="squadPosition">
             <Select disabled={securityClearance < 3}>
               <Select.Option value="Mannschaft">Mannschaft</Select.Option>
@@ -270,7 +270,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       </Form.Item>
 
       <Row gutter={8}>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Belohnungspunkte" name="points">
             <InputNumber
               style={{ width: "100%" }}
@@ -278,7 +278,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col lg={12} md={24}>
           <Form.Item label="Inaktivitätspunkte" name="inactivityPoints">
             <InputNumber
               style={{ width: "100%" }}
