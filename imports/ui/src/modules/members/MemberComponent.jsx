@@ -131,7 +131,7 @@ const MembersComponent = () => {
   ];
   return (
     <Row>
-      {selected === "active" && (
+      {selected === "active" && window.innerWidth > 700 && (
         <Col span={24}>
           <Row style={{ padding: "0.5rem" }} gutter={16}>
             <Col>

@@ -82,7 +82,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         tier: 3,
         rank: "Unteroffizier",
         designation: "KSK",
-        squadPosition: "Mannschaft",
+        squadPosition: "Mannschaftler",
         securityClearance: 1,
         points: 0,
         inactivityPoints: 0,
@@ -240,7 +240,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         <Col lg={12} md={24}>
           <Form.Item label="Trupp-Position" name="squadPosition">
             <Select disabled={securityClearance < 3} optionLabelProp="label">
-              <Select.Option value="Mannschaft">Mannschaft</Select.Option>
+              <Select.Option value="Mannschaft">Mannschaftler</Select.Option>
               <Select.Option value="Stv. Truppführer">
                 Stv. Truppführer
               </Select.Option>

@@ -57,11 +57,15 @@ const AttendenceComponent = () => {
       value: "training",
       label: "Trainings",
     },
-    {
-      key: "all",
-      value: "all",
-      label: "Alle",
-    },
+    ...(window.innerWidth > 700
+      ? [
+          {
+            key: "all",
+            value: "all",
+            label: "Alle",
+          },
+        ]
+      : []),
   ];
   const data = attendences;
   const errorText = "Bitte wähle zuerst ein oder mehr Einsätze aus!";
@@ -144,28 +148,30 @@ const AttendenceComponent = () => {
   };
   return (
     <Row>
-      <Col span={24}>
-        <Row style={{ padding: "0.5rem" }} gutter={16}>
-          <Col>
-            <Statistic
-              title={
-                selected === "mission"
-                  ? "Missionen"
-                  : selected === "trainings"
-                  ? "Trainings"
-                  : "Einsätze"
-              }
-              value={attendences?.length || 0}
-            />
-          </Col>
-          <Col>
-            <Statistic
-              title="Durchschnittliche Teilnehmerzahl"
-              value={getAverageParticipants()}
-            />
-          </Col>
-        </Row>
-      </Col>
+      {window.innerWidth > 700 && (
+        <Col span={24}>
+          <Row style={{ padding: "0.5rem" }} gutter={16}>
+            <Col>
+              <Statistic
+                title={
+                  selected === "mission"
+                    ? "Missionen"
+                    : selected === "trainings"
+                    ? "Trainings"
+                    : "Einsätze"
+                }
+                value={attendences?.length || 0}
+              />
+            </Col>
+            <Col>
+              <Statistic
+                title="Durchschnittliche Teilnehmerzahl"
+                value={getAverageParticipants()}
+              />
+            </Col>
+          </Row>
+        </Col>
+      )}
       <Col span={24}>
         <Table
           scroll={{ x: 150 }}

@@ -42,6 +42,7 @@ const LogComponent = () => {
       <Col span={24}>
         <Spin spinning={!ready}>
           <Table
+            scroll={{ x: 150 }}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Col>
@@ -58,10 +59,13 @@ const LogComponent = () => {
                 </Col>
                 <Col>
                   <RangePicker
-                    format="DD.MM.YYYY"
+                    format={window.innerWidth > 700 ? "DD.MM.YYYY" : "DD.MM.YY"}
                     onChange={setDateRange}
                     value={dateRange}
                     placeholder={["Start", "Ende"]}
+                    panelRender={
+                      window.innerWidth > 700 ? undefined : () => <></>
+                    }
                   />
                 </Col>
               </Row>

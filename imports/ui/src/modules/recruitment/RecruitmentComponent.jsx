@@ -10,14 +10,14 @@ const RecruitmentComponent = () => {
   const { ready, recruitment } = useTracker(() => {
     const sub = Meteor.subscribe("users");
     const subRecruitments = Meteor.subscribe("recruitments");
-    const recruitment = RecruitmentCollection.find({ status: selected }).map(
-      (item) => {
-        return {
-          key: item?._id,
-          ...item,
-        };
-      }
-    );
+    const recruitment = RecruitmentCollection.find(
+      window.innerWidth > 700 ? { status: selected } : {}
+    ).map((item) => {
+      return {
+        key: item?._id,
+        ...item,
+      };
+    });
     return {
       ready: sub.ready() && subRecruitments.ready(),
       recruitment,
@@ -36,21 +36,23 @@ const RecruitmentComponent = () => {
                 Bewerbungen
               </span>
             </Col>
-            <Col>
-              <Row align="middle" gutter={16}>
-                <Col>
-                  <Segmented
-                    value={selected}
-                    onChange={setSelected}
-                    options={[
-                      { value: "open", label: "Offen" },
-                      { value: "closed", label: "Abgeschlossen" },
-                    ]}
-                  />
-                </Col>
-                <Col>Anzahl: {recruitment?.length || 0}</Col>
-              </Row>
-            </Col>
+            {window.innerWidth > 700 && (
+              <Col>
+                <Row align="middle" gutter={16}>
+                  <Col>
+                    <Segmented
+                      value={selected}
+                      onChange={setSelected}
+                      options={[
+                        { value: "open", label: "Offen" },
+                        { value: "closed", label: "Abgeschlossen" },
+                      ]}
+                    />
+                  </Col>
+                  <Col>Anzahl: {recruitment?.length || 0}</Col>
+                </Row>
+              </Col>
+            )}
           </Row>
         }
         loading={!ready}
@@ -66,7 +68,7 @@ const RecruitmentComponent = () => {
                       "recruitment.update",
                       item.key,
                       {
-                        status: selected === "open" ? "closed" : "open",
+                        status: item.status === "open" ? "closed" : "open",
                       },
                       (err, res) => {
                         if (!err) {
@@ -85,7 +87,7 @@ const RecruitmentComponent = () => {
                     );
                   }}
                 >
-                  {selected === "open" ? "Abschließen" : "Wiedereröffnen"}
+                  {item.status === "open" ? "Abschließen" : "Wiedereröffnen"}
                 </a>,
                 <a onClick={() => setDeleteModal(true)}>Löschen</a>,
               ]}

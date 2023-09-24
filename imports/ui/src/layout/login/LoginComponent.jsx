@@ -68,10 +68,11 @@ const LoginComponent = () => {
               },
             ]}
           >
-            <Input
+            <Input.Password
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
               placeholder="Passwort"
+              visibilityToggle
             />
           </Form.Item>
 

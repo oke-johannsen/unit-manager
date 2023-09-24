@@ -30,20 +30,22 @@ const MainFrameComponent = () => {
       <SidebarComponent setView={setView} />
       <Layout>
         <Header style={headerStyle}>
-          <Row justify="space-between" align="middle">
-            <Col
-              className="layer-2"
-              style={{
-                fontSize: window.innerWidth < 768 ? "1.2rem" : "1.5rem",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-              flex="auto"
-            >
-              {`Willkommen, ${user?.profile?.name}!`}
-            </Col>
-            <Col className="layer-2">
-              <Row gutter={16} align="middle">
+          <Row justify="space-between" align="middle" style={{ height: 80 }}>
+            {window.innerWidth > 700 && (
+              <Col
+                className="layer-2"
+                style={{
+                  fontSize: window.innerWidth < 768 ? "1.2rem" : "1.5rem",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                flex="auto"
+              >
+                {`Willkommen, ${user?.profile?.name}!`}
+              </Col>
+            )}
+            <Col className="layer-2" span={window.innerWidth > 700 ? null : 24}>
+              <Row gutter={16} justify="end" align="middle">
                 <Col>
                   <Button
                     style={{
@@ -103,36 +105,38 @@ const MainFrameComponent = () => {
         <Content style={contentStyle}>
           <ViewController view={view} setView={setView} />
         </Content>
-        <Footer style={footerStyle}>
-          <Row gutter={16} justify="end">
-            <Col>
-              <a
-                href="http://steamcommunity.com/groups/TaskForce-11"
-                target="_blank"
-              >
-                Steam Gruppe
-              </a>
-            </Col>
-            <Col>
-              <a
-                href="https://units.arma3.com/unit/taskforce11"
-                target="_blank"
-              >
-                Arma 3 Unit
-              </a>
-            </Col>
-            <Col>
-              <a href="ts3server://ts.TaskForce11.de" target="_blank">
-                TeamSpeak
-              </a>
-            </Col>
-            <Col>
-              <a href="https://www.taskforce11.de/" target="_blank">
-                Task Force 11 <sup>TM</sup>
-              </a>
-            </Col>
-          </Row>
-        </Footer>
+        {window.innerWidth > 700 && (
+          <Footer style={footerStyle}>
+            <Row gutter={16} justify="end">
+              <Col>
+                <a
+                  href="http://steamcommunity.com/groups/TaskForce-11"
+                  target="_blank"
+                >
+                  Steam Gruppe
+                </a>
+              </Col>
+              <Col>
+                <a
+                  href="https://units.arma3.com/unit/taskforce11"
+                  target="_blank"
+                >
+                  Arma 3 Unit
+                </a>
+              </Col>
+              <Col>
+                <a href="ts3server://ts.TaskForce11.de" target="_blank">
+                  TeamSpeak
+                </a>
+              </Col>
+              <Col>
+                <a href="https://www.taskforce11.de/" target="_blank">
+                  Task Force 11 <sup>TM</sup>
+                </a>
+              </Col>
+            </Row>
+          </Footer>
+        )}
       </Layout>
     </Layout>
   );
