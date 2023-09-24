@@ -79,7 +79,7 @@ const RecruitingModal = ({ open, setOpen }) => {
           onFinish={handleFinish}
           onFinishFailed={handleFinishFailed}
         >
-          <Row gutter={8}>
+          <Row gutter={8} align="bottom">
             <Col xs={24} md={12}>
               <Form.Item
                 name="age"
