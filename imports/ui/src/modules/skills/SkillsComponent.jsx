@@ -100,7 +100,7 @@ const SkillsComponent = () => {
                         setFormDisabled(false);
                         setIsDelete(false);
                         setOpen(true);
-                        setTitle("Trupp erstellen");
+                        setTitle("Ausbildung erstellen");
                         setRowSelection({
                           selectedRows: [],
                           selectedRowKeys: [],
@@ -150,7 +150,7 @@ const SkillsComponent = () => {
                       selectedRows: [record],
                       selectedRowKeys: [record.key],
                     });
-                    setTitle("Trupp anzeigen");
+                    setTitle("Squad anzeigen");
                     setFormDisabled(true);
                     setOpen(true);
                   }

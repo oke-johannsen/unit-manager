@@ -117,7 +117,7 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
             items={ids?.map((id) => {
               return {
                 key: id,
-                label: SkillsCollection.findOne(id)?.skillsName,
+                label: SkillsCollection.findOne(id)?.name,
                 children: (
                   <SkillsForm
                     id={id}

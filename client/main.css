@@ -30,10 +30,10 @@ body {
 }
 
 .dashboard-card.even .ant-card-head {
-  background: #222222;
+  background: #5f1d1d;
 }
 .dashboard-card.odd .ant-card-head {
-  background: #5f1d1d;
+  background: #222222;
 }
 
 .recruitment-list {
@@ -62,7 +62,7 @@ body {
   font-size: 60px !important;
 }
 .sider-button:not(:hover) svg {
-  transition: ease-in-out 0.2s;
+  transition: ease-in-out 0.3s;
   font-size: 48px !important;
 }
 

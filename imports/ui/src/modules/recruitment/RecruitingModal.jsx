@@ -153,7 +153,7 @@ const RecruitingModal = ({ open, setOpen }) => {
                       ]}
                       style={{ marginBottom: wasReferred ? 0 : 24 }}
                     >
-                      <Select options={members || []} />
+                      <Select options={members || []} optionLabelProp="label" />
                     </Form.Item>
                   </Col>
                 )}

@@ -151,8 +151,7 @@ const SidebarComponent = ({ setView }) => {
         <Col
           span={24}
           style={{
-            borderTop: "7px solid #698eae",
-            paddingTop: 16,
+            paddingTop: 32,
             background: "#80808",
             height: "calc(100% - 90px)",
           }}

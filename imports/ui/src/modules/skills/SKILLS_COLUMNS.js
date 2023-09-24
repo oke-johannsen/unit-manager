@@ -1,7 +1,24 @@
-import { Badge, Button, Tooltip } from "antd";
-import dayjs from "dayjs";
+import { Button, Tooltip } from "antd";
 import { Meteor } from "meteor/meteor";
 import React from "react";
+
+const getTypeName = (type) => {
+  let displayName;
+  switch (type) {
+    case "skill":
+      displayName = "Ausbildung";
+      break;
+    case "tier-1":
+      displayName = "Tier-1 Lehrgang";
+    case "tier-2":
+      displayName = "Tier-2 Lehrgang";
+    case "special":
+      displayName = "Speziallehrgang";
+    default:
+      displayName = "-";
+  }
+  return displayName;
+};
 
 export const SKILLS_COLUMNS = [
   {
@@ -46,11 +63,10 @@ export const SKILLS_COLUMNS = [
     },
   },
   {
-    title: "Farbe",
-    dataIndex: "color",
-    key: "color",
-    render: (color) => {
-      return <Badge color={color || "#ccc"} />;
-    },
+    title: "Ausbildungsart",
+    dataIndex: "type",
+    key: "type",
+    render: (type) => getTypeName(type),
+    sorter: (a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)),
   },
 ];

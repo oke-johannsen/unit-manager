@@ -21,7 +21,7 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
         }),
     };
   }, []);
-  const defaultValues = SkillsCollection.findOne(id);
+  const defaultValues = SkillsCollection.findOne(id) || { type: "skill" };
   const colors = [
     { value: "pink", label: <Badge color={"pink"} text="Pink" /> },
     { value: "red", label: <Badge color={"red"} text="Rot" /> },
@@ -39,6 +39,24 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
     { value: "volcano", label: <Badge color={"volcano"} text="Orange" /> },
     { value: "gold", label: <Badge color={"gold"} text="Gold" /> },
     { value: "lime", label: <Badge color={"lime"} text="Hellgrün" /> },
+  ];
+  const skillTypes = [
+    {
+      label: "Ausbildung",
+      value: "skill",
+    },
+    {
+      label: "Speziallehrgang",
+      value: "special",
+    },
+    {
+      label: "Tier-1 Lehrgang",
+      value: "tier-1",
+    },
+    {
+      label: "Tier-2 Lehrgang",
+      value: "tier-2",
+    },
   ];
 
   return (
@@ -62,6 +80,18 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           ]}
         >
           <Input name="name" />
+        </Form.Item>
+        <Form.Item
+          label="Ausbildungsart"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: "Bitte wähle eine Ausbildungsart aus!",
+            },
+          ]}
+        >
+          <Select options={skillTypes} optionLabelProp="label" />
         </Form.Item>
         <Form.Item label="Ausbilder" name="trainers">
           <Select name="trainers" mode="multiple" options={userOptions} />

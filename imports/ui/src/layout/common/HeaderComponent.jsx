@@ -8,7 +8,7 @@ const HeaderComponent = () => {
         alt=""
         style={{
           padding: "0.5rem",
-          height: 82.5,
+          height: 82,
           position: "relative",
           zIndex: 2,
         }}

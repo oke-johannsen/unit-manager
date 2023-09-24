@@ -18,8 +18,9 @@ const MainFrameComponent = () => {
   };
   const contentStyle = {
     color: "#d1d1d1",
-    borderTop: "7px solid #698eae",
-    padding: "11px 16px",
+    padding: "32px 16px",
+    height: "calc(100% - 90px)",
+    overflowY: "auto",
   };
   const footerStyle = {
     textAlign: "center",
@@ -102,7 +103,22 @@ const MainFrameComponent = () => {
         <Content style={contentStyle}>
           <ViewController view={view} setView={setView} />
         </Content>
-        <Footer style={footerStyle}></Footer>
+        <Footer style={footerStyle}>
+          <Row gutter={16} justify="end">
+            <Col>
+              Website:{" "}
+              <a href="https://www.taskforce11.de/" target="_blank">
+                Task Force 11
+              </a>
+            </Col>
+            <Col>
+              TeamSpeak:{" "}
+              <a href="ts3server://ts.TaskForce11.de" target="_blank">
+                ts.TaskForce11.de
+              </a>
+            </Col>
+          </Row>
+        </Footer>
       </Layout>
     </Layout>
   );
