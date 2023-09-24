@@ -61,6 +61,10 @@ body {
   transition: ease-in-out 0.3s;
   font-size: 60px !important;
 }
+.sider-button:not(:hover) svg {
+  transition: ease-in-out 0.2s;
+  font-size: 48px !important;
+}
 
 #header-background {
   position: absolute;
