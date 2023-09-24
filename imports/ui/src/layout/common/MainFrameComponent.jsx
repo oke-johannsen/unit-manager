@@ -106,15 +106,29 @@ const MainFrameComponent = () => {
         <Footer style={footerStyle}>
           <Row gutter={16} justify="end">
             <Col>
-              Website:{" "}
-              <a href="https://www.taskforce11.de/" target="_blank">
-                Task Force 11
+              <a
+                href="http://steamcommunity.com/groups/TaskForce-11"
+                target="_blank"
+              >
+                Steam Gruppe
               </a>
             </Col>
             <Col>
-              TeamSpeak:{" "}
+              <a
+                href="https://units.arma3.com/unit/taskforce11"
+                target="_blank"
+              >
+                Arma 3 Unit
+              </a>
+            </Col>
+            <Col>
               <a href="ts3server://ts.TaskForce11.de" target="_blank">
-                ts.TaskForce11.de
+                TeamSpeak
+              </a>
+            </Col>
+            <Col>
+              <a href="https://www.taskforce11.de/" target="_blank">
+                Task Force 11 <sup>TM</sup>
               </a>
             </Col>
           </Row>
