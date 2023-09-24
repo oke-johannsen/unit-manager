@@ -15,10 +15,18 @@ Meteor.startup(async () => {
       username: "mando",
       password: "Test-123*",
       profile: {
-        points: 0,
-        name: "Oke Johansen",
-        status: "active",
+        name: "Oke Johannsen",
+        tier: 1,
+        rank: "Unteroffizier",
+        designation: "KSK",
+        squadPosition: "Mannschaftler",
         securityClearance: 4,
+        points: 0,
+        inactivityPoints: 0,
+        trainings: 0,
+        missions: 0,
+        skills: [],
+        promitionHistory: [],
       },
     });
   }
