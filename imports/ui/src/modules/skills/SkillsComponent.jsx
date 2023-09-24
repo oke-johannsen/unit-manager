@@ -3,7 +3,7 @@ import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { Col, Dropdown, Row, Spin, Table } from "antd";
 import { SKILLS_COLUMNS } from "./SKILLS_COLUMNS";
-import { SkillsCollection } from "../api/SkillsApi";
+import { SkillsCollection } from "../../../../api/SkillsApi";
 import SkillsModal from "./SkillsModal";
 
 const SkillsComponent = () => {

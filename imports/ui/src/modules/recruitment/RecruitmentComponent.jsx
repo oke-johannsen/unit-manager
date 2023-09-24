@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { RecruitmentCollection } from "../api/RecruitmentsApi";
 import { Col, List, Modal, Row, Segmented, message } from "antd";
+import { RecruitmentCollection } from "../../../../api/RecruitmentsApi";
 
 const RecruitmentComponent = () => {
   const [selected, setSelected] = useState("open");

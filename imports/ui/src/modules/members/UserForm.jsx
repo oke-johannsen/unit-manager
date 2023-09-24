@@ -12,9 +12,9 @@ import {
 } from "antd";
 import React from "react";
 import { Meteor } from "meteor/meteor";
-import { SquadCollection } from "../api/SquadApi";
-import { SkillsCollection } from "../api/SkillsApi";
 import { useTracker } from "meteor/react-meteor-data";
+import { SkillsCollection } from "../../../../api/SkillsApi";
+import { SquadCollection } from "../../../../api/SquadApi";
 
 const PASSWORD_PATTER =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;

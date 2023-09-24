@@ -1,10 +1,10 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { AttendenceCollection } from "../api/AttendenceApi";
 import { Card, Col, Row, Statistic, Tooltip } from "antd";
 import dayjs from "dayjs";
-import { SquadCollection } from "../api/SquadApi";
+import { SquadCollection } from "../../../../api/SquadApi";
+import { AttendenceCollection } from "../../../../api/AttendenceApi";
 
 const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations } = useTracker(() => {

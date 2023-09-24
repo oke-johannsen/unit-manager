@@ -1,9 +1,9 @@
 import { Col, List, Modal, Row, Tabs, message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AttendenceForm from "./AttendenceForm";
 import dayjs from "dayjs";
 import { Meteor } from "meteor/meteor";
-import { AttendenceCollection } from "../api/AttendenceApi";
+import { AttendenceCollection } from "../../../../api/AttendenceApi";
 import { useTracker } from "meteor/react-meteor-data";
 
 const AttendenceModal = ({

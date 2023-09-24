@@ -1,8 +1,8 @@
 import { Tooltip } from "antd";
 import dayjs from "dayjs";
 import React from "react";
-import { SquadCollection } from "../api/SquadApi";
-import { sortByRank } from "./SORTER_LIB";
+import { SquadCollection } from "../../../../api/SquadApi";
+import { sortByRank } from "../../libs/SORTER_LIB";
 
 export const MEMBER_TABLE_COLUMNS = [
   {

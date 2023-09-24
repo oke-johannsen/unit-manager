@@ -1,6 +1,6 @@
 import React from "react";
 
-const EINSÄTZE_SVG = ({ style }) => {
+const ATTENDENCE_SVG = ({ style }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,4 +23,4 @@ const EINSÄTZE_SVG = ({ style }) => {
   );
 };
 
-export default EINSÄTZE_SVG;
+export default ATTENDENCE_SVG;

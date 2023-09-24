@@ -1,6 +1,6 @@
 import React from "react";
 
-const TRUPPS_SVG = ({ style }) => {
+const SQUADS_SVG = ({ style }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,4 +23,4 @@ const TRUPPS_SVG = ({ style }) => {
   );
 };
 
-export default TRUPPS_SVG;
+export default SQUADS_SVG;

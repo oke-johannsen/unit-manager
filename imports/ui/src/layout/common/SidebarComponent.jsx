@@ -1,13 +1,13 @@
 import { AppstoreFilled, HddFilled } from "@ant-design/icons";
 import { Button, Col, Divider, Layout, Row } from "antd";
 import React from "react";
-import HeaderComponent from "./HeaderComponent";
 import { Meteor } from "meteor/meteor";
-import AUSBILDER_SVG from "./AUSBILDER_SVG";
-import MEMBER_SVG from "./MEMBER_SVG";
-import TRUPPS_SVG from "./TRUPPS_SVG";
-import BEWERBUNGEN_SVG from "./BEWERBUNGEN_SVG";
-import EINSÄTZE_SVG from "./EINSÄTZE_SVG";
+import HeaderComponent from "./HeaderComponent";
+import MEMBER_SVG from "../../assets/MEMBER_SVG";
+import RECRUITMENT_SVG from "../../assets/RECRUITMENT_SVG";
+import SKILLS_SVG from "../../assets/SKILLS_SVG";
+import ATTENDENCE_SVG from "../../assets/ATTENDENCE_SVG";
+import SQUADS_SVG from "../../assets/SQUADS_SVG";
 const { Sider } = Layout;
 
 const SidebarComponent = ({ setView }) => {
@@ -49,7 +49,7 @@ const SidebarComponent = ({ setView }) => {
     },
     {
       view: "squads",
-      icon: <TRUPPS_SVG style={{ fontSize: 48, color: "inherit" }} />,
+      icon: <SQUADS_SVG style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -65,7 +65,7 @@ const SidebarComponent = ({ setView }) => {
     },
     {
       view: "attendence",
-      icon: <EINSÄTZE_SVG style={{ fontSize: 48, color: "inherit" }} />,
+      icon: <ATTENDENCE_SVG style={{ fontSize: 48, color: "inherit" }} />,
       text: (
         <span
           style={{
@@ -84,7 +84,7 @@ const SidebarComponent = ({ setView }) => {
           {
             view: "recruitment",
             icon: (
-              <BEWERBUNGEN_SVG style={{ fontSize: 48, color: "inherit" }} />
+              <RECRUITMENT_SVG style={{ fontSize: 48, color: "inherit" }} />
             ),
             text: (
               <span
@@ -105,7 +105,7 @@ const SidebarComponent = ({ setView }) => {
       ? [
           {
             view: "skills",
-            icon: <AUSBILDER_SVG style={{ fontSize: 48, color: "inherit" }} />,
+            icon: <SKILLS_SVG style={{ fontSize: 48, color: "inherit" }} />,
             text: (
               <span
                 style={{

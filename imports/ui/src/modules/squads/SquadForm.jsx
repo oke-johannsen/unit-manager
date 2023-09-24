@@ -1,6 +1,6 @@
 import { Form, Input, Select, Spin } from "antd";
 import React from "react";
-import { SquadCollection } from "../api/SquadApi";
+import { SquadCollection } from "../../../../api/SquadApi";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 

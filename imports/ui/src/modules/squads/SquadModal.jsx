@@ -1,10 +1,10 @@
-import { Badge, Col, List, Modal, Row, Tabs, message } from "antd";
+import { Col, List, Modal, Row, Tabs, message } from "antd";
 import React, { useEffect, useState } from "react";
+import { SquadCollection } from "../../../../api/SquadApi";
+import SquadForm from "./SquadForm";
 import { Meteor } from "meteor/meteor";
-import SkillsForm from "./SkillsForm";
-import { SkillsCollection } from "../api/SkillsApi";
 
-const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
+const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
   const [forms, setForms] = useState({});
   const [form, setForm] = useState(undefined);
   const [activeKey, setActiveKey] = useState(null);
@@ -19,12 +19,12 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
     if (ids?.length) {
       ids.forEach((id, index) => {
         if (isDelete) {
-          Meteor.call("skills.remove", id, (err, res) => {
+          Meteor.call("squad.remove", id, (err, res) => {
             if (!err) {
               if (index === ids.length - 1) {
                 setForm(undefined);
                 setForms({});
-                message.success("Ausbildungen wurden erfolgreich gelöscht!");
+                message.success("Trupps wurden erfolgreich gelöscht!");
                 setOpen(false);
               }
             } else {
@@ -36,12 +36,12 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
           });
         } else {
           if (forms[id]) {
-            Meteor.call("skills.update", id, forms[id], (err, res) => {
+            Meteor.call("squad.update", id, forms[id], (err, res) => {
               if (!err) {
                 if (index === ids.length - 1) {
                   setForm(undefined);
                   setForms({});
-                  message.success("Ausbildungen wurden erfolgreich erstellt!");
+                  message.success("Trupps wurden erfolgreich erstellt!");
                   setOpen(false);
                 }
               } else {
@@ -55,11 +55,11 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
         }
       });
     } else {
-      Meteor.call("skills.create", form, (err, res) => {
+      Meteor.call("squad.create", form, (err, res) => {
         if (!err) {
           setForm(undefined);
           setForms({});
-          message.success("Ausbildung wurde erfolgreich erstellt!");
+          message.success("Trupp wurde erfolgreich erstellt!");
           setOpen(false);
         } else {
           message.error("Etwas ist schief gelaufen, bitte versuche es erneut!");
@@ -85,23 +85,23 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
           <Row>
             <Col>
               Bist du sicher, dass du {ids.length}{" "}
-              {ids.length === 1 ? "Ausbildung" : "Ausbildungen"} löschen
-              möchtest?
+              {ids.length === 1 ? "Trupp" : "Trupps"} löschen möchtest?
             </Col>
             <List
-              dataSource={SkillsCollection.find({ _id: { $in: ids } }).fetch()}
+              dataSource={SquadCollection.find({ _id: { $in: ids } }).fetch()}
               style={{ width: "100%", padding: "0.5rem", margin: "0.5rem 0" }}
               renderItem={(item) => {
-                const skill = SkillsCollection.findOne(item._id);
+                const squad = SquadCollection.findOne(item);
                 return (
-                  <Row style={{ width: "100%" }} align="middle" gutter={8}>
-                    <Col>
-                      <Badge color={skill?.color || "#ccc"} />
+                  <Row style={{ width: "100%" }}>
+                    <Col xs={12} sm={12} md={8} lg={8} xl={4} xxl={4}>
+                      {squad?.squadName}:
                     </Col>
-                    <Col>{skill?.name}:</Col>
                     <Col flex="auto">
-                      {skill?.trainers?.length}
-                      {"  Ausbilder"}
+                      {squad?.squadMember?.length}{" "}
+                      {squad?.squadMember?.length === 1
+                        ? "Mitglied"
+                        : "Mitglieder"}
                     </Col>
                   </Row>
                 );
@@ -117,9 +117,9 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
             items={ids?.map((id) => {
               return {
                 key: id,
-                label: SkillsCollection.findOne(id)?.skillsName,
+                label: SquadCollection.findOne(id)?.squadName,
                 children: (
-                  <SkillsForm
+                  <SquadForm
                     id={id}
                     handleFormChange={handleFormChange}
                     handleSubmit={handleSubmit}
@@ -133,7 +133,7 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
       }
     } else {
       body = (
-        <SkillsForm
+        <SquadForm
           handleFormChange={handleFormChange}
           handleSubmit={handleSubmit}
         />
@@ -161,4 +161,4 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
   );
 };
 
-export default SkillModal;
+export default SquadModal;

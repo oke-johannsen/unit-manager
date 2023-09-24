@@ -2,7 +2,7 @@ import { Col, Dropdown, Row, Table, message } from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { SquadCollection } from "../api/SquadApi";
+import { SquadCollection } from "../../../../api/SquadApi";
 import { SQUAD_TABLE_COLUMNS } from "./SQUAD_TABLE_COLUMNS";
 import SquadModal from "./SquadModal";
 

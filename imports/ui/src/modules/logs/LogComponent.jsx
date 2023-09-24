@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { LoggingCollection } from "../api/LoggingApi";
+import { LoggingCollection } from "../../../../api/LoggingApi";
 import { Col, DatePicker, Row, Spin, Table } from "antd";
 import { LOG_COLUMNS } from "./LOG_COLUMNS";
 import dayjs from "dayjs";

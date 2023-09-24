@@ -1,12 +1,12 @@
 import React from "react";
-import UserDashboardComponent from "./UserDashboardComponent";
-import MembersComponent from "./MemberComponent";
-import AttendenceComponent from "./AttendenceComponent";
-import SquadsComponent from "./SquadsComponent";
-import RecruitmentComponent from "./RecruitmentComponent";
-import LogComponent from "./LogComponent";
+import MembersComponent from "../../modules/members/MemberComponent";
+import AttendenceComponent from "../../modules/attendence/AttendenceComponent";
+import SquadsComponent from "../../modules/squads/SquadsComponent";
+import LogComponent from "../../modules/logs/LogComponent";
 import { Button, Result } from "antd";
-import SkillsComponent from "./SkillsComponent";
+import SkillsComponent from "../../modules/skills/SkillsComponent";
+import UserDashboardComponent from "../../modules/members/UserDashboardComponent";
+import RecruitmentComponent from "../../modules/recruitment/RecruitmentComponent";
 
 const ViewController = ({ view, setView }) => {
   switch (view) {

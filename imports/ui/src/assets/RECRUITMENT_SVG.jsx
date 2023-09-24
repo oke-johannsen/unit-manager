@@ -1,6 +1,6 @@
 import React from "react";
 
-const BEWERBUNGEN_SVG = ({ style }) => {
+const RECRUITMENT_SVG = ({ style }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,4 +23,4 @@ const BEWERBUNGEN_SVG = ({ style }) => {
   );
 };
 
-export default BEWERBUNGEN_SVG;
+export default RECRUITMENT_SVG;

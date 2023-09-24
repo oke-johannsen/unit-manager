@@ -1,13 +1,4 @@
-import {
-  Button,
-  Col,
-  Dropdown,
-  Row,
-  Segmented,
-  Statistic,
-  Table,
-  message,
-} from "antd";
+import { Col, Dropdown, Row, Segmented, Statistic, Table, message } from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
@@ -18,7 +9,7 @@ import UserDisplayModal from "./UserDisplayModal";
 import UserArchiveModal from "./UsersArchiveModal";
 import UserReactivateModal from "./UserReactiveModal";
 import UserDeleteModal from "./UserDeleteModal";
-import PasswordResetModal from "./PasswordResetModal";
+import PasswordResetModal from "../../layout/common/PasswordResetModal";
 
 const MembersComponent = () => {
   const [selected, setSelected] = useState("active");
@@ -234,7 +225,7 @@ const MembersComponent = () => {
           style={{
             padding: "0.5rem",
           }}
-          onRow={(record, index) => {
+          onRow={(record) => {
             return {
               onClick: () => {
                 if (securityClearance === 1) {

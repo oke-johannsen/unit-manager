@@ -11,7 +11,7 @@ import {
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { AttendenceCollection } from "../api/AttendenceApi";
+import { AttendenceCollection } from "../../../../api/AttendenceApi";
 import { ATTENDENCE_TABLE_COLUMNS } from "./ATTENDENCE_TABLE_COLUMNS";
 import AttendenceModal from "./AttendenceModal";
 

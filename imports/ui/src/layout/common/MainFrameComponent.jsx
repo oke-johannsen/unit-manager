@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Col, Layout, Row, Tooltip } from "antd";
-import ViewController from "./ViewController";
-import SidebarComponent from "./SidebarComponent";
 import { Meteor } from "meteor/meteor";
-import PasswordResetModal from "./PasswordResetModal";
 import { LogoutOutlined, UnlockOutlined } from "@ant-design/icons";
+import ViewController from "./ViewController";
+import PasswordResetModal from "./PasswordResetModal";
+import SidebarComponent from "./SidebarComponent";
 const { Header, Content, Footer } = Layout;
 
 const MainFrameComponent = () => {

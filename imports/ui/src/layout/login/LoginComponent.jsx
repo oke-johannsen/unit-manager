@@ -2,7 +2,7 @@ import { Col, Row, Button, Form, Input, Typography, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
-import RecruitingModal from "./RecruitingModal";
+import RecruitingModal from "../../modules/recruitment/RecruitingModal";
 
 const LoginComponent = () => {
   const [open, setOpen] = useState(false);

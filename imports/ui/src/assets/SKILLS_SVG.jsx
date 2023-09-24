@@ -1,6 +1,6 @@
 import React from "react";
 
-const AUSBILDER_SVG = ({ style }) => {
+const SKILLS_SVG = ({ style }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,4 +23,4 @@ const AUSBILDER_SVG = ({ style }) => {
   );
 };
 
-export default AUSBILDER_SVG;
+export default SKILLS_SVG;
