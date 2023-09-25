@@ -182,13 +182,13 @@ const UserDashboardComponent = () => {
       ),
     },
     {
-      title: "TIER-1 LEHRGÄNGE",
+      title: "TIER-2 LEHRGÄNGE",
       children: (
         <Row justify="center" align="middle">
-          {tier1Options?.length === 0 ? (
+          {tier2Options?.length === 0 ? (
             <Empty description="Keine Ausbildungen für diese Ausbildungsart gefunden." />
           ) : (
-            tier1Options?.map((option, index) => {
+            tier2Options?.map((option, index) => {
               return (
                 <Col span={24} key={"option" + option.label + "-" + index}>
                   <Checkbox checked={option.value} disabled>
@@ -222,13 +222,13 @@ const UserDashboardComponent = () => {
       ),
     },
     {
-      title: "TIER-2 LEHRGÄNGE",
+      title: "TIER-1 LEHRGÄNGE",
       children: (
         <Row justify="center" align="middle">
-          {tier2Options?.length === 0 ? (
+          {tier1Options?.length === 0 ? (
             <Empty description="Keine Ausbildungen für diese Ausbildungsart gefunden." />
           ) : (
-            tier2Options?.map((option, index) => {
+            tier1Options?.map((option, index) => {
               return (
                 <Col span={24} key={"option" + option.label + "-" + index}>
                   <Checkbox checked={option.value} disabled>

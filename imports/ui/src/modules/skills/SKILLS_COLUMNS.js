@@ -10,12 +10,16 @@ const getTypeName = (type) => {
       break;
     case "tier-1":
       displayName = "Tier-1 Lehrgang";
+      break;
     case "tier-2":
       displayName = "Tier-2 Lehrgang";
+      break;
     case "special":
       displayName = "Speziallehrgang";
+      break;
     default:
       displayName = "-";
+      break;
   }
   return displayName;
 };

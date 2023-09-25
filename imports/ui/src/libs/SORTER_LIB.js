@@ -1,5 +1,6 @@
 const getRankPower = (rank) => {
   return [
+    "",
     "Unteroffizier",
     "Feldwebel",
     "Oberbootsmann",
