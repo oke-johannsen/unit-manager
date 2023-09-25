@@ -85,7 +85,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
             name="type"
             rules={[{ required: true }]}
           >
-            <Select options={typeOptions} optionLabelProp="label" />
+            <Select options={typeOptions} optionFilterProp="label" showSearch />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -105,7 +105,8 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
         rules={[{ required: true, message: "Bitte wähle Teilnehmer aus!" }]}
       >
         <Select
-          optionLabelProp="label"
+          optionFilterProp="label"
+          showSearch
           mode="multiple"
           value={userIds}
           onChange={setUserIds}
@@ -114,7 +115,8 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
       </Form.Item>
       <Form.Item label="Beförderte Mitglieder" name="promotedMembers">
         <Select
-          optionLabelProp="label"
+          optionFilterProp="label"
+          showSearch
           mode="multiple"
           disabled={disabled || userIds?.length === 0}
           placeholder={

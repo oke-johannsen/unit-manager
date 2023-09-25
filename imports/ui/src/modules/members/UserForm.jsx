@@ -82,7 +82,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         tier: 3,
         rank: "Unteroffizier",
         designation: "KSK",
-        squadPosition: "Mannschaftler",
+        squadPosition: "Mannschafter",
         securityClearance: 1,
         points: 0,
         inactivityPoints: 0,
@@ -201,7 +201,11 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         </Col>
         <Col lg={12} md={24}>
           <Form.Item label="Tier" name="tier">
-            <Select disabled={securityClearance < 3} optionLabelProp="label">
+            <Select
+              disabled={securityClearance < 3}
+              optionFilterProp="label"
+              showSearch
+            >
               <Select.Option value={3}>3</Select.Option>
               <Select.Option value={2}>2</Select.Option>
               <Select.Option value={1}>1</Select.Option>
@@ -213,7 +217,11 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       <Row gutter={8}>
         <Col lg={12} md={24}>
           <Form.Item label="Zugehörigkeit" name="designation">
-            <Select disabled={securityClearance < 3} optionLabelProp="label">
+            <Select
+              disabled={securityClearance < 3}
+              optionFilterProp="label"
+              showSearch
+            >
               <Select.Option value="KSK">KSK</Select.Option>
               <Select.Option value="KSM">KSM</Select.Option>
               <Select.Option value="Luftwaffe">Luftwaffe</Select.Option>
@@ -221,7 +229,12 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
           </Form.Item>
         </Col>
         <Col lg={12} md={24}>
-          <Form.Item label="Dienstgrad" name="rank" optionLabelProp="label">
+          <Form.Item
+            label="Dienstgrad"
+            name="rank"
+            optionFilterProp="label"
+            showSearch
+          >
             <Select disabled={securityClearance < 3} options={rankOptions} />
           </Form.Item>
         </Col>
@@ -233,14 +246,19 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             <Select
               disabled={securityClearance < 3}
               options={squadOptions || []}
-              optionLabelProp="label"
+              optionFilterProp="label"
+              showSearch
             />
           </Form.Item>
         </Col>
         <Col lg={12} md={24}>
           <Form.Item label="Trupp-Position" name="squadPosition">
-            <Select disabled={securityClearance < 3} optionLabelProp="label">
-              <Select.Option value="Mannschaft">Mannschaftler</Select.Option>
+            <Select
+              disabled={securityClearance < 3}
+              optionFilterProp="label"
+              showSearch
+            >
+              <Select.Option value="Mannschaft">Mannschafter</Select.Option>
               <Select.Option value="Stv. Truppführer">
                 Stv. Truppführer
               </Select.Option>
@@ -254,7 +272,8 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
 
       <Form.Item label="Ausbildungen" name="skills">
         <Select
-          optionLabelProp="label"
+          optionFilterProp="label"
+          showSearch
           mode="multiple"
           tagRender={tagRender}
           options={skillsOptions || []}
@@ -263,7 +282,11 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       </Form.Item>
 
       <Form.Item label="Sicherheitsstufe" name="securityClearance">
-        <Select disabled={securityClearance < 4} optionLabelProp="label">
+        <Select
+          disabled={securityClearance < 4}
+          optionFilterProp="label"
+          showSearch
+        >
           <Select.Option value="1">1</Select.Option>
           <Select.Option value="2">2</Select.Option>
           <Select.Option value="3">3</Select.Option>
