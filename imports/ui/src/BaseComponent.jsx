@@ -5,6 +5,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import LoginComponent from "./layout/login/LoginComponent";
 import MainFrameComponent from "./layout/common/MainFrameComponent";
 import HeaderComponent from "./layout/common/HeaderComponent";
+import deDe from "antd/locale/de_DE";
 
 export const BaseComponent = () => {
   document.getElementsByTagName("html")[0].setAttribute("lang", "de");
@@ -16,6 +17,7 @@ export const BaseComponent = () => {
 
   return (
     <ConfigProvider
+      locale={deDe}
       theme={{
         token: {
           colorPrimary: "#842121",

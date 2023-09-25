@@ -164,7 +164,7 @@ const UserDashboardComponent = () => {
     {
       title: "AUSBILDUNGEN",
       children: (
-        <Row align="end">
+        <Row justify="center" align="middle">
           {skillOptions?.length === 0 ? (
             <Empty description="Keine Ausbildungen für diese Ausbildungsart gefunden." />
           ) : (
@@ -184,7 +184,7 @@ const UserDashboardComponent = () => {
     {
       title: "TIER-1 LEHRGÄNGE",
       children: (
-        <Row align="end">
+        <Row justify="center" align="middle">
           {tier1Options?.length === 0 ? (
             <Empty description="Keine Ausbildungen für diese Ausbildungsart gefunden." />
           ) : (
@@ -204,7 +204,7 @@ const UserDashboardComponent = () => {
     {
       title: "SPEZIALLEHRGÄNGE",
       children: (
-        <Row align="end">
+        <Row justify="center" align="middle">
           {specialOptionsOptions?.length === 0 ? (
             <Empty description="Keine Ausbildungen für diese Ausbildungsart gefunden." />
           ) : (
@@ -224,7 +224,7 @@ const UserDashboardComponent = () => {
     {
       title: "TIER-2 LEHRGÄNGE",
       children: (
-        <Row align="end">
+        <Row justify="center" align="middle">
           {tier2Options?.length === 0 ? (
             <Empty description="Keine Ausbildungen für diese Ausbildungsart gefunden." />
           ) : (

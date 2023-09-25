@@ -107,7 +107,7 @@ const MainFrameComponent = () => {
         </Content>
         {window.innerWidth > 700 && (
           <Footer style={footerStyle}>
-            <Row gutter={16} justify="end">
+            <Row gutter={16} justify="end" align="bottom">
               <Col>
                 <a
                   href="http://steamcommunity.com/groups/TaskForce-11"
