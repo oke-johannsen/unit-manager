@@ -23,5 +23,5 @@ const getRankPower = (rank) => {
 };
 
 export const sortByRank = (rankA, rankB) => {
-  return getRankPower(rankA) - getRankPower(rankB);
+  return getRankPower(rankB) - getRankPower(rankA);
 };
