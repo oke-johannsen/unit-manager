@@ -6,11 +6,10 @@ import dayjs from "dayjs";
 import { SquadCollection } from "../../../../api/SquadApi";
 import { AttendenceCollection } from "../../../../api/AttendenceApi";
 import { SkillsCollection } from "../../../../api/SkillsApi";
-import { WarningOutlined } from "@ant-design/icons";
 
-const UserDashboardComponent = () => {
+const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations, ready } = useTracker(() => {
-    const user = Meteor.user();
+    const user = userProp;
     const squadSub = Meteor.subscribe("squads");
     const skillsSub = Meteor.subscribe("skills");
     const sub = Meteor.subscribe("attendence.by.user", user?._id);

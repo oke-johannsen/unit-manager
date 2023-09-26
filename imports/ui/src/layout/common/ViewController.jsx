@@ -7,6 +7,7 @@ import { Button, Result } from "antd";
 import SkillsComponent from "../../modules/skills/SkillsComponent";
 import UserDashboardComponent from "../../modules/members/UserDashboardComponent";
 import RecruitmentComponent from "../../modules/recruitment/RecruitmentComponent";
+import { Meteor } from "meteor/meteor";
 
 const ViewController = ({ view, setView }) => {
   switch (view) {
