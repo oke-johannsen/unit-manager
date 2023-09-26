@@ -21,6 +21,7 @@ const PASSWORD_PATTER =
 
 const rankOptions = [
   { value: "Unteroffizier", label: "Unteroffizier" },
+  { value: "Bootsmann", label: "Bootsmann" },
   { value: "Feldwebel", label: "Feldwebel" },
   { value: "Oberbootsmann", label: "Oberbootsmann" },
   { value: "Oberfeldwebel", label: "Oberfeldwebel" },

@@ -2,6 +2,7 @@ const getRankPower = (rank) => {
   return [
     "",
     "Unteroffizier",
+    "Bootsmann",
     "Feldwebel",
     "Oberbootsmann",
     "Oberfeldwebel",
@@ -22,5 +23,5 @@ const getRankPower = (rank) => {
 };
 
 export const sortByRank = (rankA, rankB) => {
-  return getRankPower(rankA) > getRankPower(rankB);
+  return getRankPower(rankA) - getRankPower(rankB);
 };
