@@ -28,12 +28,14 @@ const AttendenceComponent = () => {
           };
     return {
       attendences: sub.ready()
-        ? AttendenceCollection.find(filter).map((attendence) => {
-            return {
-              key: attendence._id,
-              ...attendence,
-            };
-          })
+        ? AttendenceCollection.find(filter, { sort: { date: -1 } }).map(
+            (attendence) => {
+              return {
+                key: attendence._id,
+                ...attendence,
+              };
+            }
+          )
         : null,
     };
   }, [selected]);
