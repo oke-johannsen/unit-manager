@@ -107,9 +107,7 @@ const UserDashboardComponent = ({ userProp }) => {
           <Col span={12}>Letzter Einsatz:</Col>
           <Col span={12}>
             {operations?.length
-              ? dayjs(operations[operations?.length - 1].date).format(
-                  "DD.MM.YYYY"
-                )
+              ? dayjs(operations[0].date).format("DD.MM.YYYY")
               : "Noch keine Missionen absolviert!"}
           </Col>
           <Col span={12}>Trainings:</Col>
@@ -117,9 +115,7 @@ const UserDashboardComponent = ({ userProp }) => {
           <Col span={12}>Letztes Training:</Col>
           <Col span={12}>
             {trainings?.length
-              ? dayjs(trainings[trainings?.length - 1].date).format(
-                  "DD.MM.YYYY"
-                )
+              ? dayjs(trainings[0].date).format("DD.MM.YYYY")
               : "Noch keine Trainings absolviert!"}
           </Col>
         </Row>
