@@ -83,7 +83,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         tier: 3,
         rank: "Unteroffizier",
         designation: "KSK",
-        squadPosition: "Mannschafter",
+        squadPosition: "Trupp-Soldat",
         securityClearance: 1,
         points: 0,
         inactivityPoints: 0,
@@ -259,7 +259,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               optionFilterProp="label"
               showSearch
             >
-              <Select.Option value="Mannschaft">Mannschafter</Select.Option>
+              <Select.Option value="Mannschaft">TruppS-oldat</Select.Option>
               <Select.Option value="Stv. Truppführer">
                 Stv. Truppführer
               </Select.Option>

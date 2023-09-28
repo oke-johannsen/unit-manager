@@ -34,7 +34,7 @@ const UserDashboardComponent = ({ userProp }) => {
       );
       return {
         key: skill._id,
-        value: index ? index > 1 : false,
+        value: index ? index > -1 : false,
         label: skill.name,
       };
     }
@@ -47,7 +47,7 @@ const UserDashboardComponent = ({ userProp }) => {
       );
       return {
         key: skill._id,
-        value: index ? index > 1 : false,
+        value: index ? index > -1 : false,
         label: skill.name,
       };
     }
@@ -60,7 +60,7 @@ const UserDashboardComponent = ({ userProp }) => {
       );
       return {
         key: skill._id,
-        value: index ? index > 1 : false,
+        value: index ? index > -1 : false,
         label: skill.name,
       };
     }
@@ -73,7 +73,7 @@ const UserDashboardComponent = ({ userProp }) => {
       );
       return {
         key: skill._id,
-        value: index ? index > 1 : false,
+        value: index ? index > -1 : false,
         label: skill.name,
       };
     }
@@ -137,9 +137,7 @@ const UserDashboardComponent = ({ userProp }) => {
           </Col>
           <Col span={12}>Einsätze seitdem:</Col>
           <Col span={12}>
-            {user?.profile?.promotionHistory[
-              user?.profile?.promotionHistory?.length - 1
-            ]
+            {user?.profile?.promotionHistory?.length
               ? AttendenceCollection?.find({
                   date: {
                     $gte: user?.profile?.promotionHistory[

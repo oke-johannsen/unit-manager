@@ -231,6 +231,7 @@ const AttendenceModal = ({
           message.success("Die ausgewählten Einsätze wurden aktualisiert!");
           handleCancel();
         }
+        break;
       case "delete":
         rowSelection?.selectedRowKeys?.forEach((item) => {
           Meteor.call("attendence.remove", item, (err, res) => {
@@ -252,10 +253,18 @@ const AttendenceModal = ({
   };
 
   const handleCancel = () => {
-    setOpenAttendenceCreateModal(false);
-    setOpenAttendenceDeleteModal(false);
-    setOpenAttendenceDisplayModal(false);
-    setOpenAttendenceUpdateModal(false);
+    if (openAttendenceDisplayModal) {
+      setOpenAttendenceDisplayModal(false);
+    }
+    if (openAttendenceCreateModal) {
+      setOpenAttendenceCreateModal(false);
+    }
+    if (openAttendenceUpdateModal) {
+      setOpenAttendenceUpdateModal(false);
+    }
+    if (openAttendenceDeleteModal) {
+      setOpenAttendenceDeleteModal(false);
+    }
     setForm(defaultFormValues);
   };
 

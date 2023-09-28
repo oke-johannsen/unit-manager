@@ -94,7 +94,12 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           <Select options={skillTypes} optionFilterProp="label" showSearch />
         </Form.Item>
         <Form.Item label="Ausbilder" name="trainers">
-          <Select name="trainers" mode="multiple" options={userOptions} />
+          <Select
+            name="trainers"
+            mode="multiple"
+            optionFilterProp="label"
+            options={userOptions}
+          />
         </Form.Item>
         <Form.Item label="Farbe" name="color">
           <Select name="color" options={colors} />

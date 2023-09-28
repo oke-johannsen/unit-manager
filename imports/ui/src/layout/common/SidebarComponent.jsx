@@ -101,7 +101,7 @@ const SidebarComponent = ({ setView }) => {
           },
         ]
       : []),
-    ...(Meteor.user()?.profile?.securityClearance > 2
+    ...(Meteor.user()?.profile?.securityClearance > 1
       ? [
           {
             view: "skills",
