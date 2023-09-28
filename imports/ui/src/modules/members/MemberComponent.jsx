@@ -1,4 +1,13 @@
-import { Col, Dropdown, Row, Segmented, Statistic, Table, message } from "antd";
+import {
+  Col,
+  Dropdown,
+  Input,
+  Row,
+  Segmented,
+  Statistic,
+  Table,
+  message,
+} from "antd";
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
@@ -40,6 +49,7 @@ const MembersComponent = () => {
   const [openUserDeleteModal, setOpenUserDeleteModal] = useState(false);
   const [openPasswordResetModal, setOpenPasswordResetModal] = useState(false);
   const [rowSelection, setRowSelection] = useState(null);
+  const [search, setSearch] = useState("");
   const options = [
     {
       key: "active",
@@ -52,7 +62,9 @@ const MembersComponent = () => {
       label: "Inaktiv",
     },
   ];
-  const data = users;
+  const data = users?.filter((user) => {
+    return user?.profile?.name?.includes(search);
+  });
   const securityClearance = Meteor.user()?.profile?.securityClearance;
   const items = [
     {
@@ -179,6 +191,15 @@ const MembersComponent = () => {
                       block={window.innerWidth < 768}
                     />
                   </Col>
+                  {window.innerWidth > 700 && (
+                    <Col>
+                      <Input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Mitglieder suchen"
+                      />
+                    </Col>
+                  )}
                 </Row>
               </Col>
               {securityClearance > 1 && (
