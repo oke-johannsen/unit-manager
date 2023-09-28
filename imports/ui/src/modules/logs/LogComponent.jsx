@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { LoggingCollection } from "../../../../api/LoggingApi";
-import { Col, DatePicker, Row, Spin, Table } from "antd";
+import { Col, DatePicker, Modal, Row, Spin, Table } from "antd";
 import { LOG_COLUMNS } from "./LOG_COLUMNS";
 import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
@@ -12,6 +12,7 @@ const LogComponent = () => {
     dayjs().startOf("month"),
     dayjs().endOf("month"),
   ]);
+  const [open, setOpen] = useState(false);
   const { ready, loggings } = useTracker(() => {
     const sub = Meteor.subscribe("users");
     const subLogging = Meteor.subscribe("logging");
@@ -43,6 +44,13 @@ const LogComponent = () => {
         <Spin spinning={!ready}>
           <Table
             scroll={{ x: 150 }}
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  setOpen(record);
+                },
+              };
+            }}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Col>
@@ -74,9 +82,9 @@ const LogComponent = () => {
             dataSource={loggings}
             columns={LOG_COLUMNS}
             pagination={
-              loggings?.length > 10
+              loggings?.length > 7
                 ? {
-                    pageSize: 10,
+                    pageSize: 7,
                     responsive: true,
                     showTotal: () => (
                       <span>{`Insgegsamt: ${loggings.length} Logs`}</span>
@@ -88,6 +96,37 @@ const LogComponent = () => {
           />
         </Spin>
       </Col>
+      {open && (
+        <Modal
+          open={open}
+          title={"Log Detailansicht"}
+          onCancel={() => setOpen(false)}
+          footer={false}
+        >
+          <Row gutter={[16, 16]}>
+            <Col xs={24} xl={12}>
+              <Row>
+                <Col span={24} style={{ fontWeight: "bold" }}>
+                  Vorher
+                </Col>
+                <Col span={24} style={{ whiteSpace: "pre-wrap" }}>
+                  {JSON.stringify(open.before, null, 2)}
+                </Col>
+              </Row>
+            </Col>
+            <Col xs={24} xl={12}>
+              <Row>
+                <Col span={24} style={{ fontWeight: "bold" }}>
+                  Nachher
+                </Col>
+                <Col span={24} style={{ whiteSpace: "pre-wrap" }}>
+                  {JSON.stringify(open.after, null, 2)}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Modal>
+      )}
     </Row>
   );
 };

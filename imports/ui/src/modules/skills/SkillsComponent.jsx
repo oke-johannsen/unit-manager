@@ -120,9 +120,9 @@ const SkillsComponent = () => {
             dataSource={skills}
             columns={SKILLS_COLUMNS}
             pagination={
-              skills?.length > 10
+              skills?.length > 7
                 ? {
-                    pageSize: 10,
+                    pageSize: 7,
                     responsive: true,
                     showTotal: () => (
                       <span>{`Insgegsamt: ${skills.length} Ausbildungen`}</span>
