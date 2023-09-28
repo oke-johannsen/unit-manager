@@ -164,7 +164,10 @@ const UserDashboardComponent = ({ userProp }) => {
             skillOptions?.map((option, index) => {
               return (
                 <Col span={24} key={"option" + option.label + "-" + index}>
-                  <Checkbox checked={option.value} disabled>
+                  <Checkbox
+                    checked={option.value}
+                    style={{ cursor: "not-allowed" }}
+                  >
                     {option.label}
                   </Checkbox>
                 </Col>
@@ -184,7 +187,10 @@ const UserDashboardComponent = ({ userProp }) => {
             tier2Options?.map((option, index) => {
               return (
                 <Col span={24} key={"option" + option.label + "-" + index}>
-                  <Checkbox checked={option.value} disabled>
+                  <Checkbox
+                    checked={option.value}
+                    style={{ cursor: "not-allowed" }}
+                  >
                     {option.label}
                   </Checkbox>
                 </Col>
@@ -204,7 +210,10 @@ const UserDashboardComponent = ({ userProp }) => {
             specialOptionsOptions?.map((option, index) => {
               return (
                 <Col span={24} key={"option" + option.label + "-" + index}>
-                  <Checkbox checked={option.value} disabled>
+                  <Checkbox
+                    checked={option.value}
+                    style={{ cursor: "not-allowed" }}
+                  >
                     {option.label}
                   </Checkbox>
                 </Col>
@@ -224,7 +233,10 @@ const UserDashboardComponent = ({ userProp }) => {
             tier1Options?.map((option, index) => {
               return (
                 <Col span={24} key={"option" + option.label + "-" + index}>
-                  <Checkbox checked={option.value} disabled>
+                  <Checkbox
+                    checked={option.value}
+                    style={{ cursor: "not-allowed" }}
+                  >
                     {option.label}
                   </Checkbox>
                 </Col>
