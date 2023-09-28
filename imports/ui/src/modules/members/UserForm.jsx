@@ -259,7 +259,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               optionFilterProp="label"
               showSearch
             >
-              <Select.Option value="Mannschaft">TruppS-oldat</Select.Option>
+              <Select.Option value="Trupp-Soldat">Trupp-Soldat</Select.Option>
               <Select.Option value="Stv. Truppführer">
                 Stv. Truppführer
               </Select.Option>
