@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 import { SquadCollection } from "../../../../api/SquadApi";
 import { sortByRank } from "../../libs/SORTER_LIB";
+import { SkillsCollection } from "../../../../api/SkillsApi";
 
 export const MEMBER_TABLE_COLUMNS = [
   {
@@ -51,7 +52,11 @@ export const MEMBER_TABLE_COLUMNS = [
     dataIndex: "skills",
     key: "skills",
     render: (skills) => (
-      <Tooltip title={skills?.join(", ")}>
+      <Tooltip
+        title={skills
+          ?.map((skill) => SkillsCollection.findOne(skill).name)
+          ?.join(", ")}
+      >
         <span style={{ display: "block", width: "100%" }}>
           {skills?.length || 0}
         </span>
