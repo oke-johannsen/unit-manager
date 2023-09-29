@@ -29,12 +29,12 @@ const UserDashboardComponent = ({ userProp }) => {
 
   const skillOptions = SkillsCollection?.find({ type: "skill" }).map(
     (skill) => {
-      const index = user?.profile?.skills.findIndex(
-        (userSkill) => SkillsCollection.findOne(userSkill)?.name === skill.name
-      );
+      const index = user?.profile?.skills?.findIndex((userSkill) => {
+        return userSkill === skill._id;
+      });
       return {
         key: skill._id,
-        value: index ? index > -1 : false,
+        value: index !== false,
         label: skill.name,
       };
     }
@@ -42,12 +42,12 @@ const UserDashboardComponent = ({ userProp }) => {
 
   const tier2Options = SkillsCollection?.find({ type: "tier-2" }).map(
     (skill) => {
-      const index = user?.profile?.skills.findIndex(
-        (userSkill) => SkillsCollection.findOne(userSkill)?.name === skill.name
+      const index = user?.profile?.skills?.findIndex(
+        (userSkill) => userSkill === skill._id
       );
       return {
         key: skill._id,
-        value: index ? index > -1 : false,
+        value: index !== false,
         label: skill.name,
       };
     }
@@ -55,12 +55,12 @@ const UserDashboardComponent = ({ userProp }) => {
 
   const specialOptionsOptions = SkillsCollection?.find({ type: "special" }).map(
     (skill) => {
-      const index = user?.profile?.skills.findIndex(
-        (userSkill) => SkillsCollection.findOne(userSkill)?.name === skill.name
+      const index = user?.profile?.skills?.findIndex(
+        (userSkill) => userSkill === skill._id
       );
       return {
         key: skill._id,
-        value: index ? index > -1 : false,
+        value: index !== false,
         label: skill.name,
       };
     }
@@ -68,12 +68,12 @@ const UserDashboardComponent = ({ userProp }) => {
 
   const tier1Options = SkillsCollection?.find({ type: "tier-1" }).map(
     (skill) => {
-      const index = user?.profile?.skills.findIndex(
-        (userSkill) => SkillsCollection.findOne(userSkill)?.name === skill.name
+      const index = user?.profile?.skills?.findIndex(
+        (userSkill) => userSkill === skill._id
       );
       return {
         key: skill._id,
-        value: index ? index > -1 : false,
+        value: index !== false,
         label: skill.name,
       };
     }

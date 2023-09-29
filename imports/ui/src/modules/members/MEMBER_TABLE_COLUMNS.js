@@ -54,7 +54,7 @@ export const MEMBER_TABLE_COLUMNS = [
     render: (skills) => (
       <Tooltip
         title={skills
-          ?.map((skill) => SkillsCollection.findOne(skill).name)
+          ?.map((skill) => SkillsCollection.findOne(skill)?.name)
           ?.join(", ")}
       >
         <span style={{ display: "block", width: "100%" }}>

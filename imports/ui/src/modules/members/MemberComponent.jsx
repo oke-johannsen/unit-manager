@@ -63,7 +63,11 @@ const MembersComponent = () => {
     },
   ];
   const data = users?.filter((user) => {
-    return user?.profile?.name?.includes(search);
+    const userProfile = user?.profile;
+    return (
+      userProfile?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+      userProfile?.rank?.toLowerCase().includes(search?.toLowerCase())
+    );
   });
   const securityClearance = Meteor.user()?.profile?.securityClearance;
   const items = [
