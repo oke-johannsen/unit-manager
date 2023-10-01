@@ -130,6 +130,12 @@ const MainFrameComponent = () => {
                 </a>
               </Col>
               <Col>
+                <a href="https://discord.gg/74cPDMcyaU" target="_blank">
+                  Discord
+                </a>
+              </Col>
+              <Col>|</Col>
+              <Col>
                 <a href="https://www.taskforce11.de/" target="_blank">
                   Task Force 11 <sup>TM</sup>
                 </a>
