@@ -34,7 +34,7 @@ const UserDashboardComponent = ({ userProp }) => {
       });
       return {
         key: skill._id,
-        value: index !== false,
+        value: index !== -1,
         label: skill.name,
       };
     }
@@ -42,12 +42,12 @@ const UserDashboardComponent = ({ userProp }) => {
 
   const tier2Options = SkillsCollection?.find({ type: "tier-2" }).map(
     (skill) => {
-      const index = user?.profile?.skills?.findIndex(
-        (userSkill) => userSkill === skill._id
-      );
+      const index = user?.profile?.skills?.findIndex((userSkill) => {
+        return userSkill === skill._id;
+      });
       return {
         key: skill._id,
-        value: index !== false,
+        value: index !== -1,
         label: skill.name,
       };
     }
@@ -60,7 +60,7 @@ const UserDashboardComponent = ({ userProp }) => {
       );
       return {
         key: skill._id,
-        value: index !== false,
+        value: index !== -1,
         label: skill.name,
       };
     }
@@ -73,7 +73,7 @@ const UserDashboardComponent = ({ userProp }) => {
       );
       return {
         key: skill._id,
-        value: index !== false,
+        value: index !== -1,
         label: skill.name,
       };
     }
