@@ -25,9 +25,11 @@ if (Meteor.isServer) {
   const updateSkillsBasedOnUser = (user) => {
     const skills = SkillsCollection.find({ trainers: user._id }).fetch();
     skills.forEach((skill) => {
-      const index = skill.trainers.indexOf(user._id);
+      const index = skill.trainers?.indexOf(user._id);
       const newTrainers = skill.trainers;
-      newTrainers.splice(index, 1);
+      if (index > -1) {
+        newTrainers.splice(index, 1);
+      }
       SkillsCollection.update(skill._id, { $set: { trainers: newTrainers } });
     });
   };

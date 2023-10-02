@@ -99,7 +99,7 @@ const UserDashboardComponent = ({ userProp }) => {
       ),
     },
     {
-      title: "ANWENSEHEIT",
+      title: "ANWESENHEIT",
       children: (
         <Row align="end">
           <Col span={12}>Einsätze:</Col>
