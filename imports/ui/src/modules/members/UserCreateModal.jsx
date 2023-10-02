@@ -2,6 +2,7 @@ import { Modal, message } from "antd";
 import React, { useState } from "react";
 import UserForm from "./UserForm";
 import { Meteor } from "meteor/meteor";
+import dayjs from "dayjs";
 
 const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
   const [forms, setForms] = useState({});
@@ -23,6 +24,7 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
         const payload = {
           username: values.username,
           password: values.password,
+          createdAt: dayjs(values.createdAt).toDate(),
           profile: profileData,
         };
         Meteor.call(`users.create`, payload, (err, res) => {

@@ -2,6 +2,7 @@ import { Modal, Tabs, message } from "antd";
 import React, { useState } from "react";
 import UserForm from "./UserForm";
 import { Meteor } from "meteor/meteor";
+import dayjs from "dayjs";
 
 const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
   const [forms, setForms] = useState({});
@@ -25,6 +26,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
         const payload = {
           ...user,
           username: values.username || user.username,
+          createdAt: dayjs(values.createdAt).toDate(),
           profile: profileData,
           _id: Object.keys(forms)[index],
         };

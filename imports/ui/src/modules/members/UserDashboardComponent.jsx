@@ -16,11 +16,11 @@ const UserDashboardComponent = ({ userProp }) => {
     return {
       user,
       trainings: AttendenceCollection.find(
-        { type: "training" },
+        { type: "training", userIds: user._id },
         { sort: { date: -1 } }
       ).fetch(),
       operations: AttendenceCollection.find(
-        { type: "mission" },
+        { type: "mission", userIds: user._id },
         { sort: { date: -1 } }
       ).fetch(),
       ready: squadSub.ready() && skillsSub.ready() && sub.ready(),

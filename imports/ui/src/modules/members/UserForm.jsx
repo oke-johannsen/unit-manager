@@ -2,6 +2,7 @@ import {
   Badge,
   Button,
   Col,
+  DatePicker,
   Divider,
   Form,
   Input,
@@ -15,6 +16,7 @@ import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { SkillsCollection } from "../../../../api/SkillsApi";
 import { SquadCollection } from "../../../../api/SquadApi";
+import dayjs from "dayjs";
 
 const PASSWORD_PATTER =
   /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/;
@@ -75,6 +77,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
     ? {
         ...user,
         ...user.profile,
+        createdAt: dayjs(user?.createdAt),
       }
     : {
         username: undefined,
@@ -90,6 +93,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         trainings: 0,
         missions: 0,
         skills: [],
+        createdAt: dayjs(),
       };
 
   const checkUsernameForDuplicate = async (_, username) => {
@@ -282,18 +286,27 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         />
       </Form.Item>
 
-      <Form.Item label="Sicherheitsstufe" name="securityClearance">
-        <Select
-          disabled={securityClearance < 4}
-          optionFilterProp="label"
-          showSearch
-        >
-          <Select.Option value="1">1</Select.Option>
-          <Select.Option value="2">2</Select.Option>
-          <Select.Option value="3">3</Select.Option>
-          <Select.Option value="4">4</Select.Option>
-        </Select>
-      </Form.Item>
+      <Row gutter={8}>
+        <Col lg={12} md={24}>
+          <Form.Item label="Sicherheitsstufe" name="securityClearance">
+            <Select
+              disabled={securityClearance < 4}
+              optionFilterProp="label"
+              showSearch
+            >
+              <Select.Option value="1">1</Select.Option>
+              <Select.Option value="2">2</Select.Option>
+              <Select.Option value="3">3</Select.Option>
+              <Select.Option value="4">4</Select.Option>
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col lg={12} md={24}>
+          <Form.Item label="Betrittsdatum" name="createdAt">
+            <DatePicker style={{ width: "100%" }} format="DD.MM.YYYY" />
+          </Form.Item>
+        </Col>
+      </Row>
 
       <Row gutter={8}>
         <Col lg={12} md={24}>
