@@ -137,7 +137,18 @@ const MembersComponent = () => {
           if (rowSelection?.selectedRowKeys?.length > 1) {
             message.warning("Bitte wähle nur ein Mitglied aus!");
           } else {
-            setOpenPasswordResetModal(rowSelection.selectedRowKeys);
+            if (
+              Meteor.users.findOne(rowSelection?.selectedRowKeys[0])?.profile
+                ?.securityClearance > 3
+            ) {
+              Meteor.user()?.username === "service-admin"
+                ? setOpenPasswordResetModal(rowSelection.selectedRowKeys)
+                : message.error(
+                    "Um die Passwörter anderer Administratoren zu verändern, verwende bitte den 'service-admin' Account!"
+                  );
+            } else {
+              setOpenPasswordResetModal(rowSelection.selectedRowKeys);
+            }
           }
         } else {
           message.warning("Bitte wähle zuerst ein Mitglied aus!");
