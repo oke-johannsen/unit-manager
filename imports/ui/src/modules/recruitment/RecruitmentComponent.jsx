@@ -89,7 +89,7 @@ const RecruitmentComponent = () => {
                 >
                   {item.status === "open" ? "Abschließen" : "Wiedereröffnen"}
                 </a>,
-                <a onClick={() => setDeleteModal(true)}>Löschen</a>,
+                <a onClick={() => setDeleteModal(item)}>Löschen</a>,
               ]}
             >
               <List.Item.Meta
@@ -135,7 +135,7 @@ const RecruitmentComponent = () => {
           okText="Löschen"
           okButtonProps={{ danger: true }}
           onOk={() => {
-            Meteor.call("recruitment.remove", item.key, (err, res) => {
+            Meteor.call("recruitment.remove", deleteModal?.key, (err, res) => {
               if (!err) {
                 message.success("Bewerbung erfolgreich gelöscht!");
                 setDeleteModal(false);
