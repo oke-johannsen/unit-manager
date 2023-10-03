@@ -59,6 +59,33 @@ if (Meteor.isServer) {
         }
       );
     },
+    "skills.update.many": (values) => {
+      const { members, skillId } = values;
+      members?.forEach((userId) => {
+        const user = Meteor.users.findOne(userId);
+        if (user) {
+          Meteor.users.update(
+            user._id,
+            {
+              $set: {
+                profile: {
+                  ...user.profile,
+                  skills: [...(user.profile.skills || []), skillId],
+                },
+              },
+            },
+            (err, res) => {
+              if (!err) {
+                return true;
+              } else {
+                console.error('Error in "Meteor.users.update":', err, res);
+                return false;
+              }
+            }
+          );
+        }
+      });
+    },
     "skills.remove": (id) => {
       const skills = SkillsCollection.findOne(id);
       updateUsersOnSkillRemove(skills);

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import { Col, Dropdown, Row, Spin, Table, message } from "antd";
+import { Button, Col, Dropdown, Row, Spin, Table, message } from "antd";
 import { SKILLS_COLUMNS } from "./SKILLS_COLUMNS";
 import { SkillsCollection } from "../../../../api/SkillsApi";
 import SkillsModal from "./SkillsModal";
+import AddSkillModal from "./AddSkillModal";
 
 const SkillsComponent = () => {
   const { ready, skills } = useTracker(() => {
@@ -23,6 +24,7 @@ const SkillsComponent = () => {
   }, []);
   const [rowSelection, setRowSelection] = useState(null);
   const [open, setOpen] = useState(false);
+  const [addContextOpen, setAddContextOpen] = useState(false);
   const [formDisabled, setFormDisabled] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [title, setTitle] = useState("Ausbildung");
@@ -92,28 +94,39 @@ const SkillsComponent = () => {
                     Ausbildungen
                   </span>
                 </Col>
-                {securityClearance > 3 && (
-                  <Col>
-                    <Dropdown.Button
-                      type="primary"
-                      onClick={() => {
-                        setFormDisabled(false);
-                        setIsDelete(false);
-                        setOpen(true);
-                        setTitle("Ausbildung erstellen");
-                        setRowSelection({
-                          selectedRows: [],
-                          selectedRowKeys: [],
-                        });
-                      }}
-                      menu={{
-                        items,
-                      }}
-                    >
-                      Erstellen
-                    </Dropdown.Button>
-                  </Col>
-                )}
+                <Col>
+                  <Row gutter={8}>
+                    {securityClearance > 2 && (
+                      <Col>
+                        <Button onClick={() => setAddContextOpen(true)}>
+                          Ausbildung hinzufügen
+                        </Button>
+                      </Col>
+                    )}
+                    {securityClearance > 3 && (
+                      <Col>
+                        <Dropdown.Button
+                          type="primary"
+                          onClick={() => {
+                            setFormDisabled(false);
+                            setIsDelete(false);
+                            setOpen(true);
+                            setTitle("Ausbildung erstellen");
+                            setRowSelection({
+                              selectedRows: [],
+                              selectedRowKeys: [],
+                            });
+                          }}
+                          menu={{
+                            items,
+                          }}
+                        >
+                          Erstellen
+                        </Dropdown.Button>
+                      </Col>
+                    )}
+                  </Row>
+                </Col>
               </Row>
             )}
             style={{ padding: "0.5rem" }}
@@ -160,6 +173,11 @@ const SkillsComponent = () => {
           />
         </Spin>
       </Col>
+      <AddSkillModal
+        title="Ausbildung hinzufügen"
+        open={addContextOpen}
+        setOpen={setAddContextOpen}
+      />
       <SkillsModal
         title={title}
         open={open}

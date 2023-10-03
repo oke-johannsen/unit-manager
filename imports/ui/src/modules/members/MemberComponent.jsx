@@ -26,7 +26,7 @@ const MembersComponent = () => {
     const sub = Meteor.subscribe("users", {});
     const squadSub = Meteor.subscribe("squads");
     const skillsSub = Meteor.subscribe("skills");
-    const status = selected === "active" ? { $ne: "inactive" } : "inactive";
+    const status = selected;
     return {
       users: sub.ready()
         ? Meteor.users.find({ "profile.status": status }).map((user) => {
@@ -40,7 +40,7 @@ const MembersComponent = () => {
       squadsReady: squadSub.ready(),
       skillsSub: skillsSub.ready(),
     };
-  });
+  }, [selected]);
   const [openUserCreateModal, setOpenUserCreateModal] = useState(false);
   const [openUserUpdateModal, setOpenUserUpdateModal] = useState(false);
   const [openUserDisplayModal, setOpenUserDisplayModal] = useState(false);
@@ -55,6 +55,11 @@ const MembersComponent = () => {
       key: "active",
       value: "active",
       label: "Aktiv",
+    },
+    {
+      key: "new",
+      value: "new",
+      label: "Anwärter",
     },
     {
       key: "inactive",
@@ -105,7 +110,7 @@ const MembersComponent = () => {
           }
         },
       },
-    selected === "inactive" &&
+    (selected === "inactive" || selected === "new") &&
       securityClearance > 3 && {
         key: "reactivate",
         label: "Reaktivieren",

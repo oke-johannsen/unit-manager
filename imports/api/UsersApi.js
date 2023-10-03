@@ -40,9 +40,16 @@ if (Meteor.isServer) {
       SquadCollection.update(squad._id, { $set: { squadLead: undefined } });
     });
   };
-  Meteor.publish("users", function (filter = { "profile.status": "active" }) {
-    return UsersCollection.find(filter);
-  });
+  Meteor.publish(
+    "users",
+    function (
+      filter = {
+        $or: [{ "profile.status": "active" }, { "profile.status": "new" }],
+      }
+    ) {
+      return UsersCollection.find(filter);
+    }
+  );
 
   Meteor.methods({
     updateSquadsBasedOnUser: (userId, squadId) => {
@@ -55,7 +62,7 @@ if (Meteor.isServer) {
       const { username, password } = payload;
       const profile = {
         ...payload?.profile,
-        status: "active",
+        status: "new",
       };
       Meteor.call("logging.create", {
         key: "users.create",

@@ -39,7 +39,7 @@ const UserReactivateModal = ({
           Bist du sicher, dass du{" "}
           {openUserReactivateModal && openUserReactivateModal.length}{" "}
           {openUserReactivateModal.length === 1 ? "Mitglied" : "Mitglieder"} auf
-          inaktiv setzen möchtest?
+          aktiv setzen möchtest?
         </Col>
         <UserList dataSource={openUserReactivateModal} />
       </Row>
