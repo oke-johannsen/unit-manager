@@ -73,6 +73,7 @@ if (Meteor.isServer) {
         delete payload._id;
         const modifier = {
           username: payload.username || user.username,
+          createdAt: payload.createdAt || user.createdAt,
           profile: {
             ...payload.profile,
           },
