@@ -79,19 +79,13 @@ const LoginComponent = () => {
           <Form.Item>
             <Row justify="space-between" align="middle" gutter={8}>
               <Col>
-                {Meteor.user() ? (
-                  <Button type="primary" onClick={() => Meteor.logout()}>
-                    Abmelden
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="login-form-button"
-                  >
-                    Anmelden
-                  </Button>
-                )}
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                >
+                  Anmelden
+                </Button>
               </Col>
               <Col flex="auto">
                 Oder <a onClick={() => setOpen(true)}>jetzt bewerben!</a>

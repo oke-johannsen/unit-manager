@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Col, Layout, Row, Tooltip } from "antd";
+import { Button, Col, Layout, Row, Tooltip, message } from "antd";
 import { Meteor } from "meteor/meteor";
 import { LogoutOutlined, UnlockOutlined } from "@ant-design/icons";
 import ViewController from "./ViewController";
