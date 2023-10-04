@@ -96,7 +96,7 @@ const SkillsComponent = () => {
                 </Col>
                 <Col>
                   <Row gutter={8}>
-                    {securityClearance > 2 && (
+                    {securityClearance > 1 && (
                       <Col>
                         <Button onClick={() => setAddContextOpen(true)}>
                           Ausbildung hinzufügen
