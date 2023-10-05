@@ -6,20 +6,27 @@ import { SkillsCollection } from "./SkillsApi";
 export const UsersCollection = Meteor.users;
 
 if (Meteor.isServer) {
-  const updateSquadsBasedOnUser = (userId, squadId, remove = false) => {
-    const user = Meteor.users.findOne(userId);
-    if (user) {
-      const members = SquadCollection.findOne(squadId)?.squadMember || [];
-      if (squadId && members?.indexOf(squadId) === -1 && !remove) {
-        members?.push(userId);
-      } else {
-        const index = members?.indexOf(user.squad);
-        members?.splice(index, 1);
+  const updateSquadsBasedOnUser = (
+    userId,
+    squadId,
+    remove = false,
+    oldUser
+  ) => {
+    const members = SquadCollection.findOne(squadId)?.squadMember || [];
+    if (remove) {
+      const index = members?.indexOf(oldUser?.squad);
+      members?.splice(index, 1);
+    } else {
+      if (user) {
+        const user = Meteor.users.findOne(userId);
+        if (squadId && members?.indexOf(squadId) === -1) {
+          members?.push(userId);
+        }
       }
-      SquadCollection.update(squadId || user.squad, {
-        $set: { squadMember: members },
-      });
     }
+    SquadCollection.update(squadId || oldUser.squad, {
+      $set: { squadMember: members },
+    });
   };
 
   const updateSkillsBasedOnUser = (user) => {
@@ -52,8 +59,8 @@ if (Meteor.isServer) {
   );
 
   Meteor.methods({
-    updateSquadsBasedOnUser: (userId, squadId) => {
-      updateSquadsBasedOnUser(userId, squadId);
+    updateSquadsBasedOnUser: (userId, squadId, remove = false, user) => {
+      updateSquadsBasedOnUser(userId, squadId, remove, user);
     },
     "user.byId": (userId) => {
       return Meteor.users.findOne(userId);
@@ -108,7 +115,7 @@ if (Meteor.isServer) {
           after: null,
           userId: Meteor.user()?._id,
         });
-        updateSquadsBasedOnUser(user._id, user?.profile?.squad, true);
+        updateSquadsBasedOnUser(user._id, user?.profile?.squad, true, user);
         updateSkillsBasedOnUser(user._id);
         updateSquadLeadsBasedOnUser(user._id);
         Meteor.users.remove(user);
