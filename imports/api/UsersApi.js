@@ -6,46 +6,70 @@ import { SkillsCollection } from "./SkillsApi";
 export const UsersCollection = Meteor.users;
 
 if (Meteor.isServer) {
-  const updateSquadsBasedOnUser = (
-    userId,
-    squadId,
-    remove = false,
-    oldUser
-  ) => {
-    const members = SquadCollection.findOne(squadId)?.squadMember || [];
-    if (remove) {
-      const index = members?.indexOf(oldUser?.squad);
-      members?.splice(index, 1);
-    } else {
-      if (user) {
-        const user = Meteor.users.findOne(userId);
-        if (squadId && members?.indexOf(squadId) === -1) {
-          members?.push(userId);
+  const cleanupBeforeUserRemove = (user) => {
+    const profile = user?.profile || {};
+    const { squad, skills } = profile;
+    if (squad) {
+      const newSquad = SquadCollection.findOne(squad);
+      const squadMember = newSquad?.squadMember;
+      const index = squadMember.indexOf(user?._id);
+      if (index !== -1) {
+        squadMember.splice(index, 1);
+      }
+      newSquad.squadMember = squadMember;
+      if (newSquad.squadLead && newSquad.squadLead === user?._id) {
+        newSquad.squadLead = null;
+      }
+      SquadCollection.update(
+        { _id: newSquad._id },
+        {
+          $set: {
+            squadMember: newSquad.squadMember,
+            squadLead: newSquad.squadLead,
+          },
         }
-      }
+      );
     }
-    SquadCollection.update(squadId || oldUser.squad, {
-      $set: { squadMember: members },
-    });
+    if (skills) {
+      skills.forEach((skill) => {
+        const newSkill = SkillsCollection.findOne(skill._id);
+        if (newSkill?.trainers && newSkill?.trainers === user?._id) {
+          newSkill.trainers = null;
+          SkillsCollection.update(
+            { _id: newSkill._id },
+            { $set: { trainers: newSkill.trainers } }
+          );
+        }
+      });
+    }
   };
-
-  const updateSkillsBasedOnUser = (user) => {
-    const skills = SkillsCollection.find({ trainers: user._id }).fetch();
-    skills.forEach((skill) => {
-      const index = skill.trainers?.indexOf(user._id);
-      const newTrainers = skill.trainers;
-      if (index > -1) {
-        newTrainers.splice(index, 1);
+  const handleUserUpdateForLinkedFields = (user, modifier) => {
+    if (user?.profile?.squad !== modifier?.profile?.squad) {
+      // remove from old squad
+      const squad = SquadCollection.findOne(user?.profile?.squad);
+      const squadMember = squad?.squadMember;
+      const index = squadMember.indexOf(user?._id);
+      if (index !== -1) {
+        squadMember.splice(index, 1);
+        squad.squadMember = squadMember;
       }
-      SkillsCollection.update(skill._id, { $set: { trainers: newTrainers } });
-    });
-  };
-
-  const updateSquadLeadsBasedOnUser = (userId) => {
-    const squads = SquadCollection.find({ squadLead: userId }).fetch();
-    squads.forEach((squad) => {
-      SquadCollection.update(squad._id, { $set: { squadLead: undefined } });
-    });
+      if (squad.squadLead === user?._id) {
+        squad.squadLead = null;
+      }
+      SquadCollection.update(
+        { _id: squad._id },
+        { $set: { squadMember: squad.squadMember, squadLead: squad.squadLead } }
+      );
+      // add to new squad
+      const newSquad = SquadCollection.findOne(modifier?.profile?.squad);
+      const newMembers = newSquad?.squadMember;
+      newMembers.push(user?._id);
+      newSquad.squadMember = newMembers;
+      SquadCollection.update(
+        { _id: newSquad._id },
+        { $set: { squadMember: newSquad.squadMember } }
+      );
+    }
   };
   Meteor.publish(
     "users",
@@ -57,11 +81,7 @@ if (Meteor.isServer) {
       return UsersCollection.find(filter);
     }
   );
-
   Meteor.methods({
-    updateSquadsBasedOnUser: (userId, squadId, remove = false, user) => {
-      updateSquadsBasedOnUser(userId, squadId, remove, user);
-    },
     "user.byId": (userId) => {
       return Meteor.users.findOne(userId);
     },
@@ -79,6 +99,17 @@ if (Meteor.isServer) {
       });
 
       Accounts.createUser({ username, password, profile });
+      const newUser = UsersCollection.findOne({ username: username });
+      if (newUser?.profile?.squad) {
+        const squad = SquadCollection.findOne(newUser?.profile?.squad);
+        if (squad) {
+          squad.squadMember.push(newUser._id);
+          SquadCollection.update(
+            { _id: squad._id },
+            { $set: { squadMember: squad.squadMember } }
+          );
+        }
+      }
     },
     "users.update": (payload) => {
       const user = Meteor.users.findOne(payload._id);
@@ -92,15 +123,13 @@ if (Meteor.isServer) {
             ...payload.profile,
           },
         };
+        handleUserUpdateForLinkedFields(user, modifier);
         Meteor.call("logging.create", {
           key: "users.update",
           before: user,
           after: { modifier },
           userId: Meteor.user()?._id,
         });
-        if (user.profile?.squad !== modifier.profile.squad) {
-          updateSquadsBasedOnUser(userId, modifier?.profile?.squad);
-        }
         Meteor.users.update(userId, { $set: modifier });
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);
@@ -115,9 +144,7 @@ if (Meteor.isServer) {
           after: null,
           userId: Meteor.user()?._id,
         });
-        updateSquadsBasedOnUser(user._id, user?.profile?.squad, true, user);
-        updateSkillsBasedOnUser(user._id);
-        updateSquadLeadsBasedOnUser(user._id);
+        cleanupBeforeUserRemove(user);
         Meteor.users.remove(user);
       } else {
         return new Meteor.Error("Error 404", "user was not found", userId);

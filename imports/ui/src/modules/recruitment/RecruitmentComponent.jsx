@@ -96,6 +96,8 @@ const RecruitmentComponent = () => {
                 title={item.preferredName}
                 description={
                   <Row>
+                    <Col span={8}>Alter:</Col>
+                    <Col span={16}>{item.age}</Col>
                     <Col span={8}>Discord:</Col>
                     <Col span={16}>{item.discordId}</Col>
                     <Col span={8}>Steam:</Col>

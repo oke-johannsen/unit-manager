@@ -1,31 +1,51 @@
+import { UsergroupAddOutlined } from "@ant-design/icons";
 import { Meteor } from "meteor/meteor";
 import { Mongo } from "meteor/mongo";
 
 export const SquadCollection = new Mongo.Collection("squad");
 
 if (Meteor.isServer) {
+  const cleanupBeforeSquadRemove = (squad) => {
+    (squad.squadMember || []).forEach((userId) => {
+      const user = Meteor.users.findOne(userId);
+      user.profile.squad = null;
+      Meteor.users.update(
+        { _id: user._id },
+        { $set: { profile: user.profile } }
+      );
+    });
+  };
+  const handleSquadUpdateOfLinkedFields = (squad, squadMember) => {
+    if (squad.squadMember !== squadMember) {
+      squadMember.forEach((userId) => {
+        // users were added
+        if (!squad.squadMember.includes(userId)) {
+          const user = Meteor.users.findOne(userId);
+          user.profile.squad = squad._id;
+          Meteor.users.update(
+            { _id: user._id },
+            { $set: { profile: user.profile } }
+          );
+        }
+      });
+      squad.squadMember.forEach((userId) => {
+        // users were removed
+        if (!squadMember.includes(userId)) {
+          const user = Meteor.users.findOne(userId);
+          if (user) {
+            user.profile.squad = null;
+            Meteor.users.update(
+              { _id: user._id },
+              { $set: { profile: user.profile } }
+            );
+          }
+        }
+      });
+    }
+  };
   Meteor.publish("squads", function () {
     return SquadCollection.find({});
   });
-
-  const updateSquadOfUsers = (squadMember, squadId) => {
-    const users = Meteor.users.find({ _id: { $in: squadMember } }).fetch();
-    users.forEach((user) => {
-      const newProfile = user.profile;
-      newProfile.squadId = squadId;
-      Meteor.users.update(user._id, { $set: { profile: newProfile } });
-    });
-  };
-
-  const updateUsersBasedOnSquad = (squadId) => {
-    const users = Meteor.users.find({ "profile.squad": squadId }).fetch();
-    users.forEach((user) => {
-      const newProfile = user.profile;
-      delete newProfile.squad;
-      Meteor.users.update(user._id, { $set: { profile: newProfile } });
-    });
-  };
-
   Meteor.methods({
     "squad.create": (payload) => {
       const { squadName, designation, squadLead, squadMember, speciality } =
@@ -40,7 +60,14 @@ if (Meteor.isServer) {
         { squadName, designation, squadLead, squadMember, speciality },
         (err, res) => {
           if (!err) {
-            updateSquadOfUsers(squadMember, res);
+            squadMember.forEach((userId) => {
+              const user = Meteor.users.findOne(userId);
+              user.profile.squad = res;
+              Meteor.users.update(
+                { _id: user._id },
+                { $set: { profile: user.profile } }
+              );
+            });
             return true;
           } else {
             console.error('Error in "SquadCollection.insert":', err, res);
@@ -52,12 +79,14 @@ if (Meteor.isServer) {
     "squad.update": (id, payload) => {
       const { squadName, designation, squadLead, squadMember, speciality } =
         payload;
+      const squad = SquadCollection.findOne(id);
       Meteor.call("logging.create", {
         key: "squad.update",
-        before: SquadCollection.findOne(id),
+        before: squad,
         after: { squadName, designation, squadLead, squadMember, speciality },
         userId: Meteor.user()?._id,
       });
+      handleSquadUpdateOfLinkedFields(squad, squadMember);
       SquadCollection.update(
         id,
         {
@@ -65,7 +94,6 @@ if (Meteor.isServer) {
         },
         (err, res) => {
           if (!err) {
-            updateSquadOfUsers(squadMember, id);
             return true;
           } else {
             console.error('Error in "SquadCollection.update":', err, res);
@@ -76,6 +104,7 @@ if (Meteor.isServer) {
     },
     "squad.remove": (id) => {
       const squad = SquadCollection.findOne(id);
+      cleanupBeforeSquadRemove(squad);
       Meteor.call("logging.create", {
         key: "squad.remove",
         before: squad,
@@ -84,7 +113,6 @@ if (Meteor.isServer) {
       });
       SquadCollection.remove(id, (err, res) => {
         if (!err) {
-          updateUsersBasedOnSquad(squad._id);
           return true;
         } else {
           console.error('Error in "SquadCollection.remove":', err, res);

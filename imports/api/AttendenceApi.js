@@ -26,7 +26,6 @@ if (Meteor.isServer) {
       });
     }
   };
-
   const updateUserPromotionHistory = (userId, date, remove) => {
     const user = Meteor.users.findOne(userId);
     if (user && user?.profile) {

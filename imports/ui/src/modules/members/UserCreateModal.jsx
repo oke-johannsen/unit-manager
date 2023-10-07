@@ -27,26 +27,13 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
           createdAt: dayjs(values.createdAt).toDate(),
           profile: profileData,
         };
-        Meteor.call(`users.create`, payload, (err, res) => {
+        Meteor.call("users.create", payload, (err, res) => {
           if (!err) {
-            const { username, profile } = payload;
-            const squadId = profile?.squad;
-            const userId = Meteor.users.findOne({ username })?._id;
-            Meteor.call(
-              "updateSquadsBasedOnUser",
-              userId,
-              squadId,
-              (err, res) => {
-                if (err) {
-                  console.error(err, res);
-                }
-              }
-            );
-            message.success(`Mitglied erfolgreich angelegt!`);
+            message.success("Mitglied erfolgreich angelegt!");
             setOpenUserCreateModal(false);
           } else {
-            console.error(`Error in users.update`, err, res);
-            message.error(`Anlegen von Mitglied fehlgeschlagen!`);
+            console.error("Error in users.update", err, res);
+            message.error("Anlegen von Mitglied fehlgeschlagen!");
           }
         });
       });

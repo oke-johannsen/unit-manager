@@ -113,7 +113,7 @@ const MembersComponent = () => {
     (selected === "inactive" || selected === "new") &&
       securityClearance > 3 && {
         key: "reactivate",
-        label: "Reaktivieren",
+        label: selected === "new" ? "Aktivieren" : "Reaktivieren",
         onClick: () => {
           if (rowSelection && rowSelection?.selectedRowKeys?.length) {
             setOpenUserReactivateModal(rowSelection.selectedRowKeys);
