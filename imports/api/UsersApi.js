@@ -47,28 +47,43 @@ if (Meteor.isServer) {
     if (user?.profile?.squad !== modifier?.profile?.squad) {
       // remove from old squad
       const squad = SquadCollection.findOne(user?.profile?.squad);
-      const squadMember = squad?.squadMember;
-      const index = squadMember.indexOf(user?._id);
-      if (index !== -1) {
-        squadMember.splice(index, 1);
-        squad.squadMember = squadMember;
+      if (squad) {
+        const squadMember = squad?.squadMember;
+        if (squadMember) {
+          const index = squadMember.indexOf(user?._id);
+          if (index !== -1) {
+            squadMember.splice(index, 1);
+            squad.squadMember = squadMember;
+          }
+        }
+
+        if (squad.squadLead === user?._id) {
+          squad.squadLead = null;
+        }
+        SquadCollection.update(
+          { _id: squad._id },
+          {
+            $set: {
+              squadMember: squad.squadMember,
+              squadLead: squad.squadLead,
+            },
+          }
+        );
       }
-      if (squad.squadLead === user?._id) {
-        squad.squadLead = null;
-      }
-      SquadCollection.update(
-        { _id: squad._id },
-        { $set: { squadMember: squad.squadMember, squadLead: squad.squadLead } }
-      );
+
       // add to new squad
       const newSquad = SquadCollection.findOne(modifier?.profile?.squad);
-      const newMembers = newSquad?.squadMember;
-      newMembers.push(user?._id);
-      newSquad.squadMember = newMembers;
-      SquadCollection.update(
-        { _id: newSquad._id },
-        { $set: { squadMember: newSquad.squadMember } }
-      );
+      if (newSquad) {
+        const newMembers = newSquad?.squadMember;
+        if (newMembers) {
+          newMembers.push(user?._id);
+          newSquad.squadMember = newMembers;
+          SquadCollection.update(
+            { _id: newSquad._id },
+            { $set: { squadMember: newSquad.squadMember } }
+          );
+        }
+      }
     }
   };
   Meteor.publish(
