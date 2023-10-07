@@ -87,10 +87,17 @@ if (Meteor.isServer) {
         userId: Meteor.user()?._id,
       });
       handleSquadUpdateOfLinkedFields(squad, squadMember);
+      console.log(squadLead);
       SquadCollection.update(
         id,
         {
-          $set: { squadName, designation, squadLead, squadMember, speciality },
+          $set: {
+            squadName: squadName,
+            designation: designation,
+            squadLead: squadLead || null,
+            squadMember: squadMember,
+            speciality: speciality,
+          },
         },
         (err, res) => {
           if (!err) {
