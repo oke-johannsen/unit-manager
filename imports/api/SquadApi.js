@@ -19,6 +19,9 @@ if (Meteor.isServer) {
     if (squad.squadMember !== squadMember) {
       squadMember.forEach((userId) => {
         // users were added
+        if (!squad.squadMember) {
+          squad.squadMember = [];
+        }
         if (!squad.squadMember.includes(userId)) {
           const user = Meteor.users.findOne(userId);
           user.profile.squad = squad._id;
@@ -60,14 +63,16 @@ if (Meteor.isServer) {
         { squadName, designation, squadLead, squadMember, speciality },
         (err, res) => {
           if (!err) {
-            squadMember.forEach((userId) => {
-              const user = Meteor.users.findOne(userId);
-              user.profile.squad = res;
-              Meteor.users.update(
-                { _id: user._id },
-                { $set: { profile: user.profile } }
-              );
-            });
+            if (squadMember) {
+              squadMember.forEach((userId) => {
+                const user = Meteor.users.findOne(userId);
+                user.profile.squad = res;
+                Meteor.users.update(
+                  { _id: user._id },
+                  { $set: { profile: user.profile } }
+                );
+              });
+            }
             return true;
           } else {
             console.error('Error in "SquadCollection.insert":', err, res);

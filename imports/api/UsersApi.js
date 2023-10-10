@@ -74,15 +74,16 @@ if (Meteor.isServer) {
       // add to new squad
       const newSquad = SquadCollection.findOne(modifier?.profile?.squad);
       if (newSquad) {
-        const newMembers = newSquad?.squadMember;
-        if (newMembers) {
-          newMembers.push(user?._id);
-          newSquad.squadMember = newMembers;
-          SquadCollection.update(
-            { _id: newSquad._id },
-            { $set: { squadMember: newSquad.squadMember } }
-          );
+        let newMembers = newSquad?.squadMember;
+        if (!newMembers) {
+          newMembers = [];
         }
+        newMembers.push(user?._id);
+        newSquad.squadMember = newMembers;
+        SquadCollection.update(
+          { _id: newSquad._id },
+          { $set: { squadMember: newSquad.squadMember } }
+        );
       }
     }
   };
