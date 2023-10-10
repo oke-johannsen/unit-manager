@@ -92,9 +92,10 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
           <Form.Item label="Datum" name="date" rules={[{ required: true }]}>
             <DatePicker
               style={{ width: "100%" }}
-              placeholder=""
-              format="DD.MM.YYYY"
+              format="DD.MM.YYYY HH:mm"
               allowClear={false}
+              showHour
+              showMinute
             />
           </Form.Item>
         </Col>

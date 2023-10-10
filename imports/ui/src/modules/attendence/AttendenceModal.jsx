@@ -16,6 +16,7 @@ const AttendenceModal = ({
   setOpenAttendenceDisplayModal,
   setOpenAttendenceUpdateModal,
   rowSelection,
+  date,
 }) => {
   const modalType = () => {
     let type;
@@ -33,7 +34,7 @@ const AttendenceModal = ({
     return type;
   };
   const defaultFormValues = {
-    date: dayjs(),
+    date: date || dayjs(),
     type: "mission",
     userIds: [],
     promotedMembers: [],

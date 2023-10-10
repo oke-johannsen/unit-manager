@@ -1,11 +1,13 @@
 import {
   Button,
+  Calendar,
   Col,
   Dropdown,
   Row,
   Segmented,
   Statistic,
   Table,
+  Tabs,
   message,
 } from "antd";
 import React, { useState } from "react";
@@ -14,6 +16,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { AttendenceCollection } from "../../../../api/AttendenceApi";
 import { ATTENDENCE_TABLE_COLUMNS } from "./ATTENDENCE_TABLE_COLUMNS";
 import AttendenceModal from "./AttendenceModal";
+import dayjs from "dayjs";
 
 const AttendenceComponent = () => {
   const [selected, setSelected] = useState("mission");
@@ -48,6 +51,7 @@ const AttendenceComponent = () => {
   const [openAttendenceDeleteModal, setOpenAttendenceDeleteModal] =
     useState(false);
   const [rowSelection, setRowSelection] = useState(null);
+  const [date, setDate] = useState(null);
   const options = [
     {
       key: "mission",
@@ -149,136 +153,253 @@ const AttendenceComponent = () => {
     }
   };
   return (
-    <Row>
-      {window.innerWidth > 700 && (
-        <Col span={24}>
-          <Row style={{ padding: "0.5rem" }} gutter={16}>
-            <Col>
-              <Statistic
-                title={
-                  selected === "mission"
-                    ? "Missionen"
-                    : selected === "trainings"
-                    ? "Trainings"
-                    : "Einsätze"
-                }
-                value={attendences?.length || 0}
+    <>
+      <Tabs
+        items={[
+          {
+            key: "1",
+            label: "Kalender (Test)",
+            children: (
+              <Calendar
+                onSelect={(date, selectInfo) => {
+                  if (selectInfo.source === "date") {
+                    setDate(date);
+                    setOpenAttendenceCreateModal(true);
+                  }
+                }}
+                cellRender={(date, info) => {
+                  switch (info?.type) {
+                    case "date": {
+                      const attendences = AttendenceCollection.find({
+                        $and: [
+                          { date: { $gte: date.startOf("day").toDate() } },
+                          { date: { $lte: date.endOf("day").toDate() } },
+                        ],
+                      }).map((attendence) => {
+                        return (
+                          <Col
+                            key={attendence._id}
+                            style={{ cursor: "pointer" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setOpenAttendenceUpdateModal(true);
+                              setRowSelection({
+                                selectedRowKeys: [attendence._id],
+                                selectedRows: [attendence],
+                              });
+                            }}
+                          >
+                            {attendence.type === "mission"
+                              ? "Mission"
+                              : "Training"}
+                            : {dayjs(attendence.date).format("HH:mm")}
+                          </Col>
+                        );
+                      });
+                      return (
+                        <Row gutter={[4, 4]} style={{ width: "100%" }}>
+                          {attendences}
+                        </Row>
+                      );
+                    }
+                    case "month": {
+                      const attendences = AttendenceCollection.find({
+                        $and: [
+                          { date: { $gte: date.startOf("week").toDate() } },
+                          { date: { $lte: date.endOf("week").toDate() } },
+                        ],
+                      }).map((attendence) => {
+                        return (
+                          <Col
+                            key={attendence._id}
+                            style={{ cursor: "pointer" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setOpenAttendenceUpdateModal(true);
+                              setRowSelection({
+                                selectedRowKeys: [attendence._id],
+                                selectedRows: [attendence],
+                              });
+                            }}
+                          >
+                            {attendence.type === "mission"
+                              ? "Mission"
+                              : "Training"}
+                            :{" "}
+                            {dayjs(attendence.date).format("DD.MM.YYYY HH:mm")}
+                          </Col>
+                        );
+                      });
+                      return (
+                        <Row gutter={[4, 4]} style={{ width: "100%" }}>
+                          {attendences}
+                        </Row>
+                      );
+                    }
+                    default:
+                      break;
+                  }
+                }}
               />
-            </Col>
-            <Col>
-              <Statistic
-                title="Durchschnittliche Teilnehmerzahl"
-                value={getAverageParticipants()}
-              />
-            </Col>
-          </Row>
-        </Col>
-      )}
-      <Col span={24}>
-        <Table
-          scroll={{ x: 150 }}
-          title={() => (
-            <Row gutter={[16, 16]} justify="space-between" align="middle">
-              <Col flex="auto">
-                <Row gutter={[16, 16]} align="middle">
-                  <Col>
-                    <span
-                      style={{
-                        margin: "0 1.5rem 0 0",
-                        padding: 0,
-                        fontSize: 24,
-                        fontFamily: "'Bebas Neue', sans-serif",
-                      }}
-                    >
-                      Einstatzliste
-                    </span>
-                  </Col>
-                  <Col>
-                    <Segmented
-                      options={options}
-                      selected={selected}
-                      onChange={setSelected}
-                    />
-                  </Col>
-                </Row>
-              </Col>
-              {rowSelection?.selectedRowKeys?.length > 0 &&
-                securityClearance > 3 && (
-                  <Col>
-                    <Button onClick={handleAddPoints}>Punkte vergeben</Button>
+            ),
+          },
+          {
+            key: "2",
+            label: "Tabelle",
+            children: (
+              <Row>
+                {window.innerWidth > 700 && (
+                  <Col span={24}>
+                    <Row style={{ padding: "0.5rem" }} gutter={16}>
+                      <Col>
+                        <Statistic
+                          title={
+                            selected === "mission"
+                              ? "Missionen"
+                              : selected === "trainings"
+                              ? "Trainings"
+                              : "Einsätze"
+                          }
+                          value={attendences?.length || 0}
+                        />
+                      </Col>
+                      <Col>
+                        <Statistic
+                          title="Durchschnittliche Teilnehmerzahl"
+                          value={getAverageParticipants()}
+                        />
+                      </Col>
+                    </Row>
                   </Col>
                 )}
-              {securityClearance > 2 && (
-                <Col>
-                  <Dropdown.Button
-                    type="primary"
-                    onClick={() => setOpenAttendenceCreateModal(true)}
-                    menu={{
-                      items,
+                <Col span={24}>
+                  <Table
+                    scroll={{ x: 150 }}
+                    title={() => (
+                      <Row
+                        gutter={[16, 16]}
+                        justify="space-between"
+                        align="middle"
+                      >
+                        <Col flex="auto">
+                          <Row gutter={[16, 16]} align="middle">
+                            <Col>
+                              <span
+                                style={{
+                                  margin: "0 1.5rem 0 0",
+                                  padding: 0,
+                                  fontSize: 24,
+                                  fontFamily: "'Bebas Neue', sans-serif",
+                                }}
+                              >
+                                Einstatzliste
+                              </span>
+                            </Col>
+                            <Col>
+                              <Segmented
+                                options={options}
+                                selected={selected}
+                                onChange={setSelected}
+                              />
+                            </Col>
+                          </Row>
+                        </Col>
+                        {rowSelection?.selectedRowKeys?.length > 0 &&
+                          securityClearance > 3 && (
+                            <Col>
+                              <Button onClick={handleAddPoints}>
+                                Punkte vergeben
+                              </Button>
+                            </Col>
+                          )}
+                        {securityClearance > 2 && (
+                          <Col>
+                            <Dropdown.Button
+                              type="primary"
+                              onClick={() => setOpenAttendenceCreateModal(true)}
+                              menu={{
+                                items,
+                              }}
+                            >
+                              Erstellen
+                            </Dropdown.Button>
+                          </Col>
+                        )}
+                      </Row>
+                    )}
+                    columns={ATTENDENCE_TABLE_COLUMNS}
+                    dataSource={data}
+                    pagination={
+                      data?.length > 7
+                        ? {
+                            pageSize: 7,
+                            responsive: true,
+                            showTotal: () => (
+                              <span>{`Insgegsamt: ${data.length} Einsätze`}</span>
+                            ),
+                            showSizeChanger: false,
+                          }
+                        : false
+                    }
+                    loading={!data?.length == null}
+                    style={{
+                      padding: "0.5rem",
                     }}
-                  >
-                    Erstellen
-                  </Dropdown.Button>
+                    rowSelection={
+                      securityClearance > 2
+                        ? {
+                            type: "checkbox",
+                            onChange: (selectedRowKeys, selectedRows) => {
+                              setRowSelection({
+                                selectedRows,
+                                selectedRowKeys,
+                              });
+                            },
+                            selectedRowKeys:
+                              rowSelection?.selectedRowKeys || [],
+                          }
+                        : false
+                    }
+                    onRow={(record, index) => {
+                      return {
+                        onClick: () => {
+                          if (securityClearance < 3) {
+                            setRowSelection({
+                              selectedRows: [record],
+                              selectedRowKeys: [record.key],
+                            });
+                            setOpenAttendenceDisplayModal([record._id]);
+                          }
+                        },
+                      };
+                    }}
+                  />
                 </Col>
-              )}
-            </Row>
-          )}
-          columns={ATTENDENCE_TABLE_COLUMNS}
-          dataSource={data}
-          pagination={
-            data?.length > 7
-              ? {
-                  pageSize: 7,
-                  responsive: true,
-                  showTotal: () => (
-                    <span>{`Insgegsamt: ${data.length} Einsätze`}</span>
-                  ),
-                  showSizeChanger: false,
-                }
-              : false
-          }
-          loading={!data?.length == null}
-          style={{
-            padding: "0.5rem",
-          }}
-          rowSelection={
-            securityClearance > 2
-              ? {
-                  type: "checkbox",
-                  onChange: (selectedRowKeys, selectedRows) => {
-                    setRowSelection({ selectedRows, selectedRowKeys });
-                  },
-                  selectedRowKeys: rowSelection?.selectedRowKeys || [],
-                }
-              : false
-          }
-          onRow={(record, index) => {
-            return {
-              onClick: () => {
-                if (securityClearance < 3) {
-                  setRowSelection({
-                    selectedRows: [record],
-                    selectedRowKeys: [record.key],
-                  });
-                  setOpenAttendenceDisplayModal([record._id]);
-                }
-              },
-            };
-          }}
-        />
-      </Col>
-      <AttendenceModal
-        openAttendenceCreateModal={openAttendenceCreateModal}
-        openAttendenceDeleteModal={openAttendenceDeleteModal}
-        openAttendenceDisplayModal={openAttendenceDisplayModal}
-        openAttendenceUpdateModal={openAttendenceUpdateModal}
-        setOpenAttendenceCreateModal={setOpenAttendenceCreateModal}
-        setOpenAttendenceDeleteModal={setOpenAttendenceDeleteModal}
-        setOpenAttendenceDisplayModal={setOpenAttendenceDisplayModal}
-        setOpenAttendenceUpdateModal={setOpenAttendenceUpdateModal}
-        rowSelection={rowSelection}
+              </Row>
+            ),
+          },
+        ]}
       />
-    </Row>
+      {(openAttendenceCreateModal ||
+        openAttendenceDeleteModal ||
+        openAttendenceDisplayModal ||
+        openAttendenceUpdateModal) && (
+        <AttendenceModal
+          openAttendenceCreateModal={openAttendenceCreateModal}
+          openAttendenceDeleteModal={openAttendenceDeleteModal}
+          openAttendenceDisplayModal={openAttendenceDisplayModal}
+          openAttendenceUpdateModal={openAttendenceUpdateModal}
+          setOpenAttendenceCreateModal={setOpenAttendenceCreateModal}
+          setOpenAttendenceDeleteModal={setOpenAttendenceDeleteModal}
+          setOpenAttendenceDisplayModal={setOpenAttendenceDisplayModal}
+          setOpenAttendenceUpdateModal={setOpenAttendenceUpdateModal}
+          rowSelection={rowSelection}
+          date={date}
+        />
+      )}
+    </>
   );
 };
 
