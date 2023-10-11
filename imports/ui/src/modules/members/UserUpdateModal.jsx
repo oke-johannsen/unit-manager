@@ -48,7 +48,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
       open={openUserUpdateModal}
       onCancel={() => setOpenUserUpdateModal(false)}
       footer={false}
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       {openUserUpdateModal?.length > 1 ? (

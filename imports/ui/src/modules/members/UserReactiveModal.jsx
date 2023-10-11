@@ -32,7 +32,7 @@ const UserReactivateModal = ({
       onOk={reactivateUsers}
       cancelText="Abbrechen"
       title="Mitglieder auf aktiv setzen"
-      centered={window.innerWidth < 768}
+      centered
     >
       <Row>
         <Col>

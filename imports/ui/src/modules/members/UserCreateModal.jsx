@@ -45,7 +45,7 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
       open={openUserCreateModal}
       onCancel={() => setOpenUserCreateModal(false)}
       footer={false}
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       <UserForm

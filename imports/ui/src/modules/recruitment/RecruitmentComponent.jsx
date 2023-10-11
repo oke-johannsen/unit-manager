@@ -151,6 +151,7 @@ const RecruitmentComponent = () => {
           }}
           cancelText="Abbrechen"
           onCancel={() => setDeleteModal(false)}
+          centered
         />
       )}
     </>

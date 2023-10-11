@@ -1,4 +1,3 @@
-import { UsergroupAddOutlined } from "@ant-design/icons";
 import { Meteor } from "meteor/meteor";
 import { Mongo } from "meteor/mongo";
 

@@ -102,6 +102,7 @@ const LogComponent = () => {
           title={"Log Detailansicht"}
           onCancel={() => setOpen(false)}
           footer={false}
+          centered
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} xl={12}>

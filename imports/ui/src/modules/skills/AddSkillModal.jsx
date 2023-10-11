@@ -57,7 +57,7 @@ const AddSkillModal = ({ open, setOpen, title }) => {
       title={title}
       onCancel={handleClose}
       footer={false}
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       <Row>

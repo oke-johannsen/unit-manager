@@ -32,7 +32,7 @@ const UserArchiveModal = ({
       onOk={archiveUsers}
       cancelText="Abbrechen"
       title="Mitglieder auf inaktiv setzen"
-      centered={window.innerWidth < 768}
+      centered
     >
       <Row>
         <Col>

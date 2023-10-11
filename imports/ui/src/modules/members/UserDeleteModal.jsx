@@ -22,7 +22,7 @@ const UserDeleteModal = ({ openUserDeleteModal, setOpenUserDeleteModal }) => {
       onOk={deleteUsers}
       cancelText="Abbrechen"
       title="Mitglieder löschen"
-      centered={window.innerWidth < 768}
+      centered
     >
       <Row>
         <Col>

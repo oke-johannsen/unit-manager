@@ -14,7 +14,8 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     title: "Art",
     dataIndex: "type",
     key: "type",
-    render: (type) => (type === "mission" ? "Mission" : "Training"),
+    render: (type) =>
+      type === "mission" ? "Mission" : type === "training" ? "Training" : type,
     sorter: (a, b) => a.type.localeCompare(b.type),
   },
   {

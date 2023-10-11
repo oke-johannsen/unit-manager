@@ -17,6 +17,7 @@ const AttendenceModal = ({
   setOpenAttendenceUpdateModal,
   rowSelection,
   date,
+  attendenceTypeOptions,
 }) => {
   const modalType = () => {
     let type;
@@ -109,6 +110,7 @@ const AttendenceModal = ({
             setForm={setForm}
             form={form}
             disabled={type === "display"}
+            attendenceTypeOptions={attendenceTypeOptions}
           />
         ),
       };
@@ -121,7 +123,14 @@ const AttendenceModal = ({
     let body;
     switch (type) {
       case "insert":
-        body = <AttendenceForm type={type} form={form} setForm={setForm} />;
+        body = (
+          <AttendenceForm
+            type={type}
+            form={form}
+            setForm={setForm}
+            attendenceTypeOptions={attendenceTypeOptions}
+          />
+        );
         break;
       case "delete":
         body = (
@@ -304,7 +313,7 @@ const AttendenceModal = ({
       onOk={handleOk}
       okText={getOkText()}
       cancelText="Abbrechen"
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       {getModalBody()}

@@ -153,7 +153,7 @@ const SkillModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
       cancelText="Abbrechen"
       onCancel={() => setOpen(false)}
       footer={formDisabled ? false : undefined}
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       {getModalContent()}

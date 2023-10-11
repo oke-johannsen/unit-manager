@@ -70,6 +70,7 @@ const RecruitingModal = ({ open, setOpen }) => {
       footer={false}
       onCancel={() => setOpen(false)}
       closable
+      centered
       destroyOnClose
     >
       <Spin spinning={!usersReady}>

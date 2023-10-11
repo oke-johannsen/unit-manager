@@ -1,9 +1,18 @@
-import { Col, DatePicker, Form, Input, Row, Select, Spin } from "antd";
+import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
+import { PlusOutlined } from "@ant-design/icons";
+import AttendenceTypeModal from "./AttendenceTypeModal";
 
-const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
+const AttendenceForm = ({
+  type,
+  form,
+  setForm,
+  disabled,
+  activeKey,
+  attendenceTypeOptions,
+}) => {
   const { userOptions } = useTracker(() => {
     return {
       userOptions: Meteor.users
@@ -26,18 +35,6 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
       ? form?.filter((item) => item._id === activeKey)[0]?.userIds
       : form.userIds) || []
   );
-  const typeOptions = [
-    {
-      key: "mission",
-      value: "mission",
-      label: "Mission",
-    },
-    {
-      key: "training",
-      value: "training",
-      label: "Training",
-    },
-  ];
   const handleValuesChange = (allValues) => {
     if (type === "update") {
       const tempForm = [...form];
@@ -67,6 +64,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
       setForm(newForm);
     }
   }, [userIds]);
+  const [open, setOpen] = useState(false);
   const formComponent = (
     <Form
       initialValues={formDefaults}
@@ -80,13 +78,34 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
           <Input />
         </Form.Item>
         <Col span={12}>
-          <Form.Item
-            label="Einsatzart"
-            name="type"
-            rules={[{ required: true }]}
-          >
-            <Select options={typeOptions} optionFilterProp="label" showSearch />
-          </Form.Item>
+          <Row gutter={8} align="bottom">
+            <Col flex="auto">
+              <Form.Item
+                label="Einsatzart"
+                name="type"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  options={attendenceTypeOptions}
+                  optionFilterProp="label"
+                  style={{ width: "100%" }}
+                  showSearch
+                />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Button
+                onClick={() => setOpen(true)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: 24,
+                }}
+              >
+                <PlusOutlined />
+              </Button>
+            </Col>
+          </Row>
         </Col>
         <Col span={12}>
           <Form.Item label="Datum" name="date" rules={[{ required: true }]}>
@@ -145,7 +164,12 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey }) => {
       render = <></>;
       break;
   }
-  return <Spin spinning={!userOptions}>{render}</Spin>;
+  return (
+    <Spin spinning={!userOptions}>
+      {render}
+      {open && <AttendenceTypeModal open={open} setOpen={setOpen} />}
+    </Spin>
+  );
 };
 
 export default AttendenceForm;

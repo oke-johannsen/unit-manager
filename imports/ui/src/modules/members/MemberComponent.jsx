@@ -206,7 +206,7 @@ const MembersComponent = () => {
                   >
                     <Segmented
                       options={options}
-                      selected={selected}
+                      value={selected}
                       onChange={setSelected}
                       block={window.innerWidth < 768}
                     />

@@ -5,7 +5,10 @@ import { useTracker } from "meteor/react-meteor-data";
 import LoginComponent from "./layout/login/LoginComponent";
 import MainFrameComponent from "./layout/common/MainFrameComponent";
 import HeaderComponent from "./layout/common/HeaderComponent";
+import dayjs from "dayjs";
 import deDe from "antd/locale/de_DE";
+import "dayjs/locale/de";
+dayjs.locale("de");
 
 export const BaseComponent = () => {
   document.getElementsByTagName("html")[0].setAttribute("lang", "de");

@@ -14,7 +14,7 @@ const UserDisplayModal = ({
       width={"85vw"}
       footer={false}
       title="Mitglieder anzeigen"
-      centered={window.innerWidth < 768}
+      centered
     >
       <Tabs
         items={
