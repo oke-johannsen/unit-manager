@@ -4,7 +4,15 @@ import { SquadCollection } from "../../../../api/SquadApi";
 import SquadForm from "./SquadForm";
 import { Meteor } from "meteor/meteor";
 
-const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
+const SquadModal = ({
+  open,
+  setOpen,
+  ids,
+  title,
+  formDisabled,
+  isDelete,
+  isDisplay,
+}) => {
   const [forms, setForms] = useState({});
   const [form, setForm] = useState(undefined);
   const [activeKey, setActiveKey] = useState(null);
@@ -77,6 +85,47 @@ const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
       setForm(payload);
     }
   };
+  const getPositions = (squadMember = []) => {
+    const squadPositions = [
+      { postion: "1", userName: "Nicht besetzt" },
+      { postion: "2", userName: "Nicht besetzt" },
+      { postion: "3", userName: "Nicht besetzt" },
+      { postion: "4", userName: "Nicht besetzt" },
+      { postion: "5", userName: "Nicht besetzt" },
+      { postion: "6", userName: "Nicht besetzt" },
+      { postion: "Straps", usersNames: [] },
+    ];
+    squadMember.forEach((id) => {
+      const profile = Meteor.users.findOne(id)?.profile;
+      switch (profile?.squadPosition) {
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+          squadPositions[profile?.squadPosition].userName = profile?.name;
+          break;
+        default:
+          squadPositions[6].usersNames.push(profile?.name);
+          break;
+      }
+    });
+    if (squadPositions[6].usersNames.length === 0) {
+      squadPositions.splice(6, 1);
+    }
+    if (
+      squadPositions[0].userName === "Nicht besetzt" &&
+      squadPositions[1].userName === "Nicht besetzt" &&
+      squadPositions[2].userName === "Nicht besetzt" &&
+      squadPositions[3].userName === "Nicht besetzt" &&
+      squadPositions[4].userName === "Nicht besetzt" &&
+      squadPositions[5].userName === "Nicht besetzt"
+    ) {
+      squadPositions.splice(0, 6);
+    }
+    return squadPositions;
+  };
   const getModalContent = () => {
     let body;
     if (ids?.length) {
@@ -115,10 +164,51 @@ const SquadModal = ({ open, setOpen, ids, title, formDisabled, isDelete }) => {
             activeKey={activeKey}
             onChange={setActiveKey}
             items={ids?.map((id) => {
+              const squad = SquadCollection.findOne(id);
+              const postions = getPositions(squad?.squadMember);
               return {
                 key: id,
-                label: SquadCollection.findOne(id)?.squadName,
-                children: (
+                label: squad?.squadName,
+                children: isDisplay ? (
+                  <Row gutter={[16, 16]}>
+                    <Col span={24}>
+                      <Row gutter={[8, 8]}>
+                        <Col span={24}>
+                          <b>Spezialisierung:</b>
+                        </Col>
+                        <Col span={24}>{squad?.speciality}</Col>
+                      </Row>
+                    </Col>
+                    <Col span={24}>
+                      <Row gutter={[8, 8]}>
+                        <Col span={24}>
+                          <b>Zugehörigkeit:</b>
+                        </Col>
+                        <Col span={24}>{squad?.designation}</Col>
+                      </Row>
+                    </Col>
+                    <Col span={24}>
+                      <Row gutter={[8, 8]}>
+                        <Col span={24}>
+                          <b>Mitglieder:</b>
+                        </Col>
+                        <Col span={24}>
+                          <Row gutter={[8, 8]}>
+                            {postions.map((postion) => {
+                              return (
+                                <Col span={24}>
+                                  {postion.postion}:{" "}
+                                  {postion.userName ||
+                                    postion.usersNames.join(", ")}
+                                </Col>
+                              );
+                            })}
+                          </Row>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                ) : (
                   <SquadForm
                     id={id}
                     handleFormChange={handleFormChange}

@@ -93,7 +93,7 @@ const UserDashboardComponent = ({ userProp }) => {
           <Col span={12}>Trupp:</Col>
           <Col span={12}>
             {SquadCollection?.findOne(user?.profile?.squad)?.squadName ||
-              "Kein Trupp ausgewählt!"}
+              "Keinen Trupp ausgewählt!"}
           </Col>
         </Row>
       ),

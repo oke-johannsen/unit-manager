@@ -19,6 +19,7 @@ const SquadsComponent = () => {
             };
           })
         : null,
+      usersReady: userSub.ready(),
     };
   }, []);
   const [rowSelection, setRowSelection] = useState(null);
@@ -26,6 +27,7 @@ const SquadsComponent = () => {
   const [formDisabled, setFormDisabled] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [title, setTitle] = useState("Trupp");
+  const [isDisplay, setIsDisplay] = useState(false);
   const data = squads;
   const errorText = "Bitte wähle zuerst ein oder mehr Trupps aus!";
   const securityClearance = Meteor.user()?.profile?.securityClearance;
@@ -35,9 +37,9 @@ const SquadsComponent = () => {
       label: "Anzeigen",
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setFormDisabled(true);
           setOpen(true);
           setIsDelete(false);
+          setIsDisplay(true);
           setTitle("Trupps anzeigen");
         } else {
           message.warning(errorText);
@@ -52,6 +54,7 @@ const SquadsComponent = () => {
           setFormDisabled(false);
           setOpen(true);
           setIsDelete(false);
+          setIsDisplay(false);
           setTitle("Trupps bearbeiten");
         } else {
           message.warning(errorText);
@@ -65,6 +68,7 @@ const SquadsComponent = () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
           setFormDisabled(false);
           setIsDelete(true);
+          setIsDisplay(false);
           setOpen(true);
           setTitle("Trupps löschen");
         } else {
@@ -169,6 +173,7 @@ const SquadsComponent = () => {
         ids={rowSelection?.selectedRowKeys}
         formDisabled={formDisabled}
         isDelete={isDelete}
+        isDisplay={isDisplay}
       />
     </Row>
   );
