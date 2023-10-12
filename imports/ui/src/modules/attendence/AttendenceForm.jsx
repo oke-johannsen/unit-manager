@@ -143,9 +143,17 @@ const AttendenceForm = ({
           optionFilterProp="label"
           showSearch
           mode="multiple"
-          disabled={disabled || userIds?.length === 0}
+          disabled={
+            disabled ||
+            userIds?.length === 0 ||
+            Meteor.user()?.profile?.securityClearance > 3
+          }
           placeholder={
-            userIds?.length === 0 ? "Zuerst Teilnehmer auswählen" : ""
+            userIds?.length === 0
+              ? "Zuerst Teilnehmer auswählen"
+              : Meteor.user()?.profile?.securityClearance > 3
+              ? "Nicht ausreichend berechtigt!"
+              : ""
           }
           options={userOptions?.filter((option) =>
             userIds?.includes(option.key)

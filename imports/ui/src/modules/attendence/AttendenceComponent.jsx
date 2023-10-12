@@ -187,7 +187,7 @@ const AttendenceComponent = () => {
               <Calendar
                 locale={locale}
                 onSelect={(date, selectInfo) => {
-                  if (selectInfo.source === "date") {
+                  if (selectInfo.source === "date" && securityClearance > 1) {
                     setDate(date);
                     setOpenAttendenceCreateModal(true);
                   }
@@ -489,15 +489,17 @@ const AttendenceComponent = () => {
             label: "Einsatzarten",
             children: (
               <Row gutter={[16, 16]}>
-                <Col span={24}>
-                  <Row justify="end">
-                    <Col>
-                      <Button type="primary" onClick={() => setOpen(true)}>
-                        <PlusOutlined /> Erstellen
-                      </Button>
-                    </Col>
-                  </Row>
-                </Col>
+                {securityClearance > 1 && (
+                  <Col span={24}>
+                    <Row justify="end">
+                      <Col>
+                        <Button type="primary" onClick={() => setOpen(true)}>
+                          <PlusOutlined /> Erstellen
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Col>
+                )}
                 {(attendenceTypes || []).map((item) => {
                   return (
                     <Col
@@ -511,22 +513,26 @@ const AttendenceComponent = () => {
                     >
                       <Card
                         bordered={false}
-                        actions={[
-                          <EditOutlined
-                            key={item.key + "-edit"}
-                            onClick={() => {
-                              setTitle("Einsatzart bearbeiten");
-                              setOpen(true);
-                              setValue(
-                                AttendenceTypeCollection.findOne(item.key)
-                              );
-                            }}
-                          />,
-                          <DeleteOutlined
-                            key={item.key + "-delete"}
-                            onClick={() => setDeleteModal(item)}
-                          />,
-                        ]}
+                        actions={
+                          securityClearance > 1
+                            ? [
+                                <EditOutlined
+                                  key={item.key + "-edit"}
+                                  onClick={() => {
+                                    setTitle("Einsatzart bearbeiten");
+                                    setOpen(true);
+                                    setValue(
+                                      AttendenceTypeCollection.findOne(item.key)
+                                    );
+                                  }}
+                                />,
+                                <DeleteOutlined
+                                  key={item.key + "-delete"}
+                                  onClick={() => setDeleteModal(item)}
+                                />,
+                              ]
+                            : undefined
+                        }
                       >
                         <Row>
                           <Col>{item.label}</Col>
