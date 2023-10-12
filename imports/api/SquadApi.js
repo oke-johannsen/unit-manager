@@ -91,7 +91,6 @@ if (Meteor.isServer) {
         userId: Meteor.user()?._id,
       });
       handleSquadUpdateOfLinkedFields(squad, squadMember);
-      console.log(squadLead);
       SquadCollection.update(
         id,
         {

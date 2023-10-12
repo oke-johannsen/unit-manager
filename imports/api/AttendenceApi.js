@@ -53,7 +53,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     "attendence.create": (payload) => {
-      const { userIds, type, date, promotedMembers } = payload;
+      const { userIds, type, date, promotedMembers, title } = payload;
       setPromotionForUsers(promotedMembers, date);
       Meteor.call("logging.create", {
         key: "attendence.create",
@@ -63,11 +63,12 @@ if (Meteor.isServer) {
           type,
           date,
           promotedMembers,
+          title,
         },
         userId: Meteor.user()?._id,
       });
       AttendenceCollection.insert(
-        { userIds, type, date, promotedMembers },
+        { userIds, type, date, promotedMembers, title },
         (err, res) => {
           if (!err) {
             return true;
@@ -79,7 +80,8 @@ if (Meteor.isServer) {
       );
     },
     "attendence.update": (id, payload) => {
-      const { userIds, type, date, promotedMembers, spentPoints } = payload;
+      const { userIds, type, date, promotedMembers, spentPoints, title } =
+        payload;
       setPromotionForUsers(promotedMembers, date, id);
       Meteor.call("logging.create", {
         key: "attendence.update",
@@ -91,12 +93,13 @@ if (Meteor.isServer) {
           date,
           promotedMembers,
           spentPoints,
+          title,
         },
         userId: Meteor.user()?._id,
       });
       AttendenceCollection.update(
         id,
-        { $set: { userIds, type, date, promotedMembers, spentPoints } },
+        { $set: { userIds, type, date, promotedMembers, spentPoints, title } },
         (err, res) => {
           if (!err) {
             return true;

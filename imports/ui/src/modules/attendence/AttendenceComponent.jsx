@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   Dropdown,
+  Modal,
   Radio,
   Row,
   Segmented,
@@ -173,6 +174,7 @@ const AttendenceComponent = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [title, setTitle] = useState(null);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   return (
     <>
@@ -271,6 +273,7 @@ const AttendenceComponent = () => {
                       }).map((attendence) => {
                         return (
                           <Col
+                            span={24}
                             key={attendence._id}
                             style={{ cursor: "pointer" }}
                             onClick={(e) => {
@@ -283,11 +286,12 @@ const AttendenceComponent = () => {
                               });
                             }}
                           >
-                            {attendence.type === "mission"
-                              ? "Mission"
-                              : attendence.type === "training"
-                              ? "Training"
-                              : attendence.type}
+                            {attendence.title ||
+                              (attendence.type === "mission"
+                                ? "Mission"
+                                : attendence.type === "training"
+                                ? "Training"
+                                : attendence.type)}
                             : {dayjs(attendence.date).format("HH:mm")}
                           </Col>
                         );
@@ -308,6 +312,7 @@ const AttendenceComponent = () => {
                       }).map((attendence) => {
                         return (
                           <Col
+                            span={24}
                             key={attendence._id}
                             style={{ cursor: "pointer" }}
                             onClick={(e) => {
@@ -320,11 +325,12 @@ const AttendenceComponent = () => {
                               });
                             }}
                           >
-                            {attendence.type === "mission"
-                              ? "Mission"
-                              : attendence.type === "training"
-                              ? "Training"
-                              : attendence.type}
+                            {attendence.title ||
+                              (attendence.type === "mission"
+                                ? "Mission"
+                                : attendence.type === "training"
+                                ? "Training"
+                                : attendence.type)}
                             :{" "}
                             {dayjs(attendence.date).format("DD.MM.YYYY HH:mm")}
                           </Col>
@@ -518,9 +524,7 @@ const AttendenceComponent = () => {
                           />,
                           <DeleteOutlined
                             key={item.key + "-delete"}
-                            onClick={() =>
-                              Meteor.call("attendenceTypes.remove", item.key)
-                            }
+                            onClick={() => setDeleteModal(item)}
                           />,
                         ]}
                       >
@@ -536,6 +540,35 @@ const AttendenceComponent = () => {
           },
         ]}
       />
+      {deleteModal && (
+        <Modal
+          title="Bist du dir sicher?"
+          okText="Löschen"
+          open={deleteModal}
+          okButtonProps={{ danger: true }}
+          onOk={() =>
+            Meteor.call(
+              "attendenceTypes.remove",
+              deleteModal.key,
+              (err, res) => {
+                if (!err) {
+                  setDeleteModal(false);
+                } else {
+                  console.error(err, res);
+                  message.error(
+                    "Etwas ist schief gelaufen, bitte versuche es erneut!"
+                  );
+                }
+              }
+            )
+          }
+          onCancel={() => setDeleteModal(false)}
+          closable
+          centered
+        >
+          Wenn du auf "Löschen" klickst, wird diese Einsatzart gelöscht.
+        </Modal>
+      )}
       {open && (
         <AttendenceTypeModal
           open={open}

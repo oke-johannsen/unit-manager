@@ -54,6 +54,7 @@ const AttendenceModal = ({
               type: attendence?.type,
               userIds: attendence?.userIds,
               promotedMembers: attendence?.promotedMembers,
+              title: attendence.title,
             };
           });
     setForm(initialFormState);

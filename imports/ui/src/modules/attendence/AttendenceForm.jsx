@@ -77,6 +77,11 @@ const AttendenceForm = ({
         <Form.Item label="id" name="_id" hidden>
           <Input />
         </Form.Item>
+        <Col span={24}>
+          <Form.Item label="Einsatzname" name="title">
+            <Input />
+          </Form.Item>
+        </Col>
         <Col span={12}>
           <Row gutter={8} align="bottom">
             <Col flex="auto">
