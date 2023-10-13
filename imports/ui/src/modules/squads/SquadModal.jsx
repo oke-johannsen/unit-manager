@@ -87,23 +87,23 @@ const SquadModal = ({
   };
   const getPositions = (squadMember = []) => {
     const squadPositions = [
-      { postion: "1", userName: "Nicht besetzt" },
-      { postion: "2", userName: "Nicht besetzt" },
-      { postion: "3", userName: "Nicht besetzt" },
-      { postion: "4", userName: "Nicht besetzt" },
-      { postion: "5", userName: "Nicht besetzt" },
-      { postion: "6", userName: "Nicht besetzt" },
+      { postion: 1, userName: "Nicht besetzt" },
+      { postion: 2, userName: "Nicht besetzt" },
+      { postion: 3, userName: "Nicht besetzt" },
+      { postion: 4, userName: "Nicht besetzt" },
+      { postion: 5, userName: "Nicht besetzt" },
+      { postion: 6, userName: "Nicht besetzt" },
       { postion: "Straps", usersNames: [] },
     ];
     squadMember.forEach((id) => {
       const profile = Meteor.users.findOne(id)?.profile;
       switch (profile?.squadPosition) {
-        case "1":
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-        case "6":
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
           squadPositions[profile?.squadPosition].userName = profile?.name;
           break;
         default:
