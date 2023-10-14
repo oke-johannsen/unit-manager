@@ -97,7 +97,6 @@ const SquadModal = ({
     ];
     squadMember.forEach((id) => {
       const profile = Meteor.users.findOne(id)?.profile;
-      console.log(profile?.squadPosition);
       switch (profile?.squadPosition) {
         case 1:
         case 2:
