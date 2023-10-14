@@ -97,6 +97,7 @@ const SquadModal = ({
     ];
     squadMember.forEach((id) => {
       const profile = Meteor.users.findOne(id)?.profile;
+      console.log(profile?.squadPosition);
       switch (profile?.squadPosition) {
         case 1:
         case 2:
@@ -104,7 +105,7 @@ const SquadModal = ({
         case 4:
         case 5:
         case 6:
-          squadPositions[profile?.squadPosition].userName = profile?.name;
+          squadPositions[profile?.squadPosition - 1].userName = profile?.name;
           break;
         default:
           squadPositions[6].usersNames.push(profile?.name);
@@ -196,7 +197,10 @@ const SquadModal = ({
                           <Row gutter={[8, 8]}>
                             {postions.map((postion) => {
                               return (
-                                <Col span={24}>
+                                <Col
+                                  span={24}
+                                  key={"position-" + postion.postion}
+                                >
                                   {postion.postion}:{" "}
                                   {postion.userName ||
                                     postion.usersNames.join(", ")}
