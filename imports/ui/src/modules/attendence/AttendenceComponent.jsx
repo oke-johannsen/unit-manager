@@ -182,7 +182,7 @@ const AttendenceComponent = () => {
         items={[
           {
             key: "1",
-            label: "Kalender (Test)",
+            label: "Kalender",
             children: (
               <Calendar
                 locale={locale}
