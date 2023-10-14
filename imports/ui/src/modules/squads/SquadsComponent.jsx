@@ -160,6 +160,13 @@ const SquadsComponent = () => {
                   setTitle("Trupp anzeigen");
                   setFormDisabled(true);
                   setOpen(true);
+                } else {
+                  setRowSelection({
+                    selectedRows: [record],
+                    selectedRowKeys: [record.key],
+                  });
+                  setTitle("Trupp bearbeiten");
+                  setOpen(true);
                 }
               },
             };

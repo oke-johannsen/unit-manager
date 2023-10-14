@@ -9,6 +9,7 @@ const UserReactivateModal = ({
 }) => {
   const reactivateUsers = () => {
     if (openUserReactivateModal?.length) {
+      let error = false;
       openUserReactivateModal.forEach((userId) => {
         const user = Meteor.users.findOne(userId);
         if (user) {
@@ -19,10 +20,19 @@ const UserReactivateModal = ({
               status: "active",
             },
           };
-          Meteor.call("users.update", data);
+          Meteor.call("users.update", data, (err, res) => {
+            if (err) {
+              error = true;
+            }
+          });
         }
       });
       setOpenUserReactivateModal(false);
+      if (!error) {
+        message.success(`Mitglieder erfolgreich reaktiviert!`);
+      } else {
+        message.error(`Reaktivieren von Mitgliedern fehlgeschlagen!`);
+      }
     }
   };
   return (

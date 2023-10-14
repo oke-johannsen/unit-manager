@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
   const [forms, setForms] = useState({});
   const submitForms = () => {
+    let error = false;
     Object.values(forms).forEach((values, index) => {
       const user = Meteor.users.findOne(Object.keys(forms)[index]);
       if (user) {
@@ -32,15 +33,19 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
         };
         Meteor.call(`users.update`, payload, (err, res) => {
           if (!err) {
-            message.success(`Mitglied erfolgreich aktualisiert!`);
             setOpenUserUpdateModal(false);
           } else {
+            error = false;
             console.error(`Error in users.update`, err, res);
-            message.error(`Aktualisieren von Mitglied fehlgeschlagen!`);
           }
         });
       }
     });
+    if (!error) {
+      message.success(`Mitglieder erfolgreich aktualisiert!`);
+    } else {
+      message.error(`Aktualisieren von Mitgliedern fehlgeschlagen!`);
+    }
   };
   return (
     <Modal

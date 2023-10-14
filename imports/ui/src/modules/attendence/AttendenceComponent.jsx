@@ -475,6 +475,12 @@ const AttendenceComponent = () => {
                               selectedRowKeys: [record.key],
                             });
                             setOpenAttendenceDisplayModal([record._id]);
+                          } else {
+                            setRowSelection({
+                              selectedRows: [record],
+                              selectedRowKeys: [record.key],
+                            });
+                            setOpenAttendenceUpdateModal([record._id]);
                           }
                         },
                       };

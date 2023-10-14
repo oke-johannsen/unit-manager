@@ -220,6 +220,7 @@ const AttendenceModal = ({
         break;
       case "update":
         if (form && form.length !== undefined) {
+          let error = false;
           form.forEach((item) => {
             const attendence = AttendenceCollection.findOne(item._id);
             if (attendence) {
@@ -233,13 +234,20 @@ const AttendenceModal = ({
                 },
                 (err, res) => {
                   if (err) {
+                    error = true;
                     console.error("Error in attendence.update", err, res);
                   }
                 }
               );
             }
           });
-          message.success("Die ausgewählten Einsätze wurden aktualisiert!");
+          if (!error) {
+            message.success("Die ausgewählten Einsätze wurden aktualisiert!");
+          } else {
+            message.error(
+              "Aktualisieren der ausgewählten Einsätze fehlgeschlagen!"
+            );
+          }
           handleCancel();
         }
         break;

@@ -9,6 +9,7 @@ const UserArchiveModal = ({
 }) => {
   const archiveUsers = () => {
     if (openUserArchiveModal?.length) {
+      let error = false;
       openUserArchiveModal.forEach((userId) => {
         const user = Meteor.users.findOne(userId);
         if (user) {
@@ -19,10 +20,19 @@ const UserArchiveModal = ({
               status: "inactive",
             },
           };
-          Meteor.call("users.update", data);
+          Meteor.call("users.update", data, (err, res) => {
+            if (err) {
+              error = true;
+            }
+          });
         }
       });
       setOpenUserArchiveModal(false);
+      if (!error) {
+        message.success(`Mitglieder erfolgreich deaktiviert!`);
+      } else {
+        message.error(`Deaktivieren von Mitgliedern fehlgeschlagen!`);
+      }
     }
   };
   return (

@@ -166,6 +166,13 @@ const SkillsComponent = () => {
                     setTitle("Squad anzeigen");
                     setFormDisabled(true);
                     setOpen(true);
+                  } else {
+                    setRowSelection({
+                      selectedRows: [record],
+                      selectedRowKeys: [record.key],
+                    });
+                    setTitle("Squad bearbeiten");
+                    setOpen(true);
                   }
                 },
               };

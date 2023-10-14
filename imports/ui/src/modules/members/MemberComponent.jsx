@@ -268,6 +268,8 @@ const MembersComponent = () => {
               onClick: () => {
                 if (securityClearance === 1) {
                   setOpenUserDisplayModal([record._id]);
+                } else {
+                  setOpenUserUpdateModal([record._id]);
                 }
               },
             };
@@ -284,35 +286,49 @@ const MembersComponent = () => {
               : false
           }
         />
-        <UserCreateModal
-          openUserCreateModal={openUserCreateModal}
-          setOpenUserCreateModal={setOpenUserCreateModal}
-        />
-        <UserUpdateModal
-          openUserUpdateModal={openUserUpdateModal}
-          setOpenUserUpdateModal={setOpenUserUpdateModal}
-        />
-        <UserDisplayModal
-          openUserDisplayModal={openUserDisplayModal}
-          setOpenUserDisplayModal={setOpenUserDisplayModal}
-        />
-        <UserArchiveModal
-          openUserArchiveModal={openUserArchiveModal}
-          setOpenUserArchiveModal={setOpenUserArchiveModal}
-        />
-        <UserReactivateModal
-          openUserReactivateModal={openUserReactivateModal}
-          setOpenUserReactivateModal={setOpenUserReactivateModal}
-        />
-        <UserDeleteModal
-          openUserDeleteModal={openUserDeleteModal}
-          setOpenUserDeleteModal={setOpenUserDeleteModal}
-        />
-        <PasswordResetModal
-          open={openPasswordResetModal}
-          setOpen={setOpenPasswordResetModal}
-          userId={rowSelection?.selectedRowKeys[0]}
-        />
+        {openUserCreateModal && (
+          <UserCreateModal
+            openUserCreateModal={openUserCreateModal}
+            setOpenUserCreateModal={setOpenUserCreateModal}
+          />
+        )}
+        {openUserUpdateModal && (
+          <UserUpdateModal
+            openUserUpdateModal={openUserUpdateModal}
+            setOpenUserUpdateModal={setOpenUserUpdateModal}
+          />
+        )}
+        {openUserDisplayModal && (
+          <UserDisplayModal
+            openUserDisplayModal={openUserDisplayModal}
+            setOpenUserDisplayModal={setOpenUserDisplayModal}
+          />
+        )}
+        {openUserArchiveModal && (
+          <UserArchiveModal
+            openUserArchiveModal={openUserArchiveModal}
+            setOpenUserArchiveModal={setOpenUserArchiveModal}
+          />
+        )}
+        {openUserReactivateModal && (
+          <UserReactivateModal
+            openUserReactivateModal={openUserReactivateModal}
+            setOpenUserReactivateModal={setOpenUserReactivateModal}
+          />
+        )}
+        {openUserDeleteModal && (
+          <UserDeleteModal
+            openUserDeleteModal={openUserDeleteModal}
+            setOpenUserDeleteModal={setOpenUserDeleteModal}
+          />
+        )}
+        {openPasswordResetModal && (
+          <PasswordResetModal
+            open={openPasswordResetModal}
+            setOpen={setOpenPasswordResetModal}
+            userId={rowSelection?.selectedRowKeys[0]}
+          />
+        )}
       </Col>
     </Row>
   );
