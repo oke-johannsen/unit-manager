@@ -58,7 +58,15 @@ export const SKILLS_COLUMNS = [
     key: "link",
     render: (link) => {
       return link ? (
-        <Button type="link" onClick={() => window.open(link, "_blank")}>
+        <Button
+          type="link"
+          style={{ padding: 0 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.open(link, "_blank");
+          }}
+        >
           Link
         </Button>
       ) : (
