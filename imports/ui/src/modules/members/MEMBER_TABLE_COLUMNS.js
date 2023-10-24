@@ -45,7 +45,7 @@ export const MEMBER_TABLE_COLUMNS = [
     title: "Trupp-Position",
     dataIndex: "squadPosition",
     key: "squadPosition",
-    sorter: (a, b) => a.squadPosition.localeCompare(b.squadPosition),
+    sorter: (a, b) => a.squadPosition - b.squadPosition,
   },
   {
     title: "Ausbildungen",
