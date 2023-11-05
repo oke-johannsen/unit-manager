@@ -29,7 +29,7 @@ const SkillsComponent = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [title, setTitle] = useState("Ausbildung");
   const errorText = "Bitte wähle zuerst ein oder mehr Ausbildungen aus!";
-  const securityClearance = Meteor.user()?.profile?.securityClearance;
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
   const items = [
     {
       key: "read",

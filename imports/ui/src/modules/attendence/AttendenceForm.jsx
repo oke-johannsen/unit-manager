@@ -146,12 +146,12 @@ const AttendenceForm = ({
           disabled={
             disabled ||
             userIds?.length === 0 ||
-            Meteor.user()?.profile?.securityClearance > 3
+            Number(Meteor.user()?.profile?.securityClearance) < 3
           }
           placeholder={
             userIds?.length === 0
               ? "Zuerst Teilnehmer auswählen"
-              : Meteor.user()?.profile?.securityClearance > 3
+              : Number(Meteor.user()?.profile?.securityClearance) < 3
               ? "Nicht ausreichend berechtigt!"
               : ""
           }

@@ -79,7 +79,7 @@ const SidebarComponent = ({ setView }) => {
       ),
       color: "#4a873b",
     },
-    ...(Meteor.user()?.profile?.securityClearance > 2
+    ...(Number(Meteor.user()?.profile?.securityClearance) > 2
       ? [
           {
             view: "recruitment",
@@ -101,7 +101,7 @@ const SidebarComponent = ({ setView }) => {
           },
         ]
       : []),
-    ...(Meteor.user()?.profile?.securityClearance > 1
+    ...(Number(Meteor.user()?.profile?.securityClearance) > 1
       ? [
           {
             view: "skills",
@@ -121,7 +121,7 @@ const SidebarComponent = ({ setView }) => {
           },
         ]
       : []),
-    ...(Meteor.user()?.profile?.securityClearance > 3
+    ...(Number(Meteor.user()?.profile?.securityClearance) > 3
       ? [
           {
             view: "logging",

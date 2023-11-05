@@ -94,7 +94,7 @@ const AttendenceComponent = () => {
   ];
   const data = attendences;
   const errorText = "Bitte wähle zuerst ein oder mehr Einsätze aus!";
-  const securityClearance = Meteor.user()?.profile?.securityClearance;
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
   const items = [
     {
       key: "read",

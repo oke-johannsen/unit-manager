@@ -74,7 +74,7 @@ const MembersComponent = () => {
       userProfile?.rank?.toLowerCase().includes(search?.toLowerCase())
     );
   });
-  const securityClearance = Meteor.user()?.profile?.securityClearance;
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
   const items = [
     {
       key: "read",

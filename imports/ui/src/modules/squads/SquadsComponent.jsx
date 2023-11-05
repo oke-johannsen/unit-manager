@@ -30,7 +30,7 @@ const SquadsComponent = () => {
   const [isDisplay, setIsDisplay] = useState(false);
   const data = squads;
   const errorText = "Bitte wähle zuerst ein oder mehr Trupps aus!";
-  const securityClearance = Meteor.user()?.profile?.securityClearance;
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
   const items = [
     {
       key: "read",

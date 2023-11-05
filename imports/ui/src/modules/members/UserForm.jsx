@@ -123,7 +123,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
     );
   };
 
-  const securityClearance = Meteor.user()?.profile?.securityClearance;
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
   return (
     <Form
       layout="vertical"
