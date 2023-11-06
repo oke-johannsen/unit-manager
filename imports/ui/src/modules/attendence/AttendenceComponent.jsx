@@ -43,14 +43,14 @@ const AttendenceComponent = () => {
       }));
       return {
         attendences: subs.every((sub) => sub.ready())
-          ? AttendenceCollection.find(filter, { sort: { date: -1 } }).map(
-              (attendence) => {
+          ? AttendenceCollection.find(filter)
+              .map((attendence) => {
                 return {
                   key: attendence._id,
                   ...attendence,
                 };
-              }
-            )
+              })
+              .sort((a, b) => a.type.localeCompare(b.type))
           : null,
         attendenceTypeOptions: [
           { key: "all", label: "Alle", value: "all" },

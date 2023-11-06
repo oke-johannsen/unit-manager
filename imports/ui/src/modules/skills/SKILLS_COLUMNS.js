@@ -2,7 +2,7 @@ import { Button, Tooltip } from "antd";
 import { Meteor } from "meteor/meteor";
 import React from "react";
 
-const getTypeName = (type) => {
+export const getTypeName = (type) => {
   let displayName;
   switch (type) {
     case "skill":
@@ -80,5 +80,6 @@ export const SKILLS_COLUMNS = [
     key: "type",
     render: (type) => getTypeName(type),
     sorter: (a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)),
+    defaultSortOrder: "ascend",
   },
 ];

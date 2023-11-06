@@ -11,6 +11,7 @@ export const MEMBER_TABLE_COLUMNS = [
     dataIndex: "rank",
     key: "rank",
     sorter: (a, b) => sortByRank(a.rank, b.rank),
+    defaultSortOrder: "ascend",
   },
   {
     title: "Name",

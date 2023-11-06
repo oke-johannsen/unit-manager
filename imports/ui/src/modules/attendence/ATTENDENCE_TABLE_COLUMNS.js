@@ -17,6 +17,7 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     render: (type) =>
       type === "mission" ? "Mission" : type === "training" ? "Training" : type,
     sorter: (a, b) => a.type.localeCompare(b.type),
+    defaultSortOrder: "ascend",
   },
   {
     title: "Teilnehmer",

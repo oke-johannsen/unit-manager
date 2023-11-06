@@ -12,12 +12,14 @@ const SquadsComponent = () => {
     const userSub = Meteor.subscribe("users");
     return {
       squads: sub.ready()
-        ? SquadCollection.find({}).map((squad) => {
-            return {
-              key: squad._id,
-              ...squad,
-            };
-          })
+        ? SquadCollection.find({})
+            .map((squad) => {
+              return {
+                key: squad._id,
+                ...squad,
+              };
+            })
+            .sort((a, b) => a.squadName.localeCompare(b.squadName))
         : null,
       usersReady: userSub.ready(),
     };

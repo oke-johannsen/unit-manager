@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
 import { Button, Col, Dropdown, Row, Spin, Table, message } from "antd";
-import { SKILLS_COLUMNS } from "./SKILLS_COLUMNS";
+import { SKILLS_COLUMNS, getTypeName } from "./SKILLS_COLUMNS";
 import { SkillsCollection } from "../../../../api/SkillsApi";
 import SkillsModal from "./SkillsModal";
 import AddSkillModal from "./AddSkillModal";
@@ -11,12 +11,14 @@ const SkillsComponent = () => {
   const { ready, skills } = useTracker(() => {
     const sub = Meteor.subscribe("users");
     const subSkills = Meteor.subscribe("skills");
-    const skills = SkillsCollection.find({}).map((item) => {
-      return {
-        ...item,
-        key: item?._id,
-      };
-    });
+    const skills = SkillsCollection.find({})
+      .map((item) => {
+        return {
+          ...item,
+          key: item?._id,
+        };
+      })
+      .sort((a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)));
     return {
       ready: sub.ready() && subSkills.ready(),
       skills,
@@ -99,7 +101,7 @@ const SkillsComponent = () => {
                     {securityClearance > 1 && (
                       <Col>
                         <Button onClick={() => setAddContextOpen(true)}>
-                          Ausbildung hinzufügen
+                          Ausbildung zuweisen
                         </Button>
                       </Col>
                     )}

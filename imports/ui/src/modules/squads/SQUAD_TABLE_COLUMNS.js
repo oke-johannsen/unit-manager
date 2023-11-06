@@ -8,6 +8,7 @@ export const SQUAD_TABLE_COLUMNS = [
     dataIndex: "squadName",
     key: "squadName",
     sorter: (a, b) => a.squadName.localeCompare(b.squadName),
+    defaultSortOrder: "ascend",
   },
   {
     title: "Zugehörigkeit",

@@ -19,6 +19,7 @@ import UserArchiveModal from "./UsersArchiveModal";
 import UserReactivateModal from "./UserReactiveModal";
 import UserDeleteModal from "./UserDeleteModal";
 import PasswordResetModal from "../../layout/common/PasswordResetModal";
+import { sortByRank } from "../../libs/SORTER_LIB";
 
 const MembersComponent = () => {
   const [selected, setSelected] = useState("active");
@@ -29,13 +30,16 @@ const MembersComponent = () => {
     const status = selected;
     return {
       users: sub.ready()
-        ? Meteor.users.find({ "profile.status": status }).map((user) => {
-            return {
-              key: user._id,
-              ...user,
-              ...user.profile,
-            };
-          })
+        ? Meteor.users
+            .find({ "profile.status": status })
+            .map((user) => {
+              return {
+                key: user._id,
+                ...user,
+                ...user.profile,
+              };
+            })
+            .sort((a, b) => sortByRank(a.rank, b.rank))
         : null,
       squadsReady: squadSub.ready(),
       skillsSub: skillsSub.ready(),
