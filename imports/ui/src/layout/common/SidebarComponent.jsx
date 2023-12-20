@@ -94,21 +94,21 @@ const SidebarComponent = ({ setView }) => {
             view: 'recruitment',
             icon: <RECRUITMENT_SVG style={{ fontSize: 48, color: 'inherit' }} />,
             text: (
-              <span
-                style={{
-                  fontSize: 18,
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: 'inherit',
-                }}
+              <Badge
+                count={openCount}
+                offset={[13, -2]}
+                style={{ color: '#fff' }}
               >
-                <Badge
-                  count={openCount}
-                  offset={[13, -2]}
-                  style={{ color: '#fff' }}
+                <span
+                  style={{
+                    fontSize: 18,
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    color: '#545a83',
+                  }}
                 >
                   BEWERBUNGEN
-                </Badge>
-              </span>
+                </span>
+              </Badge>
             ),
             color: '#545a83',
           },
