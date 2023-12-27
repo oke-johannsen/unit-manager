@@ -15,8 +15,8 @@ const UserDashboardComponent = ({ userProp }) => {
     const sub = Meteor.subscribe('attendence.by.user', user?._id)
     return {
       user,
-      trainings: AttendenceCollection.find({ type: 'training', userIds: user._id }, { sort: { date: -1 } }).fetch(),
-      operations: AttendenceCollection.find({ type: 'mission', userIds: user._id }, { sort: { date: -1 } }).fetch(),
+      trainings: AttendenceCollection.find({ type: 'training', userIds: user?._id }, { sort: { date: -1 } }).fetch(),
+      operations: AttendenceCollection.find({ type: 'mission', userIds: user?._id }, { sort: { date: -1 } }).fetch(),
       ready: squadSub.ready() && skillsSub.ready() && sub.ready(),
     }
   })
@@ -81,8 +81,10 @@ const UserDashboardComponent = ({ userProp }) => {
                     date: {
                       $gte: user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1],
                     },
+                    type: 'mission',
+                    userIds: user?._id,
                   }).count()
-                : AttendenceCollection?.find({ userIds: user._id }).count()}
+                : AttendenceCollection?.find({ type: 'mission', userIds: user?._id }).count()}
             </Col>
           </Row>
         ),
@@ -214,7 +216,7 @@ const UserDashboardComponent = ({ userProp }) => {
   const updateOptions = () => {
     const isPilot = designation === 'pilot'
     let type = isPilot ? 'flying' : 'skill'
-    const newSkillOptions = SkillsCollection?.find({ type, designation }).map((skill) => {
+    const newSkillOptions = SkillsCollection.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => {
         return userSkill === skill._id
       })
@@ -226,7 +228,7 @@ const UserDashboardComponent = ({ userProp }) => {
     })
 
     type = isPilot ? 'infantry' : 'tier-2'
-    const newTier2Options = SkillsCollection?.find({ type, designation }).map((skill) => {
+    const newTier2Options = SkillsCollection.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => {
         return userSkill === skill._id
       })
@@ -238,7 +240,7 @@ const UserDashboardComponent = ({ userProp }) => {
     })
 
     type = isPilot ? 'skills' : 'special'
-    const newSpecialOptionsOptions = SkillsCollection?.find({ type, designation }).map((skill) => {
+    const newSpecialOptionsOptions = SkillsCollection.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
       return {
         key: skill._id,
@@ -248,7 +250,7 @@ const UserDashboardComponent = ({ userProp }) => {
     })
 
     type = isPilot ? 'crs' : 'tier-1'
-    const newTier1Options = SkillsCollection?.find({ type, designation }).map((skill) => {
+    const newTier1Options = SkillsCollection.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
       return {
         key: skill._id,
@@ -261,7 +263,7 @@ const UserDashboardComponent = ({ userProp }) => {
 
   useEffect(() => {
     updateOptions(designation)
-  }, [designation])
+  }, [designation, ready])
 
   return (
     <Row
@@ -282,8 +284,8 @@ const UserDashboardComponent = ({ userProp }) => {
           >
             <Segmented
               options={[
-                { label: 'Infanterie', value: 'infantry' },
-                { label: 'Pilot', value: 'pilot' },
+                { label: 'Kommando', value: 'infantry' },
+                { label: 'Luftwaffe', value: 'pilot' },
               ]}
               onChange={(value) => setDesignation(value)}
               value={designation}
