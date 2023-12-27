@@ -1,106 +1,116 @@
-import { Form, Input, Select, Spin } from "antd";
-import React from "react";
-import { SquadCollection } from "../../../../api/SquadApi";
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
+import { Form, Input, Select, Spin } from 'antd'
+import React from 'react'
+import { SquadCollection } from '../../../../api/SquadApi'
+import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
 
 const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
   const { squadsReady, usersReady, userOptions } = useTracker(() => {
-    const sub = Meteor.subscribe("squads");
-    const userSub = Meteor.subscribe("users");
+    const sub = Meteor.subscribe('squads')
+    const userSub = Meteor.subscribe('users')
     return {
       squadsReady: sub.ready(),
       usersReady: userSub.ready(),
-      userOptions: Meteor.users
-        .find({ "profile.status": "active" })
-        .map((user) => {
-          return {
-            label: user?.profile?.name,
-            value: user?._id,
-          };
-        }),
-    };
-  }, []);
+      userOptions: Meteor.users.find({ 'profile.status': 'active' }).map((user) => {
+        return {
+          label: user?.profile?.name,
+          value: user?._id,
+        }
+      }),
+    }
+  }, [])
   const defaultValues = {
-    designation: "KSK",
-  };
+    designation: 'KSK',
+  }
 
   return (
     <Spin spinning={!squadsReady || !usersReady}>
       <Form
         disabled={formDisabled}
-        layout="vertical"
+        layout='vertical'
         labelCol={24}
         onValuesChange={(_, values) => handleFormChange(values)}
         onFinish={() => handleSubmit()}
         initialValues={SquadCollection.findOne(id) || defaultValues}
       >
         <Form.Item
-          label="Truppname"
-          name="squadName"
+          label='Truppname'
+          name='squadName'
           rules={[
             {
               required: true,
-              message: "Bitte trage einen Truppnamen ein!",
+              message: 'Bitte trage einen Truppnamen ein!',
             },
           ]}
         >
-          <Input name="squadName" />
+          <Input name='squadName' />
         </Form.Item>
-        <Form.Item label="Zugehörigkeit" name="designation">
+        <Form.Item
+          label='Zugehörigkeit'
+          name='designation'
+        >
           <Select
-            optionFilterProp="label"
+            optionFilterProp='label'
             showSearch
-            name="designation"
+            name='designation'
             options={[
               {
-                label: "KSK",
-                value: "KSK",
+                label: 'KSK',
+                value: 'KSK',
               },
               {
-                label: "KSM",
-                value: "KSM",
+                label: 'KSM',
+                value: 'KSM',
               },
               {
-                label: "Luftwaffe",
-                value: "Luftwaffe",
+                label: 'Luftwaffe',
+                value: 'Luftwaffe',
               },
             ]}
           />
         </Form.Item>
-        <Form.Item label="Truppmitglieder" name="squadMember">
+        <Form.Item
+          label='Truppmitglieder'
+          name='squadMember'
+        >
           <Select
-            optionFilterProp="label"
+            optionFilterProp='label'
             showSearch
-            name="squadMember"
-            mode="multiple"
+            name='squadMember'
+            mode='multiple'
             options={userOptions.map((opt) => ({
               ...opt,
-              key: "multi-" + opt.value,
+              key: 'multi-' + opt.value,
             }))}
           />
         </Form.Item>
-        <Form.Item label="Truppführung" name="squadLead">
+        <Form.Item
+          label='Truppführung'
+          name='squadLead'
+        >
           <Select
-            optionFilterProp="label"
+            optionFilterProp='label'
             showSearch
             allowClear
-            name="squadLead"
+            name='squadLead'
             options={userOptions.map((opt) => ({
               ...opt,
-              key: "single-" + opt.value,
+              key: 'single-' + opt.value,
             }))}
           />
         </Form.Item>
-        <Form.Item label="Spezialisierung" name="speciality">
+        <Form.Item
+          label='Spezialisierung'
+          name='speciality'
+        >
           <Input.TextArea
-            name="speciality"
-            style={{ width: "100%", minHeight: "7.5vh" }}
+            name='speciality'
+            style={{ width: '100%', minHeight: '7.5vh' }}
           />
         </Form.Item>
       </Form>
     </Spin>
-  );
-};
+  )
+}
 
-export default SquadForm;
+export default SquadForm

@@ -1,43 +1,40 @@
-import { Meteor } from "meteor/meteor";
-import { Mongo } from "meteor/mongo";
+import { Meteor } from 'meteor/meteor'
+import { Mongo } from 'meteor/mongo'
 
-export const AttendenceTypeCollection = new Mongo.Collection("attendenceTypes");
+export const AttendenceTypeCollection = new Mongo.Collection('attendenceTypes')
 
 if (Meteor.isServer) {
-  Meteor.publish("attendenceTypes", function () {
-    return AttendenceTypeCollection.find({});
-  });
+  Meteor.publish('attendenceTypes', function () {
+    return AttendenceTypeCollection.find({})
+  })
   Meteor.methods({
-    "attendenceTypes.create": (payload) => {
-      const { name } = payload;
-      Meteor.call("logging.create", {
-        key: "attendenceTypes.create",
+    'attendenceTypes.create': (payload) => {
+      const { name } = payload
+      Meteor.call('logging.create', {
+        key: 'attendenceTypes.create',
         before: null,
         after: {
           name,
         },
         userId: Meteor.user()?._id,
-      });
-      AttendenceTypeCollection.insert(
-        { value: name, label: name },
-        (err, res) => {
-          if (err) {
-            console.error(err, res);
-          }
+      })
+      AttendenceTypeCollection.insert({ value: name, label: name }, (err, res) => {
+        if (err) {
+          console.error(err, res)
         }
-      );
+      })
     },
-    "attendenceTypes.update": (id, payload) => {
-      const { name } = payload;
-      const attendenceTypes = AttendenceTypeCollection.findOne(id);
-      Meteor.call("logging.create", {
-        key: "attendenceTypes.update",
+    'attendenceTypes.update': (id, payload) => {
+      const { name } = payload
+      const attendenceTypes = AttendenceTypeCollection.findOne(id)
+      Meteor.call('logging.create', {
+        key: 'attendenceTypes.update',
         before: attendenceTypes,
         after: {
           name,
         },
         userId: Meteor.user()?._id,
-      });
+      })
       AttendenceTypeCollection.update(
         id,
         {
@@ -48,24 +45,24 @@ if (Meteor.isServer) {
         },
         (err, res) => {
           if (err) {
-            console.error(err, res);
+            console.error(err, res)
           }
         }
-      );
+      )
     },
-    "attendenceTypes.remove": (id) => {
-      const attendenceTypes = AttendenceTypeCollection.findOne(id);
-      Meteor.call("logging.create", {
-        key: "attendenceTypes.remove",
+    'attendenceTypes.remove': (id) => {
+      const attendenceTypes = AttendenceTypeCollection.findOne(id)
+      Meteor.call('logging.create', {
+        key: 'attendenceTypes.remove',
         before: attendenceTypes,
         after: null,
         userId: Meteor.user()?._id,
-      });
+      })
       AttendenceTypeCollection.remove(id, (err, res) => {
         if (err) {
-          console.error(err, res);
+          console.error(err, res)
         }
-      });
+      })
     },
-  });
+  })
 }
