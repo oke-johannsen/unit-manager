@@ -13,205 +13,194 @@ import {
   Table,
   Tabs,
   message,
-} from "antd";
-import React, { useState } from "react";
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
-import { AttendenceCollection } from "../../../../api/AttendenceApi";
-import { ATTENDENCE_TABLE_COLUMNS } from "./ATTENDENCE_TABLE_COLUMNS";
-import AttendenceModal from "./AttendenceModal";
-import dayjs from "dayjs";
-import { AttendenceTypeCollection } from "../../../../api/AttendenceTypesApi";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import AttendenceTypeModal from "./AttendenceTypeModal";
-import locale from "antd/es/calendar/locale/de_DE";
+} from 'antd'
+import React, { useState } from 'react'
+import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
+import { AttendenceCollection } from '../../../../api/AttendenceApi'
+import { ATTENDENCE_TABLE_COLUMNS } from './ATTENDENCE_TABLE_COLUMNS'
+import AttendenceModal from './AttendenceModal'
+import dayjs from 'dayjs'
+import { AttendenceTypeCollection } from '../../../../api/AttendenceTypesApi'
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import AttendenceTypeModal from './AttendenceTypeModal'
+import locale from 'antd/es/calendar/locale/de_DE'
 
 const AttendenceComponent = () => {
-  const [selected, setSelected] = useState("all");
-  const { attendences, attendenceTypeOptions, attendenceTypes } =
-    useTracker(() => {
-      const subs = [
-        Meteor.subscribe("attendence"),
-        Meteor.subscribe("users"),
-        Meteor.subscribe("attendenceTypes"),
-      ];
-      const filter = selected !== "all" ? { type: selected } : {};
-      const attendenceTypes = AttendenceTypeCollection.find({}).map((item) => ({
-        key: item._id,
-        value: item.value,
-        label: item.label,
-      }));
-      return {
-        attendences: subs.every((sub) => sub.ready())
-          ? AttendenceCollection.find(filter)
-              .map((attendence) => {
-                return {
-                  key: attendence._id,
-                  ...attendence,
-                };
-              })
-              .sort((a, b) => a.type.localeCompare(b.type))
-          : null,
-        attendenceTypeOptions: [
-          { key: "all", label: "Alle", value: "all" },
-          { key: "mission", label: "Mission", value: "mission" },
-          { key: "training", label: "Training", value: "training" },
-          ...(subs.every((sub) => sub.ready()) ? attendenceTypes : []),
-        ],
-        attendenceTypes: attendenceTypes,
-      };
-    }, [selected]);
-  const [openAttendenceCreateModal, setOpenAttendenceCreateModal] =
-    useState(false);
-  const [openAttendenceDisplayModal, setOpenAttendenceDisplayModal] =
-    useState(false);
-  const [openAttendenceUpdateModal, setOpenAttendenceUpdateModal] =
-    useState(false);
-  const [openAttendenceDeleteModal, setOpenAttendenceDeleteModal] =
-    useState(false);
-  const [rowSelection, setRowSelection] = useState(null);
-  const [date, setDate] = useState(null);
+  const [selected, setSelected] = useState('all')
+  const { attendences, attendenceTypeOptions, attendenceTypes } = useTracker(() => {
+    const subs = [Meteor.subscribe('attendence'), Meteor.subscribe('users'), Meteor.subscribe('attendenceTypes')]
+    const filter = selected !== 'all' ? { type: selected } : {}
+    const attendenceTypes = AttendenceTypeCollection.find({}).map((item) => ({
+      key: item._id,
+      value: item.value,
+      label: item.label,
+    }))
+    return {
+      attendences: subs.every((sub) => sub.ready())
+        ? AttendenceCollection.find(filter)
+            .map((attendence) => {
+              return {
+                key: attendence._id,
+                ...attendence,
+              }
+            })
+            .sort((a, b) => a.type.localeCompare(b.type))
+        : null,
+      attendenceTypeOptions: [
+        { key: 'all', label: 'Alle', value: 'all' },
+        { key: 'mission', label: 'Mission', value: 'mission' },
+        { key: 'training', label: 'Training', value: 'training' },
+        ...(subs.every((sub) => sub.ready()) ? attendenceTypes : []),
+      ],
+      attendenceTypes: attendenceTypes,
+    }
+  }, [selected])
+  const [openAttendenceCreateModal, setOpenAttendenceCreateModal] = useState(false)
+  const [openAttendenceDisplayModal, setOpenAttendenceDisplayModal] = useState(false)
+  const [openAttendenceUpdateModal, setOpenAttendenceUpdateModal] = useState(false)
+  const [openAttendenceDeleteModal, setOpenAttendenceDeleteModal] = useState(false)
+  const [rowSelection, setRowSelection] = useState(null)
+  const [date, setDate] = useState(null)
   const options = [
     {
-      key: "mission",
-      value: "mission",
-      label: "Missionen",
+      key: 'mission',
+      value: 'mission',
+      label: 'Missionen',
     },
     ...(window.innerWidth > 700
       ? [
           {
-            key: "training",
-            value: "training",
-            label: "Trainings",
+            key: 'training',
+            value: 'training',
+            label: 'Trainings',
           },
         ]
       : []),
     {
-      key: "all",
-      value: "all",
-      label: "Alle",
+      key: 'all',
+      value: 'all',
+      label: 'Alle',
     },
-  ];
-  const data = attendences;
-  const errorText = "Bitte wähle zuerst ein oder mehr Einsätze aus!";
-  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
+  ]
+  const data = attendences
+  const errorText = 'Bitte wähle zuerst ein oder mehr Einsätze aus!'
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance)
   const items = [
     {
-      key: "read",
-      label: "Anzeigen",
+      key: 'read',
+      label: 'Anzeigen',
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setOpenAttendenceDisplayModal(rowSelection.selectedRowKeys);
+          setOpenAttendenceDisplayModal(rowSelection.selectedRowKeys)
         } else {
-          message.warning(errorText);
+          message.warning(errorText)
         }
       },
     },
     {
-      key: "edit",
-      label: "Bearbeiten",
+      key: 'edit',
+      label: 'Bearbeiten',
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setOpenAttendenceUpdateModal(rowSelection.selectedRowKeys);
+          setOpenAttendenceUpdateModal(rowSelection.selectedRowKeys)
         } else {
-          message.warning(errorText);
+          message.warning(errorText)
         }
       },
     },
     securityClearance > 3 && {
-      key: "delete",
-      label: "Löschen",
+      key: 'delete',
+      label: 'Löschen',
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setOpenAttendenceDeleteModal(rowSelection.selectedRowKeys);
+          setOpenAttendenceDeleteModal(rowSelection.selectedRowKeys)
         } else {
-          message.warning(errorText);
+          message.warning(errorText)
         }
       },
     },
-  ];
+  ]
   const handleAddPoints = () => {
     rowSelection?.selectedRowKeys?.forEach((item) => {
-      const attendence = AttendenceCollection.findOne(item);
+      const attendence = AttendenceCollection.findOne(item)
       if (attendence.spentPoints !== true) {
         attendence.userIds?.forEach((id) => {
-          const user = Meteor.users.findOne(id);
+          const user = Meteor.users.findOne(id)
           if (user) {
-            const newUser = { ...user };
-            newUser.profile.points =
-              newUser?.profile?.points +
-              (attendence.type === "mission" ? 5 : 10);
-            Meteor.call("users.update", newUser);
+            const newUser = { ...user }
+            newUser.profile.points = newUser?.profile?.points + (attendence.type === 'mission' ? 5 : 10)
+            Meteor.call('users.update', newUser)
           }
-        });
-        const { userIds, type, date, promotedMembers } = attendence;
-        Meteor.call("attendence.update", attendence._id, {
+        })
+        const { userIds, type, date, promotedMembers } = attendence
+        Meteor.call('attendence.update', attendence._id, {
           userIds,
           type,
           date,
           promotedMembers,
           spentPoints: true,
-        });
+        })
       }
-    });
-  };
+    })
+  }
   const getAverageParticipants = () => {
     if (attendences?.length) {
       const { totalParticipants, totalEntries } = attendences.reduce(
         (accumulator, entry) => {
-          accumulator.totalParticipants += entry.userIds.length;
-          accumulator.totalEntries += 1;
-          return accumulator;
+          accumulator.totalParticipants += entry.userIds.length
+          accumulator.totalEntries += 1
+          return accumulator
         },
         { totalParticipants: 0, totalEntries: 0 }
-      );
-      const averageParticipants = totalParticipants / totalEntries;
-      return Math.floor(averageParticipants);
+      )
+      const averageParticipants = totalParticipants / totalEntries
+      return Math.floor(averageParticipants)
     } else {
-      return 0;
+      return 0
     }
-  };
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [title, setTitle] = useState(null);
-  const [deleteModal, setDeleteModal] = useState(false);
+  }
+  const [open, setOpen] = useState(false)
+  const [value, setValue] = useState(null)
+  const [title, setTitle] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(false)
 
   return (
     <>
       <Tabs
         items={[
           {
-            key: "1",
-            label: "Kalender",
+            key: '1',
+            label: 'Kalender',
             children: (
               <Calendar
                 locale={locale}
                 onSelect={(date, selectInfo) => {
-                  if (selectInfo.source === "date" && securityClearance > 1) {
-                    setDate(date);
-                    setOpenAttendenceCreateModal(true);
+                  if (selectInfo.source === 'date' && securityClearance > 1) {
+                    setDate(date)
+                    setOpenAttendenceCreateModal(true)
                   }
                 }}
                 headerRender={({ value, type, onChange, onTypeChange }) => {
                   const monthOptions = [
-                    { key: "month-0", value: 0, label: "Januar" },
-                    { key: "month-1", value: 1, label: "Februar" },
-                    { key: "month-2", value: 2, label: "März" },
-                    { key: "month-3", value: 3, label: "April" },
-                    { key: "month-4", value: 4, label: "Mai" },
-                    { key: "month-5", value: 5, label: "Juni" },
-                    { key: "month-6", value: 6, label: "Juli" },
-                    { key: "month-7", value: 7, label: "August" },
-                    { key: "month-8", value: 8, label: "September" },
-                    { key: "month-9", value: 9, label: "Oktober" },
-                    { key: "month-10", value: 10, label: "November" },
-                    { key: "month-11", value: 11, label: "Dezember" },
-                  ];
-                  const year = value.year();
-                  const month = value.month();
-                  const yearOptions = [];
+                    { key: 'month-0', value: 0, label: 'Januar' },
+                    { key: 'month-1', value: 1, label: 'Februar' },
+                    { key: 'month-2', value: 2, label: 'März' },
+                    { key: 'month-3', value: 3, label: 'April' },
+                    { key: 'month-4', value: 4, label: 'Mai' },
+                    { key: 'month-5', value: 5, label: 'Juni' },
+                    { key: 'month-6', value: 6, label: 'Juli' },
+                    { key: 'month-7', value: 7, label: 'August' },
+                    { key: 'month-8', value: 8, label: 'September' },
+                    { key: 'month-9', value: 9, label: 'Oktober' },
+                    { key: 'month-10', value: 10, label: 'November' },
+                    { key: 'month-11', value: 11, label: 'Dezember' },
+                  ]
+                  const year = value.year()
+                  const month = value.month()
+                  const yearOptions = []
                   for (let i = year - 10; i < year + 10; i += 1) {
-                    yearOptions.push({ key: i, value: i, label: i });
+                    yearOptions.push({ key: i, value: i, label: i })
                   }
                   return (
                     <div
@@ -219,7 +208,10 @@ const AttendenceComponent = () => {
                         padding: 8,
                       }}
                     >
-                      <Row gutter={8} justify="end">
+                      <Row
+                        gutter={8}
+                        justify='end'
+                      >
                         <Col>
                           <Segmented
                             options={options}
@@ -232,8 +224,8 @@ const AttendenceComponent = () => {
                             value={year}
                             options={yearOptions}
                             onChange={(newYear) => {
-                              const now = value.clone().year(newYear);
-                              onChange(now);
+                              const now = value.clone().year(newYear)
+                              onChange(now)
                             }}
                           ></Select>
                         </Col>
@@ -243,8 +235,8 @@ const AttendenceComponent = () => {
                             options={monthOptions}
                             popupMatchSelectWidth={false}
                             onChange={(newMonth) => {
-                              const now = value.clone().month(newMonth);
-                              onChange(now);
+                              const now = value.clone().month(newMonth)
+                              onChange(now)
                             }}
                           />
                         </Col>
@@ -253,125 +245,129 @@ const AttendenceComponent = () => {
                             onChange={(e) => onTypeChange(e.target.value)}
                             value={type}
                           >
-                            <Radio.Button value="month">Monat</Radio.Button>
-                            <Radio.Button value="year">Jahr</Radio.Button>
+                            <Radio.Button value='month'>Monat</Radio.Button>
+                            <Radio.Button value='year'>Jahr</Radio.Button>
                           </Radio.Group>
                         </Col>
                       </Row>
                     </div>
-                  );
+                  )
                 }}
                 cellRender={(date, info) => {
                   switch (info?.type) {
-                    case "date": {
+                    case 'date': {
                       const attendences = AttendenceCollection.find({
-                        ...(selected !== "all" ? { type: selected } : {}),
+                        ...(selected !== 'all' ? { type: selected } : {}),
                         $and: [
-                          { date: { $gte: date.startOf("day").toDate() } },
-                          { date: { $lte: date.endOf("day").toDate() } },
+                          { date: { $gte: date.startOf('day').toDate() } },
+                          { date: { $lte: date.endOf('day').toDate() } },
                         ],
                       }).map((attendence) => {
                         return (
                           <Col
                             span={24}
                             key={attendence._id}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: 'pointer' }}
                             onClick={(e) => {
-                              e.stopPropagation();
-                              e.preventDefault();
-                              setOpenAttendenceUpdateModal(true);
+                              e.stopPropagation()
+                              e.preventDefault()
+                              setOpenAttendenceUpdateModal(true)
                               setRowSelection({
                                 selectedRowKeys: [attendence._id],
                                 selectedRows: [attendence],
-                              });
+                              })
                             }}
                           >
                             {attendence.title ||
-                              (attendence.type === "mission"
-                                ? "Mission"
-                                : attendence.type === "training"
-                                ? "Training"
+                              (attendence.type === 'mission'
+                                ? 'Mission'
+                                : attendence.type === 'training'
+                                ? 'Training'
                                 : attendence.type)}
-                            : {dayjs(attendence.date).format("HH:mm")}
+                            : {dayjs(attendence.date).format('HH:mm')}
                           </Col>
-                        );
-                      });
+                        )
+                      })
                       return (
-                        <Row gutter={[4, 4]} style={{ width: "100%" }}>
+                        <Row
+                          gutter={[4, 4]}
+                          style={{ width: '100%' }}
+                        >
                           {attendences}
                         </Row>
-                      );
+                      )
                     }
-                    case "month": {
+                    case 'month': {
                       const attendences = AttendenceCollection.find({
-                        ...(selected !== "all" ? { type: selected } : {}),
+                        ...(selected !== 'all' ? { type: selected } : {}),
                         $and: [
-                          { date: { $gte: date.startOf("week").toDate() } },
-                          { date: { $lte: date.endOf("week").toDate() } },
+                          { date: { $gte: date.startOf('week').toDate() } },
+                          { date: { $lte: date.endOf('week').toDate() } },
                         ],
                       }).map((attendence) => {
                         return (
                           <Col
                             span={24}
                             key={attendence._id}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: 'pointer' }}
                             onClick={(e) => {
-                              e.stopPropagation();
-                              e.preventDefault();
-                              setOpenAttendenceUpdateModal(true);
+                              e.stopPropagation()
+                              e.preventDefault()
+                              setOpenAttendenceUpdateModal(true)
                               setRowSelection({
                                 selectedRowKeys: [attendence._id],
                                 selectedRows: [attendence],
-                              });
+                              })
                             }}
                           >
                             {attendence.title ||
-                              (attendence.type === "mission"
-                                ? "Mission"
-                                : attendence.type === "training"
-                                ? "Training"
+                              (attendence.type === 'mission'
+                                ? 'Mission'
+                                : attendence.type === 'training'
+                                ? 'Training'
                                 : attendence.type)}
-                            :{" "}
-                            {dayjs(attendence.date).format("DD.MM.YYYY HH:mm")}
+                            : {dayjs(attendence.date).format('DD.MM.YYYY HH:mm')}
                           </Col>
-                        );
-                      });
+                        )
+                      })
                       return (
-                        <Row gutter={[4, 4]} style={{ width: "100%" }}>
+                        <Row
+                          gutter={[4, 4]}
+                          style={{ width: '100%' }}
+                        >
                           {attendences}
                         </Row>
-                      );
+                      )
                     }
                     default:
-                      break;
+                      break
                   }
                 }}
               />
             ),
           },
           {
-            key: "2",
-            label: "Tabelle",
+            key: '2',
+            label: 'Tabelle',
             children: (
               <Row>
                 {window.innerWidth > 700 && (
                   <Col span={24}>
-                    <Row style={{ padding: "0.5rem" }} gutter={16}>
+                    <Row
+                      style={{ padding: '0.5rem' }}
+                      gutter={16}
+                    >
                       <Col>
                         <Statistic
                           title={
-                            selected === "mission"
-                              ? "Missionen"
-                              : selected === "trainings"
-                              ? "Trainings"
-                              : "Einsätze"
+                            selected === 'mission' ? 'Missionen' : selected === 'trainings' ? 'Trainings' : 'Einsätze'
                           }
                           value={attendences?.length || 0}
                         />
                       </Col>
                       <Col>
                         <Statistic
-                          title="Durchschnittliche Teilnehmerzahl"
+                          title='Durchschnittliche Teilnehmerzahl'
                           value={getAverageParticipants()}
                         />
                       </Col>
@@ -384,15 +380,18 @@ const AttendenceComponent = () => {
                     title={() => (
                       <Row
                         gutter={[16, 16]}
-                        justify="space-between"
-                        align="middle"
+                        justify='space-between'
+                        align='middle'
                       >
-                        <Col flex="auto">
-                          <Row gutter={[16, 16]} align="middle">
+                        <Col flex='auto'>
+                          <Row
+                            gutter={[16, 16]}
+                            align='middle'
+                          >
                             <Col>
                               <span
                                 style={{
-                                  margin: "0 1.5rem 0 0",
+                                  margin: '0 1.5rem 0 0',
                                   padding: 0,
                                   fontSize: 24,
                                   fontFamily: "'Bebas Neue', sans-serif",
@@ -410,18 +409,15 @@ const AttendenceComponent = () => {
                             </Col>
                           </Row>
                         </Col>
-                        {rowSelection?.selectedRowKeys?.length > 0 &&
-                          securityClearance > 3 && (
-                            <Col>
-                              <Button onClick={handleAddPoints}>
-                                Punkte vergeben
-                              </Button>
-                            </Col>
-                          )}
+                        {rowSelection?.selectedRowKeys?.length > 0 && securityClearance > 3 && (
+                          <Col>
+                            <Button onClick={handleAddPoints}>Punkte vergeben</Button>
+                          </Col>
+                        )}
                         {securityClearance > 2 && (
                           <Col>
                             <Dropdown.Button
-                              type="primary"
+                              type='primary'
                               onClick={() => setOpenAttendenceCreateModal(true)}
                               menu={{
                                 items,
@@ -440,29 +436,26 @@ const AttendenceComponent = () => {
                         ? {
                             pageSize: 7,
                             responsive: true,
-                            showTotal: () => (
-                              <span>{`Insgegsamt: ${data.length} Einsätze`}</span>
-                            ),
+                            showTotal: () => <span>{`Insgegsamt: ${data.length} Einsätze`}</span>,
                             showSizeChanger: false,
                           }
                         : false
                     }
                     loading={!data?.length == null}
                     style={{
-                      padding: "0.5rem",
+                      padding: '0.5rem',
                     }}
                     rowSelection={
                       securityClearance > 2
                         ? {
-                            type: "checkbox",
+                            type: 'checkbox',
                             onChange: (selectedRowKeys, selectedRows) => {
                               setRowSelection({
                                 selectedRows,
                                 selectedRowKeys,
-                              });
+                              })
                             },
-                            selectedRowKeys:
-                              rowSelection?.selectedRowKeys || [],
+                            selectedRowKeys: rowSelection?.selectedRowKeys || [],
                           }
                         : false
                     }
@@ -473,17 +466,17 @@ const AttendenceComponent = () => {
                             setRowSelection({
                               selectedRows: [record],
                               selectedRowKeys: [record.key],
-                            });
-                            setOpenAttendenceDisplayModal([record._id]);
+                            })
+                            setOpenAttendenceDisplayModal([record._id])
                           } else {
                             setRowSelection({
                               selectedRows: [record],
                               selectedRowKeys: [record.key],
-                            });
-                            setOpenAttendenceUpdateModal([record._id]);
+                            })
+                            setOpenAttendenceUpdateModal([record._id])
                           }
                         },
-                      };
+                      }
                     }}
                   />
                 </Col>
@@ -491,15 +484,18 @@ const AttendenceComponent = () => {
             ),
           },
           {
-            key: "3",
-            label: "Einsatzarten",
+            key: '3',
+            label: 'Einsatzarten',
             children: (
               <Row gutter={[16, 16]}>
                 {securityClearance > 1 && (
                   <Col span={24}>
-                    <Row justify="end">
+                    <Row justify='end'>
                       <Col>
-                        <Button type="primary" onClick={() => setOpen(true)}>
+                        <Button
+                          type='primary'
+                          onClick={() => setOpen(true)}
+                        >
                           <PlusOutlined /> Erstellen
                         </Button>
                       </Col>
@@ -523,17 +519,15 @@ const AttendenceComponent = () => {
                           securityClearance > 1
                             ? [
                                 <EditOutlined
-                                  key={item.key + "-edit"}
+                                  key={item.key + '-edit'}
                                   onClick={() => {
-                                    setTitle("Einsatzart bearbeiten");
-                                    setOpen(true);
-                                    setValue(
-                                      AttendenceTypeCollection.findOne(item.key)
-                                    );
+                                    setTitle('Einsatzart bearbeiten')
+                                    setOpen(true)
+                                    setValue(AttendenceTypeCollection.findOne(item.key))
                                   }}
                                 />,
                                 <DeleteOutlined
-                                  key={item.key + "-delete"}
+                                  key={item.key + '-delete'}
                                   onClick={() => setDeleteModal(item)}
                                 />,
                               ]
@@ -545,7 +539,7 @@ const AttendenceComponent = () => {
                         </Row>
                       </Card>
                     </Col>
-                  );
+                  )
                 })}
               </Row>
             ),
@@ -554,25 +548,19 @@ const AttendenceComponent = () => {
       />
       {deleteModal && (
         <Modal
-          title="Bist du dir sicher?"
-          okText="Löschen"
+          title='Bist du dir sicher?'
+          okText='Löschen'
           open={deleteModal}
           okButtonProps={{ danger: true }}
           onOk={() =>
-            Meteor.call(
-              "attendenceTypes.remove",
-              deleteModal.key,
-              (err, res) => {
-                if (!err) {
-                  setDeleteModal(false);
-                } else {
-                  console.error(err, res);
-                  message.error(
-                    "Etwas ist schief gelaufen, bitte versuche es erneut!"
-                  );
-                }
+            Meteor.call('attendenceTypes.remove', deleteModal.key, (err, res) => {
+              if (!err) {
+                setDeleteModal(false)
+              } else {
+                console.error(err, res)
+                message.error('Etwas ist schief gelaufen, bitte versuche es erneut!')
               }
-            )
+            })
           }
           onCancel={() => setDeleteModal(false)}
           closable
@@ -608,7 +596,7 @@ const AttendenceComponent = () => {
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default AttendenceComponent;
+export default AttendenceComponent
