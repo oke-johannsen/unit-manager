@@ -114,11 +114,11 @@ const SkillsComponent = () => {
                           value: 'all',
                         },
                         {
-                          label: 'Infanterie',
+                          label: 'Kommando',
                           value: 'infantry',
                         },
                         {
-                          label: 'Piloten',
+                          label: 'Luftwaffe',
                           value: 'pilot',
                         },
                       ]}

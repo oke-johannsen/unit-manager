@@ -156,15 +156,27 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
       label: 'Tier-2 Lehrgang',
       value: 'tier-2',
     },
+    {
+      label: 'Fliegerische Module',
+      value: 'flying',
+    },
+    {
+      label: 'Infanterische Module',
+      value: 'infantry',
+    },
+    {
+      label: 'Combat Ready Stufe',
+      value: 'crs',
+    },
   ]
 
   skillDesignationOptions = [
     {
-      label: 'Infanterie',
+      label: 'Kommando',
       value: 'infantry',
     },
     {
-      label: 'Piloten',
+      label: 'Luftwaffe',
       value: 'pilot',
     },
   ]

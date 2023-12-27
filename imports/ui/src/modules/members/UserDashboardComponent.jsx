@@ -22,13 +22,199 @@ const UserDashboardComponent = ({ userProp }) => {
   })
 
   const [designation, setDesignation] = useState('infantry')
-  const [skillOptions, setSkillOptions] = useState([])
-  const [tier2Options, setTier2Options] = useState([])
-  const [specialOptionsOptions, setSpecialOptionsOptions] = useState([])
-  const [tier1Options, setTier1Options] = useState([])
+  const [cardsArray, setCardsArray] = useState([])
+
+  const buildCardsArray = (skillOptions, tier2Options, specialOptionsOptions, tier1Options) => {
+    const newCardsArray = [
+      {
+        title: 'PERSONALDATEN',
+        children: (
+          <Row align='end'>
+            <Col span={12}>Name:</Col>
+            <Col span={12}>{user?.profile?.name || '-'}</Col>
+            <Col span={12}>Dienstgrad:</Col>
+            <Col span={12}>{user?.profile?.rank || '-'}</Col>
+            <Col span={12}>Tier-Stufe:</Col>
+            <Col span={12}>{user?.profile?.tier || '-'}</Col>
+            <Col span={12}>Trupp:</Col>
+            <Col span={12}>
+              {SquadCollection?.findOne(user?.profile?.squad)?.squadName || 'Keinen Trupp ausgewählt!'}
+            </Col>
+          </Row>
+        ),
+      },
+      {
+        title: 'ANWESENHEIT',
+        children: (
+          <Row align='end'>
+            <Col span={12}>Einsätze:</Col>
+            <Col span={12}>{operations?.length || '0'}</Col>
+            <Col span={12}>Letzter Einsatz:</Col>
+            <Col span={12}>
+              {operations?.length ? dayjs(operations[0].date).format('DD.MM.YYYY') : 'Noch keine Missionen absolviert!'}
+            </Col>
+            <Col span={12}>Trainings:</Col>
+            <Col span={12}>{trainings?.length || '0'}</Col>
+            <Col span={12}>Letztes Training:</Col>
+            <Col span={12}>
+              {trainings?.length ? dayjs(trainings[0].date).format('DD.MM.YYYY') : 'Noch keine Trainings absolviert!'}
+            </Col>
+          </Row>
+        ),
+      },
+      {
+        title: 'BEFÖRDERUNGEN',
+        children: (
+          <Row align='end'>
+            <Col span={12}>Letzte Beförderung:</Col>
+            <Col span={12}>
+              {user?.profile?.promotionHistory?.length
+                ? dayjs(user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1]).format(
+                    'DD.MM.YYYY'
+                  )
+                : 'Noch nicht befördert!'}
+            </Col>
+            <Col span={12}>Einsätze seitdem:</Col>
+            <Col span={12}>
+              {user?.profile?.promotionHistory?.length
+                ? AttendenceCollection?.find({
+                    date: {
+                      $gte: user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1],
+                    },
+                  }).count()
+                : AttendenceCollection?.find({ userIds: user._id }).count()}
+            </Col>
+          </Row>
+        ),
+      },
+      {
+        title: 'BELOHNUNGSPUNKTE',
+        children: <Statistic value={user?.profile?.points || 0} />,
+      },
+      {
+        title: designation === 'pilot' ? 'FLIEGERISCHE MODULE' : 'AUSBILDUNGEN',
+        children: (
+          <Row
+            justify='center'
+            align='middle'
+          >
+            {skillOptions?.length === 0 ? (
+              <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
+            ) : (
+              skillOptions?.map((option, index) => {
+                return (
+                  <Col
+                    span={24}
+                    key={'option' + option.label + '-' + index}
+                  >
+                    <Checkbox
+                      checked={option.value}
+                      style={{ cursor: 'not-allowed' }}
+                    >
+                      {option.label}
+                    </Checkbox>
+                  </Col>
+                )
+              })
+            )}
+          </Row>
+        ),
+      },
+      {
+        title: designation === 'pilot' ? 'INFANTERISCHE MODULE' : 'TIER-2 LEHRGÄNGE',
+        children: (
+          <Row
+            justify='center'
+            align='middle'
+          >
+            {tier2Options?.length === 0 ? (
+              <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
+            ) : (
+              tier2Options?.map((option, index) => {
+                return (
+                  <Col
+                    span={24}
+                    key={'option' + option.label + '-' + index}
+                  >
+                    <Checkbox
+                      checked={option.value}
+                      style={{ cursor: 'not-allowed' }}
+                    >
+                      {option.label}
+                    </Checkbox>
+                  </Col>
+                )
+              })
+            )}
+          </Row>
+        ),
+      },
+      {
+        title: designation === 'pilot' ? 'AUSBILDUNGEN' : 'SPEZIALLEHRGÄNGE',
+        children: (
+          <Row
+            justify='center'
+            align='middle'
+          >
+            {specialOptionsOptions?.length === 0 ? (
+              <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
+            ) : (
+              specialOptionsOptions?.map((option, index) => {
+                return (
+                  <Col
+                    span={24}
+                    key={'option' + option.label + '-' + index}
+                  >
+                    <Checkbox
+                      checked={option.value}
+                      style={{ cursor: 'not-allowed' }}
+                    >
+                      {option.label}
+                    </Checkbox>
+                  </Col>
+                )
+              })
+            )}
+          </Row>
+        ),
+      },
+      {
+        title: designation === 'pilot' ? 'COMBAT READY STUFE' : 'TIER-1 LEHRGÄNGE',
+        children: (
+          <Row
+            justify='center'
+            align='middle'
+          >
+            {tier1Options?.length === 0 ? (
+              <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
+            ) : (
+              tier1Options?.map((option, index) => {
+                return (
+                  <Col
+                    span={24}
+                    key={'option' + option.label + '-' + index}
+                  >
+                    <Checkbox
+                      checked={option.value}
+                      style={{ cursor: 'not-allowed' }}
+                    >
+                      {option.label}
+                    </Checkbox>
+                  </Col>
+                )
+              })
+            )}
+          </Row>
+        ),
+      },
+    ]
+    return newCardsArray
+  }
 
   const updateOptions = () => {
-    const newSkillOptions = SkillsCollection?.find({ type: 'skill', designation: designation }).map((skill) => {
+    const isPilot = designation === 'pilot'
+    let type = isPilot ? 'flying' : 'skill'
+    const newSkillOptions = SkillsCollection?.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => {
         return userSkill === skill._id
       })
@@ -39,7 +225,8 @@ const UserDashboardComponent = ({ userProp }) => {
       }
     })
 
-    const newTier2Options = SkillsCollection?.find({ type: 'tier-2', designation: designation }).map((skill) => {
+    type = isPilot ? 'infantry' : 'tier-2'
+    const newTier2Options = SkillsCollection?.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => {
         return userSkill === skill._id
       })
@@ -50,18 +237,8 @@ const UserDashboardComponent = ({ userProp }) => {
       }
     })
 
-    const newSpecialOptionsOptions = SkillsCollection?.find({ type: 'special', designation: designation }).map(
-      (skill) => {
-        const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
-        return {
-          key: skill._id,
-          value: index !== -1,
-          label: skill.name,
-        }
-      }
-    )
-
-    const newTier1Options = SkillsCollection?.find({ type: 'tier-1', designation: designation }).map((skill) => {
+    type = isPilot ? 'skills' : 'special'
+    const newSpecialOptionsOptions = SkillsCollection?.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
       return {
         key: skill._id,
@@ -69,201 +246,52 @@ const UserDashboardComponent = ({ userProp }) => {
         label: skill.name,
       }
     })
-    setSkillOptions(newSkillOptions)
-    setTier2Options(newTier2Options)
-    setSpecialOptionsOptions(newSpecialOptionsOptions)
-    setTier1Options(newTier1Options)
+
+    type = isPilot ? 'crs' : 'tier-1'
+    const newTier1Options = SkillsCollection?.find({ type, designation }).map((skill) => {
+      const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
+      return {
+        key: skill._id,
+        value: index !== -1,
+        label: skill.name,
+      }
+    })
+    setCardsArray(buildCardsArray(newSkillOptions, newTier2Options, newSpecialOptionsOptions, newTier1Options))
   }
 
   useEffect(() => {
     updateOptions(designation)
   }, [designation])
 
-  const cardsArray = [
-    {
-      title: 'PERSONALDATEN',
-      children: (
-        <Row align='end'>
-          <Col span={12}>Name:</Col>
-          <Col span={12}>{user?.profile?.name || '-'}</Col>
-          <Col span={12}>Dienstgrad:</Col>
-          <Col span={12}>{user?.profile?.rank || '-'}</Col>
-          <Col span={12}>Tier-Stufe:</Col>
-          <Col span={12}>{user?.profile?.tier || '-'}</Col>
-          <Col span={12}>Trupp:</Col>
-          <Col span={12}>{SquadCollection?.findOne(user?.profile?.squad)?.squadName || 'Keinen Trupp ausgewählt!'}</Col>
-        </Row>
-      ),
-    },
-    {
-      title: 'ANWESENHEIT',
-      children: (
-        <Row align='end'>
-          <Col span={12}>Einsätze:</Col>
-          <Col span={12}>{operations?.length || '0'}</Col>
-          <Col span={12}>Letzter Einsatz:</Col>
-          <Col span={12}>
-            {operations?.length ? dayjs(operations[0].date).format('DD.MM.YYYY') : 'Noch keine Missionen absolviert!'}
-          </Col>
-          <Col span={12}>Trainings:</Col>
-          <Col span={12}>{trainings?.length || '0'}</Col>
-          <Col span={12}>Letztes Training:</Col>
-          <Col span={12}>
-            {trainings?.length ? dayjs(trainings[0].date).format('DD.MM.YYYY') : 'Noch keine Trainings absolviert!'}
-          </Col>
-        </Row>
-      ),
-    },
-    {
-      title: 'BEFÖRDERUNGEN',
-      children: (
-        <Row align='end'>
-          <Col span={12}>Letzte Beförderung:</Col>
-          <Col span={12}>
-            {user?.profile?.promotionHistory?.length
-              ? dayjs(user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1]).format('DD.MM.YYYY')
-              : 'Noch nicht befördert!'}
-          </Col>
-          <Col span={12}>Einsätze seitdem:</Col>
-          <Col span={12}>
-            {user?.profile?.promotionHistory?.length
-              ? AttendenceCollection?.find({
-                  date: {
-                    $gte: user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1],
-                  },
-                }).count()
-              : AttendenceCollection?.find({ userIds: user._id }).count()}
-          </Col>
-        </Row>
-      ),
-    },
-    {
-      title: 'BELOHNUNGSPUNKTE',
-      children: <Statistic value={user?.profile?.points || 0} />,
-    },
-    {
-      title: 'AUSBILDUNGEN',
-      children: (
-        <Row
-          justify='center'
-          align='middle'
-        >
-          {skillOptions?.length === 0 ? (
-            <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
-          ) : (
-            skillOptions?.map((option, index) => {
-              return (
-                <Col
-                  span={24}
-                  key={'option' + option.label + '-' + index}
-                >
-                  <Checkbox
-                    checked={option.value}
-                    style={{ cursor: 'not-allowed' }}
-                  >
-                    {option.label}
-                  </Checkbox>
-                </Col>
-              )
-            })
-          )}
-        </Row>
-      ),
-    },
-    {
-      title: 'TIER-2 LEHRGÄNGE',
-      children: (
-        <Row
-          justify='center'
-          align='middle'
-        >
-          {tier2Options?.length === 0 ? (
-            <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
-          ) : (
-            tier2Options?.map((option, index) => {
-              return (
-                <Col
-                  span={24}
-                  key={'option' + option.label + '-' + index}
-                >
-                  <Checkbox
-                    checked={option.value}
-                    style={{ cursor: 'not-allowed' }}
-                  >
-                    {option.label}
-                  </Checkbox>
-                </Col>
-              )
-            })
-          )}
-        </Row>
-      ),
-    },
-    {
-      title: 'SPEZIALLEHRGÄNGE',
-      children: (
-        <Row
-          justify='center'
-          align='middle'
-        >
-          {specialOptionsOptions?.length === 0 ? (
-            <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
-          ) : (
-            specialOptionsOptions?.map((option, index) => {
-              return (
-                <Col
-                  span={24}
-                  key={'option' + option.label + '-' + index}
-                >
-                  <Checkbox
-                    checked={option.value}
-                    style={{ cursor: 'not-allowed' }}
-                  >
-                    {option.label}
-                  </Checkbox>
-                </Col>
-              )
-            })
-          )}
-        </Row>
-      ),
-    },
-    {
-      title: 'TIER-1 LEHRGÄNGE',
-      children: (
-        <Row
-          justify='center'
-          align='middle'
-        >
-          {tier1Options?.length === 0 ? (
-            <Empty description='Keine Ausbildungen für diese Ausbildungsart gefunden.' />
-          ) : (
-            tier1Options?.map((option, index) => {
-              return (
-                <Col
-                  span={24}
-                  key={'option' + option.label + '-' + index}
-                >
-                  <Checkbox
-                    checked={option.value}
-                    style={{ cursor: 'not-allowed' }}
-                  >
-                    {option.label}
-                  </Checkbox>
-                </Col>
-              )
-            })
-          )}
-        </Row>
-      ),
-    },
-  ]
-
   return (
     <Row
       justify={!ready ? 'center' : 'start'}
       align={!ready ? 'middle' : 'stretch'}
     >
+      <Col span={24}>
+        <Row
+          justify='end'
+          align='middle'
+        >
+          <Col
+            lg={6}
+            md={12}
+            sm={24}
+            xs={24}
+            style={{ paddingInline: '0.5rem' }}
+          >
+            <Segmented
+              options={[
+                { label: 'Infanterie', value: 'infantry' },
+                { label: 'Pilot', value: 'pilot' },
+              ]}
+              onChange={(value) => setDesignation(value)}
+              value={designation}
+              block
+            />
+          </Col>
+        </Row>
+      </Col>
       {!ready ? (
         <Spin spinning />
       ) : (
@@ -281,44 +309,7 @@ const UserDashboardComponent = ({ userProp }) => {
                 className={`dashboard-card ${
                   index === 0 || index === 2 || index === 5 || index === 7 ? ' even' : ' odd'
                 }`}
-                title={
-                  index > 3 ? (
-                    <Row
-                      justify='space-between'
-                      align='middle'
-                    >
-                      <Col
-                        lg={12}
-                        xs={24}
-                        style={{ fontSize: 18 }}
-                      >
-                        {card.title}
-                      </Col>
-                      <Col
-                        lg={12}
-                        xs={24}
-                      >
-                        <Segmented
-                          block
-                          onChange={(value) => setDesignation(value)}
-                          value={designation}
-                          options={[
-                            {
-                              label: 'Infanterie',
-                              value: 'infantry',
-                            },
-                            {
-                              label: 'Piloten',
-                              value: 'pilot',
-                            },
-                          ]}
-                        />
-                      </Col>
-                    </Row>
-                  ) : (
-                    card.title
-                  )
-                }
+                title={card.title}
                 children={card.children}
                 bordered={false}
                 style={{ height: '100%' }}
