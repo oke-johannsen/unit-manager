@@ -10,7 +10,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@babel/runtime": "^7.22.15",
-    "antd": "^5.9.1",
+    "antd": "^5.12.5",
     "dayjs": "^1.11.10",
     "meteor-node-stubs": "^1.2.5",
     "mup": "^1.5.10",
