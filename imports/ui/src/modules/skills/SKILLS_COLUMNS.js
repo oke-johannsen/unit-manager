@@ -1,85 +1,83 @@
-import { Button, Tooltip } from "antd";
-import { Meteor } from "meteor/meteor";
-import React from "react";
+import { Button, Tooltip } from 'antd'
+import { Meteor } from 'meteor/meteor'
+import React from 'react'
 
 export const getTypeName = (type) => {
-  let displayName;
+  let displayName
   switch (type) {
-    case "skill":
-      displayName = "Ausbildung";
-      break;
-    case "tier-1":
-      displayName = "Tier-1 Lehrgang";
-      break;
-    case "tier-2":
-      displayName = "Tier-2 Lehrgang";
-      break;
-    case "special":
-      displayName = "Speziallehrgang";
-      break;
+    case 'skill':
+      displayName = 'Ausbildung'
+      break
+    case 'tier-1':
+      displayName = 'Tier-1 Lehrgang'
+      break
+    case 'tier-2':
+      displayName = 'Tier-2 Lehrgang'
+      break
+    case 'special':
+      displayName = 'Speziallehrgang'
+      break
     default:
-      displayName = "-";
-      break;
+      displayName = '-'
+      break
   }
-  return displayName;
-};
+  return displayName
+}
 
 export const SKILLS_COLUMNS = [
   {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
     sorter: (a, b) => a.name.localeCompare(b.name),
   },
   {
-    title: "Ausbilder",
-    dataIndex: "trainers",
-    key: "trainers",
+    title: 'Ausbilder',
+    dataIndex: 'trainers',
+    key: 'trainers',
     render: (trainers) => {
       return (
         <Tooltip
           title={trainers
             ?.map((trainer) => {
-              return Meteor.users.findOne(trainer)?.profile?.name || "-";
+              return Meteor.users.findOne(trainer)?.profile?.name || '-'
             })
-            .join(", ")}
+            .join(', ')}
         >
-          <span style={{ display: "block", width: "100%" }}>
-            {trainers?.length || 0}
-          </span>
+          <span style={{ display: 'block', width: '100%' }}>{trainers?.length || 0}</span>
         </Tooltip>
-      );
+      )
     },
     sorter: (a, b) => a.squadMember?.length - b.squadMember?.length,
   },
   {
-    title: "Link",
-    dataIndex: "link",
-    key: "link",
+    title: 'Link',
+    dataIndex: 'link',
+    key: 'link',
     render: (link) => {
       return link ? (
         <Button
-          type="link"
-          style={{ padding: 0 }}
+          type='primary'
+          style={{ paddingInline: '1rem' }}
           onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            window.open(link, "_blank");
+            e.stopPropagation()
+            e.preventDefault()
+            window.open(link, '_blank')
           }}
         >
-          Link
+          Zum Lehrgang
         </Button>
       ) : (
-        "-"
-      );
+        '-'
+      )
     },
   },
   {
-    title: "Ausbildungsart",
-    dataIndex: "type",
-    key: "type",
+    title: 'Ausbildungsart',
+    dataIndex: 'type',
+    key: 'type',
     render: (type) => getTypeName(type),
     sorter: (a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)),
-    defaultSortOrder: "ascend",
+    defaultSortOrder: 'ascend',
   },
-];
+]

@@ -1,93 +1,102 @@
-import React, { useState } from "react";
-import { Meteor } from "meteor/meteor";
-import { useTracker } from "meteor/react-meteor-data";
-import { Button, Col, Dropdown, Row, Spin, Table, message } from "antd";
-import { SKILLS_COLUMNS, getTypeName } from "./SKILLS_COLUMNS";
-import { SkillsCollection } from "../../../../api/SkillsApi";
-import SkillsModal from "./SkillsModal";
-import AddSkillModal from "./AddSkillModal";
+import React, { useState } from 'react'
+import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
+import { Button, Col, Dropdown, Row, Segmented, Spin, Table, message } from 'antd'
+import { SKILLS_COLUMNS, getTypeName } from './SKILLS_COLUMNS'
+import { SkillsCollection } from '../../../../api/SkillsApi'
+import SkillsModal from './SkillsModal'
+import AddSkillModal from './AddSkillModal'
 
 const SkillsComponent = () => {
+  const [type, setType] = useState('all')
   const { ready, skills } = useTracker(() => {
-    const sub = Meteor.subscribe("users");
-    const subSkills = Meteor.subscribe("skills");
-    const skills = SkillsCollection.find({})
+    const sub = Meteor.subscribe('users')
+    const subSkills = Meteor.subscribe('skills')
+    skillsFilter = type === 'all' ? {} : { designation: type }
+    const skills = SkillsCollection.find({ ...skillsFilter })
       .map((item) => {
         return {
           ...item,
           key: item?._id,
-        };
+        }
       })
-      .sort((a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)));
+      .sort((a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)))
     return {
       ready: sub.ready() && subSkills.ready(),
       skills,
-    };
-  }, []);
-  const [rowSelection, setRowSelection] = useState(null);
-  const [open, setOpen] = useState(false);
-  const [addContextOpen, setAddContextOpen] = useState(false);
-  const [formDisabled, setFormDisabled] = useState(false);
-  const [isDelete, setIsDelete] = useState(false);
-  const [title, setTitle] = useState("Ausbildung");
-  const errorText = "Bitte wähle zuerst ein oder mehr Ausbildungen aus!";
-  const securityClearance = Number(Meteor.user()?.profile?.securityClearance);
+    }
+  }, [type])
+  const [rowSelection, setRowSelection] = useState(null)
+  const [open, setOpen] = useState(false)
+  const [addContextOpen, setAddContextOpen] = useState(false)
+  const [formDisabled, setFormDisabled] = useState(false)
+  const [isDelete, setIsDelete] = useState(false)
+  const [title, setTitle] = useState('Ausbildung')
+  const errorText = 'Bitte wähle zuerst ein oder mehr Ausbildungen aus!'
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance)
   const items = [
     {
-      key: "read",
-      label: "Anzeigen",
+      key: 'read',
+      label: 'Anzeigen',
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setFormDisabled(true);
-          setOpen(true);
-          setIsDelete(false);
-          setTitle("Ausbildungen anzeigen");
+          setFormDisabled(true)
+          setOpen(true)
+          setIsDelete(false)
+          setTitle('Ausbildungen anzeigen')
         } else {
-          message.warning(errorText);
+          message.warning(errorText)
         }
       },
     },
     securityClearance > 3 && {
-      key: "edit",
-      label: "Bearbeiten",
+      key: 'edit',
+      label: 'Bearbeiten',
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setFormDisabled(false);
-          setOpen(true);
-          setIsDelete(false);
-          setTitle("Ausbildungen bearbeiten");
+          setFormDisabled(false)
+          setOpen(true)
+          setIsDelete(false)
+          setTitle('Ausbildungen bearbeiten')
         } else {
-          message.warning(errorText);
+          message.warning(errorText)
         }
       },
     },
     securityClearance > 3 && {
-      key: "delete",
-      label: "Löschen",
+      key: 'delete',
+      label: 'Löschen',
       onClick: () => {
         if (rowSelection && rowSelection?.selectedRowKeys?.length) {
-          setFormDisabled(false);
-          setIsDelete(true);
-          setOpen(true);
-          setTitle("Ausbildungen löschen");
+          setFormDisabled(false)
+          setIsDelete(true)
+          setOpen(true)
+          setTitle('Ausbildungen löschen')
         } else {
-          message.warning(errorText);
+          message.warning(errorText)
         }
       },
     },
-  ];
+  ]
   return (
-    <Row align="middle">
+    <Row align='middle'>
       <Col span={24}>
         <Spin spinning={!ready}>
           <Table
             scroll={{ x: 150 }}
             title={() => (
-              <Row gutter={16} justify="space-between" align="middle">
-                <Col flex="auto">
+              <Row
+                gutter={16}
+                justify='space-between'
+                align='middle'
+              >
+                <Col
+                  flex='auto'
+                  style={{ display: 'flex', alignItems: 'center' }}
+                >
                   <span
                     style={{
-                      margin: "0 1.5rem 0 0",
+                      margin: '0 1.5rem 0 0',
                       padding: 0,
                       fontSize: 24,
                       fontFamily: "'Bebas Neue', sans-serif",
@@ -95,29 +104,47 @@ const SkillsComponent = () => {
                   >
                     Ausbildungen
                   </span>
+                  <span>
+                    <Segmented
+                      onChange={(value) => setType(value)}
+                      value={type}
+                      options={[
+                        {
+                          label: 'Alle',
+                          value: 'all',
+                        },
+                        {
+                          label: 'Infanterie',
+                          value: 'infantry',
+                        },
+                        {
+                          label: 'Piloten',
+                          value: 'pilot',
+                        },
+                      ]}
+                    />
+                  </span>
                 </Col>
                 <Col>
                   <Row gutter={8}>
                     {securityClearance > 1 && (
                       <Col>
-                        <Button onClick={() => setAddContextOpen(true)}>
-                          Ausbildung zuweisen
-                        </Button>
+                        <Button onClick={() => setAddContextOpen(true)}>Ausbildung zuweisen</Button>
                       </Col>
                     )}
                     {securityClearance > 3 && (
                       <Col>
                         <Dropdown.Button
-                          type="primary"
+                          type='primary'
                           onClick={() => {
-                            setFormDisabled(false);
-                            setIsDelete(false);
-                            setOpen(true);
-                            setTitle("Ausbildung erstellen");
+                            setFormDisabled(false)
+                            setIsDelete(false)
+                            setOpen(true)
+                            setTitle('Ausbildung erstellen')
                             setRowSelection({
                               selectedRows: [],
                               selectedRowKeys: [],
-                            });
+                            })
                           }}
                           menu={{
                             items,
@@ -131,7 +158,7 @@ const SkillsComponent = () => {
                 </Col>
               </Row>
             )}
-            style={{ padding: "0.5rem" }}
+            style={{ padding: '0.5rem' }}
             dataSource={skills}
             columns={SKILLS_COLUMNS}
             pagination={
@@ -139,9 +166,7 @@ const SkillsComponent = () => {
                 ? {
                     pageSize: 7,
                     responsive: true,
-                    showTotal: () => (
-                      <span>{`Insgegsamt: ${skills.length} Ausbildungen`}</span>
-                    ),
+                    showTotal: () => <span>{`Insgegsamt: ${skills.length} Ausbildungen`}</span>,
                     showSizeChanger: false,
                   }
                 : false
@@ -149,9 +174,9 @@ const SkillsComponent = () => {
             rowSelection={
               securityClearance > 3
                 ? {
-                    type: "checkbox",
+                    type: 'checkbox',
                     onChange: (selectedRowKeys, selectedRows) => {
-                      setRowSelection({ selectedRows, selectedRowKeys });
+                      setRowSelection({ selectedRows, selectedRowKeys })
                     },
                     selectedRowKeys: rowSelection?.selectedRowKeys || [],
                   }
@@ -164,26 +189,26 @@ const SkillsComponent = () => {
                     setRowSelection({
                       selectedRows: [record],
                       selectedRowKeys: [record.key],
-                    });
-                    setTitle("Squad anzeigen");
-                    setFormDisabled(true);
-                    setOpen(true);
+                    })
+                    setTitle('Squad anzeigen')
+                    setFormDisabled(true)
+                    setOpen(true)
                   } else {
                     setRowSelection({
                       selectedRows: [record],
                       selectedRowKeys: [record.key],
-                    });
-                    setTitle("Squad bearbeiten");
-                    setOpen(true);
+                    })
+                    setTitle('Squad bearbeiten')
+                    setOpen(true)
                   }
                 },
-              };
+              }
             }}
           />
         </Spin>
       </Col>
       <AddSkillModal
-        title="Ausbildung hinzufügen"
+        title='Ausbildung hinzufügen'
         open={addContextOpen}
         setOpen={setAddContextOpen}
       />
@@ -196,7 +221,7 @@ const SkillsComponent = () => {
         isDelete={isDelete}
       />
     </Row>
-  );
-};
+  )
+}
 
-export default SkillsComponent;
+export default SkillsComponent
