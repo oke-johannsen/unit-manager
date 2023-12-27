@@ -114,26 +114,22 @@ const SidebarComponent = ({ setView }) => {
           },
         ]
       : []),
-    ...(Number(Meteor.user()?.profile?.securityClearance) > 1
-      ? [
-          {
-            view: 'skills',
-            icon: <SKILLS_SVG style={{ fontSize: 48, color: 'inherit' }} />,
-            text: (
-              <span
-                style={{
-                  fontSize: 18,
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  color: 'inherit',
-                }}
-              >
-                AUSBILDUNGEN
-              </span>
-            ),
-            color: '#b32f2f',
-          },
-        ]
-      : []),
+    {
+      view: 'skills',
+      icon: <SKILLS_SVG style={{ fontSize: 48, color: 'inherit' }} />,
+      text: (
+        <span
+          style={{
+            fontSize: 18,
+            fontFamily: "'Bebas Neue', sans-serif",
+            color: 'inherit',
+          }}
+        >
+          AUSBILDUNGEN
+        </span>
+      ),
+      color: '#b32f2f',
+    },
     ...(Number(Meteor.user()?.profile?.securityClearance) > 3
       ? [
           {
