@@ -1,14 +1,15 @@
-import { Modal, Tabs, message } from "antd";
-import React, { useState } from "react";
-import UserForm from "./UserForm";
-import { Meteor } from "meteor/meteor";
-import dayjs from "dayjs";
+import { Modal, Tabs, message } from 'antd'
+import React, { useState } from 'react'
+import UserForm from './UserForm'
+import { Meteor } from 'meteor/meteor'
+import dayjs from 'dayjs'
 
 const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
-  const [forms, setForms] = useState({});
+  const [forms, setForms] = useState({})
   const submitForms = () => {
+    let error = false
     Object.values(forms).forEach((values, index) => {
-      const user = Meteor.users.findOne(Object.keys(forms)[index]);
+      const user = Meteor.users.findOne(Object.keys(forms)[index])
       if (user) {
         const profileData = {
           ...user.profile,
@@ -22,33 +23,37 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
           points: values.points,
           inactivityPoints: values.inactivityPoints,
           skills: values.skills,
-        };
+        }
         const payload = {
           ...user,
           username: values.username || user.username,
           createdAt: dayjs(values.createdAt).toDate(),
           profile: profileData,
           _id: Object.keys(forms)[index],
-        };
+        }
         Meteor.call(`users.update`, payload, (err, res) => {
           if (!err) {
-            message.success(`Mitglied erfolgreich aktualisiert!`);
-            setOpenUserUpdateModal(false);
+            setOpenUserUpdateModal(false)
           } else {
-            console.error(`Error in users.update`, err, res);
-            message.error(`Aktualisieren von Mitglied fehlgeschlagen!`);
+            error = false
+            console.error(`Error in users.update`, err, res)
           }
-        });
+        })
       }
-    });
-  };
+    })
+    if (!error) {
+      message.success(`Mitglieder erfolgreich aktualisiert!`)
+    } else {
+      message.error(`Aktualisieren von Mitgliedern fehlgeschlagen!`)
+    }
+  }
   return (
     <Modal
-      title="Mitglied bearbeiten"
+      title='Mitglied bearbeiten'
       open={openUserUpdateModal}
       onCancel={() => setOpenUserUpdateModal(false)}
       footer={false}
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       {openUserUpdateModal?.length > 1 ? (
@@ -68,7 +73,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
                     submitForms={submitForms}
                   />
                 ),
-              };
+              }
             })
           }
         />
@@ -82,7 +87,7 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
         />
       )}
     </Modal>
-  );
-};
+  )
+}
 
-export default UserUpdateModal;
+export default UserUpdateModal

@@ -1,10 +1,10 @@
-import { Col, List, Modal, Row, Tabs, message } from "antd";
-import React, { useState } from "react";
-import AttendenceForm from "./AttendenceForm";
-import dayjs from "dayjs";
-import { Meteor } from "meteor/meteor";
-import { AttendenceCollection } from "../../../../api/AttendenceApi";
-import { useTracker } from "meteor/react-meteor-data";
+import { Col, List, Modal, Row, Tabs, message } from 'antd'
+import React, { useState } from 'react'
+import AttendenceForm from './AttendenceForm'
+import dayjs from 'dayjs'
+import { Meteor } from 'meteor/meteor'
+import { AttendenceCollection } from '../../../../api/AttendenceApi'
+import { useTracker } from 'meteor/react-meteor-data'
 
 const AttendenceModal = ({
   openAttendenceCreateModal,
@@ -16,90 +16,91 @@ const AttendenceModal = ({
   setOpenAttendenceDisplayModal,
   setOpenAttendenceUpdateModal,
   rowSelection,
+  date,
+  attendenceTypeOptions,
 }) => {
   const modalType = () => {
-    let type;
+    let type
     if (openAttendenceCreateModal) {
-      type = "insert";
+      type = 'insert'
     } else if (openAttendenceDeleteModal) {
-      type = "delete";
+      type = 'delete'
     } else if (openAttendenceDisplayModal) {
-      type = "display";
+      type = 'display'
     } else if (openAttendenceUpdateModal) {
-      type = "update";
+      type = 'update'
     } else {
-      type = "";
+      type = ''
     }
-    return type;
-  };
+    return type
+  }
   const defaultFormValues = {
-    date: dayjs(),
-    type: "mission",
+    date: date || dayjs(),
+    type: 'mission',
     userIds: [],
     promotedMembers: [],
-  };
-  const [form, setForm] = useState();
+  }
+  const [form, setForm] = useState()
   const { type, initialFormState } = useTracker(() => {
-    const type = modalType();
+    const type = modalType()
     const initialFormState =
-      type === "insert"
+      type === 'insert'
         ? defaultFormValues
         : rowSelection?.selectedRowKeys?.map((id) => {
-            const attendence = AttendenceCollection.findOne(id);
+            const attendence = AttendenceCollection.findOne(id)
             return {
               _id: attendence?._id,
               date: dayjs(attendence?.date),
               type: attendence?.type,
               userIds: attendence?.userIds,
               promotedMembers: attendence?.promotedMembers,
-            };
-          });
-    setForm(initialFormState);
+              title: attendence.title,
+            }
+          })
+    setForm(initialFormState)
     return {
       type,
       initialFormState,
-    };
+    }
   }, [
     openAttendenceCreateModal,
     openAttendenceDeleteModal,
     openAttendenceDisplayModal,
     openAttendenceUpdateModal,
     rowSelection,
-  ]);
+  ])
   const getTitle = () => {
-    let title;
+    let title
     switch (type) {
-      case "insert":
-        title = "Einsatz anlegen";
-        break;
-      case "update":
-        title = "Einsatz bearbeiten";
-        break;
-      case "delete":
-        title = "Einsatz löschen";
-        break;
-      case "display":
-        title = "Einsatz anzeigen";
-        break;
+      case 'insert':
+        title = 'Einsatz anlegen'
+        break
+      case 'update':
+        title = 'Einsatz bearbeiten'
+        break
+      case 'delete':
+        title = 'Einsatz löschen'
+        break
+      case 'display':
+        title = 'Einsatz anzeigen'
+        break
       default:
-        title = "";
-        break;
+        title = ''
+        break
     }
-    return title;
-  };
-  const [activeKey, setActiveKey] = useState(
-    form && form.length !== undefined && form[0]?._id
-  );
+    return title
+  }
+  const [activeKey, setActiveKey] = useState(form && form.length !== undefined && form[0]?._id)
   const dataOptions =
-    (type === "update" || type === "display") &&
+    (type === 'update' || type === 'display') &&
     form &&
     form.length !== undefined &&
     form?.map((item) => {
-      const attendence = AttendenceCollection.findOne(item._id);
-      const name = attendence.type === "mission" ? "Mission " : "Training ";
+      const attendence = AttendenceCollection.findOne(item._id)
+      const name = attendence.type === 'mission' ? 'Mission ' : 'Training '
       return {
         key: attendence?._id,
-        label: name + dayjs(attendence.date).format("DD.MM.YYYY"),
+        label: name + dayjs(attendence.date).format('DD.MM.YYYY'),
         children: (
           <AttendenceForm
             rowSelection={rowSelection}
@@ -107,67 +108,75 @@ const AttendenceModal = ({
             type={type}
             setForm={setForm}
             form={form}
-            disabled={type === "display"}
+            disabled={type === 'display'}
+            attendenceTypeOptions={attendenceTypeOptions}
           />
         ),
-      };
-    });
+      }
+    })
   const buildName = (id) => {
-    const user = Meteor.users.findOne(id);
-    return user?.profile?.name;
-  };
+    const user = Meteor.users.findOne(id)
+    return user?.profile?.name
+  }
   const getModalBody = () => {
-    let body;
+    let body
     switch (type) {
-      case "insert":
-        body = <AttendenceForm type={type} form={form} setForm={setForm} />;
-        break;
-      case "delete":
+      case 'insert':
+        body = (
+          <AttendenceForm
+            type={type}
+            form={form}
+            setForm={setForm}
+            attendenceTypeOptions={attendenceTypeOptions}
+          />
+        )
+        break
+      case 'delete':
         body = (
           <List
-            itemLayout="horizontal"
+            itemLayout='horizontal'
             dataSource={rowSelection?.selectedRowKeys}
             renderItem={(item) => {
-              const attendence = AttendenceCollection.findOne(item);
+              const attendence = AttendenceCollection.findOne(item)
               return (
                 <List.Item key={item}>
                   <List.Item.Meta
-                    title={`${
-                      attendence.type === "mission" ? "Mission" : "Training"
-                    }: ${dayjs(attendence.date).format("DD.MM.YYYY")}`}
+                    title={`${attendence.type === 'mission' ? 'Mission' : 'Training'}: ${dayjs(attendence.date).format(
+                      'DD.MM.YYYY'
+                    )}`}
                     description={
                       <Row>
                         {attendence.userIds.length > 0 && (
                           <Col span={24}>
-                            Teilnehmer:{" "}
+                            Teilnehmer:{' '}
                             {attendence.userIds
                               .map((item) => {
-                                return buildName(item);
+                                return buildName(item)
                               })
-                              .join(", ")}
+                              .join(', ')}
                           </Col>
                         )}
                         {attendence.promotedMembers.length > 0 && (
                           <Col span={24}>
-                            Befördert:{" "}
+                            Befördert:{' '}
                             {attendence.promotedMembers
                               .map((item) => {
-                                return buildName(item);
+                                return buildName(item)
                               })
-                              .join(", ")}
+                              .join(', ')}
                           </Col>
                         )}
                       </Row>
                     }
                   />
                 </List.Item>
-              );
+              )
             }}
           />
-        );
-        break;
-      case "update":
-      case "display":
+        )
+        break
+      case 'update':
+      case 'display':
         body = (
           <Tabs
             activeKey={activeKey}
@@ -175,46 +184,47 @@ const AttendenceModal = ({
             items={
               dataOptions &&
               dataOptions?.map((option) => {
-                return option;
+                return option
               })
             }
           />
-        );
-        break;
+        )
+        break
       default:
-        body = <></>;
-        break;
+        body = <></>
+        break
     }
-    return body;
-  };
+    return body
+  }
   const handleOk = () => {
     switch (type) {
-      case "insert":
+      case 'insert':
         Meteor.call(
-          "attendence.create",
+          'attendence.create',
           {
             ...form,
             date: form?.date.toDate(),
           },
           (err, res) => {
             if (!err) {
-              message.success("Einsatz erfolgreich angelegt!");
-              handleCancel();
+              message.success('Einsatz erfolgreich angelegt!')
+              handleCancel()
             } else {
-              message.error("Etwas ist schiefgelaufen!");
-              console.error("Error in attendence.create", err, res);
+              message.error('Etwas ist schiefgelaufen!')
+              console.error('Error in attendence.create', err, res)
             }
           }
-        );
-        break;
-      case "update":
+        )
+        break
+      case 'update':
         if (form && form.length !== undefined) {
+          let error = false
           form.forEach((item) => {
-            const attendence = AttendenceCollection.findOne(item._id);
+            const attendence = AttendenceCollection.findOne(item._id)
             if (attendence) {
-              const id = attendence._id;
+              const id = attendence._id
               Meteor.call(
-                "attendence.update",
+                'attendence.update',
                 id,
                 {
                   ...item,
@@ -222,73 +232,78 @@ const AttendenceModal = ({
                 },
                 (err, res) => {
                   if (err) {
-                    console.error("Error in attendence.update", err, res);
+                    error = true
+                    console.error('Error in attendence.update', err, res)
                   }
                 }
-              );
+              )
             }
-          });
-          message.success("Die ausgewählten Einsätze wurden aktualisiert!");
-          handleCancel();
+          })
+          if (!error) {
+            message.success('Die ausgewählten Einsätze wurden aktualisiert!')
+          } else {
+            message.error('Aktualisieren der ausgewählten Einsätze fehlgeschlagen!')
+          }
+          handleCancel()
         }
-        break;
-      case "delete":
+        break
+      case 'delete':
         rowSelection?.selectedRowKeys?.forEach((item) => {
-          Meteor.call("attendence.remove", item, (err, res) => {
+          Meteor.call('attendence.remove', item, (err, res) => {
             if (!err) {
-              handleCancel();
+              handleCancel()
             } else {
-              console.error("Error in attendence.remove", err, res);
+              console.error('Error in attendence.remove', err, res)
             }
-          });
-        });
-        message.success("Die ausgewählten Einsätze wurden gelöscht!");
-        break;
-      case "display":
-        handleCancel();
-        break;
+          })
+        })
+        message.success('Die ausgewählten Einsätze wurden gelöscht!')
+        break
+      case 'display':
+        handleCancel()
+        break
       default:
-        break;
+        break
     }
-  };
+  }
 
   const handleCancel = () => {
     if (openAttendenceDisplayModal) {
-      setOpenAttendenceDisplayModal(false);
+      setOpenAttendenceDisplayModal(false)
     }
     if (openAttendenceCreateModal) {
-      setOpenAttendenceCreateModal(false);
+      setOpenAttendenceCreateModal(false)
     }
     if (openAttendenceUpdateModal) {
-      setOpenAttendenceUpdateModal(false);
+      setOpenAttendenceUpdateModal(false)
     }
     if (openAttendenceDeleteModal) {
-      setOpenAttendenceDeleteModal(false);
+      setOpenAttendenceDeleteModal(false)
     }
-    setForm(defaultFormValues);
-  };
+    setForm(defaultFormValues)
+  }
 
   const getOkText = () => {
-    let okText;
+    let okText
     switch (type) {
-      case "insert":
-        okText = "Speichern";
-        break;
-      case "update":
-        okText = "Speichern";
-        break;
-      case "display":
-        okText = "Schließen";
-        break;
-      case "delete":
-        okText = "Löschen";
-        break;
+      case 'insert':
+        okText = 'Speichern'
+        break
+      case 'update':
+        okText = 'Speichern'
+        break
+      case 'display':
+        okText = 'Schließen'
+        break
+      case 'delete':
+        okText = 'Löschen'
+        break
       default:
-        okText = "OK";
-        break;
+        okText = 'OK'
+        break
     }
-    return okText;
-  };
+    return okText
+  }
 
   return (
     <Modal
@@ -302,13 +317,13 @@ const AttendenceModal = ({
       title={getTitle()}
       onOk={handleOk}
       okText={getOkText()}
-      cancelText="Abbrechen"
-      centered={window.innerWidth < 768}
+      cancelText='Abbrechen'
+      centered
       destroyOnClose
     >
       {getModalBody()}
     </Modal>
-  );
-};
+  )
+}
 
-export default AttendenceModal;
+export default AttendenceModal

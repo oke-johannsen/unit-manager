@@ -1,11 +1,11 @@
-import { Modal, message } from "antd";
-import React, { useState } from "react";
-import UserForm from "./UserForm";
-import { Meteor } from "meteor/meteor";
-import dayjs from "dayjs";
+import { Modal, message } from 'antd'
+import React, { useState } from 'react'
+import UserForm from './UserForm'
+import { Meteor } from 'meteor/meteor'
+import dayjs from 'dayjs'
 
 const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
-  const [forms, setForms] = useState({});
+  const [forms, setForms] = useState({})
   const submitForms = (forms) => {
     if (Object.values(forms)?.length) {
       Object.values(forms).forEach((values) => {
@@ -20,45 +20,32 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
           points: values.points,
           inactivityPoints: values.inactivityPoints,
           skills: values.skills,
-        };
+        }
         const payload = {
           username: values.username,
           password: values.password,
           createdAt: dayjs(values.createdAt).toDate(),
           profile: profileData,
-        };
-        Meteor.call(`users.create`, payload, (err, res) => {
+        }
+        Meteor.call('users.create', payload, (err, res) => {
           if (!err) {
-            const { username, profile } = payload;
-            const squadId = profile?.squad;
-            const userId = Meteor.users.findOne({ username })?._id;
-            Meteor.call(
-              "updateSquadsBasedOnUser",
-              userId,
-              squadId,
-              (err, res) => {
-                if (err) {
-                  console.error(err, res);
-                }
-              }
-            );
-            message.success(`Mitglied erfolgreich angelegt!`);
-            setOpenUserCreateModal(false);
+            message.success('Mitglied erfolgreich angelegt!')
+            setOpenUserCreateModal(false)
           } else {
-            console.error(`Error in users.update`, err, res);
-            message.error(`Anlegen von Mitglied fehlgeschlagen!`);
+            console.error('Error in users.update', err, res)
+            message.error('Anlegen von Mitglied fehlgeschlagen!')
           }
-        });
-      });
+        })
+      })
     }
-  };
+  }
   return (
     <Modal
-      title="Mitglied anlegen"
+      title='Mitglied anlegen'
       open={openUserCreateModal}
       onCancel={() => setOpenUserCreateModal(false)}
       footer={false}
-      centered={window.innerWidth < 768}
+      centered
       destroyOnClose
     >
       <UserForm
@@ -68,7 +55,7 @@ const UserCreateModal = ({ openUserCreateModal, setOpenUserCreateModal }) => {
         submitForms={submitForms}
       />
     </Modal>
-  );
-};
+  )
+}
 
-export default UserCreateModal;
+export default UserCreateModal
