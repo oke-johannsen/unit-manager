@@ -123,7 +123,7 @@ const UserDashboardComponent = ({ userProp }) => {
         ),
       },
       {
-        title: designation === 'pilot' ? 'INFANTERISCHE MODULE' : 'TIER-2 LEHRGÄNGE',
+        title: designation === 'pilot' ? 'INFANTERISTISCHE MODULE' : 'TIER-2 LEHRGÄNGE',
         children: (
           <Row
             justify='center'

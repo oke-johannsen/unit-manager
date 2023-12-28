@@ -161,7 +161,7 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
       value: 'flying',
     },
     {
-      label: 'Infanterische Module',
+      label: 'Infanteristische Module',
       value: 'infantry',
     },
     {
