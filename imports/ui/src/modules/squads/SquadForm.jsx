@@ -11,7 +11,7 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
     return {
       squadsReady: sub.ready(),
       usersReady: userSub.ready(),
-      userOptions: Meteor.users.find({ 'profile.status': 'active' }).map((user) => {
+      userOptions: Meteor.users.find({ 'profile.status': { $in: ['active', 'new'] } }).map((user) => {
         return {
           label: user?.profile?.name,
           value: user?._id,
