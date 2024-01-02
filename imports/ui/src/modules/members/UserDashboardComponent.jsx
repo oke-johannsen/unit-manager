@@ -239,8 +239,8 @@ const UserDashboardComponent = ({ userProp }) => {
       }
     })
 
-    type = isPilot ? 'skills' : 'special'
-    const newSpecialOptionsOptions = SkillsCollection.find({ type, designation }).map((skill) => {
+    type = isPilot ? 'skill' : 'special'
+    const newSpecialOptionsOptions = SkillsCollection.find({ type, designation: 'infantry' }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
       return {
         key: skill._id,
