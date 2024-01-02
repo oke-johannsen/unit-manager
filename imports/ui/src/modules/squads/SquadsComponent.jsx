@@ -133,7 +133,7 @@ const SquadsComponent = () => {
               ? {
                   pageSize: 7,
                   responsive: true,
-                  showTotal: () => <span>{`Insgegsamt: ${data.length} Einsätze`}</span>,
+                  showTotal: () => <span>{`Insgegsamt: ${data.length} Trupps`}</span>,
                   showSizeChanger: false,
                 }
               : false
