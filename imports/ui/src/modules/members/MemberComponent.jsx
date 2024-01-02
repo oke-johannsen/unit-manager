@@ -232,7 +232,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
         value: skill._id,
         label: (
           <span>
-            <Badge color={skill.color || '#ccc'} /> {skill.name}
+            <Badge color={skill.color || '#ccc'} /> {skill.name ?? 'Kein Rang'}
           </span>
         ),
         name: skill.name,
@@ -248,7 +248,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
         color={skill?.color}
         value={skill?.value}
       >
-        {skill?.name}
+        {skill?.name ?? 'Kein Rang'}
       </Tag>
     ) : (
       item?.value
@@ -284,7 +284,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
   }
 
   const handleDelete = () => {
-    Meteor.call('promotionSettings.delete', openForm?._id, (error) => {
+    Meteor.call('promotionSettings.remove', openForm?._id, (error) => {
       if (error) {
         handleError(error)
       } else {
@@ -307,8 +307,8 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
         initialValues={openForm}
       >
         <Form.Item
-          label='Rang'
-          name='rank'
+          label='Vorausgesetzter Rang'
+          name='previousRank'
           rules={[
             {
               required: true,
@@ -317,9 +317,24 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
           ]}
         >
           <Select
-            placeholder='Für welche Ränge gelten diese Voraussetzungen?'
+            placeholder='Welchen Rang muss man mindestens haben?'
             options={rankOptions}
-            mode='multiple'
+            optionFilterProp='label'
+          />
+        </Form.Item>
+        <Form.Item
+          label='Neuer Rang'
+          name='nextRank'
+          rules={[
+            {
+              required: true,
+              message: 'Bitte wähle mindesten einen Rang aus!',
+            },
+          ]}
+        >
+          <Select
+            placeholder='Welchen Rang bekommt man?'
+            options={rankOptions}
             optionFilterProp='label'
           />
         </Form.Item>
@@ -373,7 +388,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
         >
           {openForm?._id && (
             <Col>
-              <Button onClick={handleDelete}>Delete</Button>
+              <Button onClick={handleDelete}>Löschen</Button>
             </Col>
           )}
           <Col>
@@ -458,8 +473,9 @@ const PromotionSettings = ({ securityClearance }) => {
             >
               <Row style={{ gap: '0.5rem', width: '100%' }}>
                 <Col span={24}>
+                  {console.log(item.previousRank)}
                   <List.Item.Meta
-                    title={item?.rank?.join(', ')}
+                    title={`${item?.previousRank} -> ${item?.nextRank}`}
                     description={
                       <Row gutter={16}>
                         <Col
@@ -507,18 +523,20 @@ const PromotionSettings = ({ securityClearance }) => {
 }
 
 const UserPromotionChecks = ({ props }) => {
-  const { } = useTracker(() => {})
-  const nextRank = ranks[ranks.indexOf(props?.profile?.rank) + 1]
-  console.log({ nextRank })
   const getPromotionSettingForRank = (rank) => {
-    return PromotionSettingsCollection.findOne({ rank: { $in: [rank] } })
+    return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
-  const promotionSetting = getPromotionSettingForRank(nextRank)
-  console.log({ promotionSetting:  })
+  const promotionSetting = getPromotionSettingForRank(props?.item?.profile?.rank)
   return <Progress />
 }
 
 const MembersPromotionChecks = ({ props }) => {
+  const { settings } = useTracker(() => {
+    const sub = Meteor.subscribe('promotionSettings')
+    return {
+      settings: sub.ready() ? PromotionSettingsCollection.find({}).fetch() : [],
+    }
+  })
   const { data, securityClearance } = props
   const [promotionSettings, setPromotionSettings] = useState('promotion-checks')
 
@@ -572,7 +590,7 @@ const MembersPromotionChecks = ({ props }) => {
       {promotionSettings === 'promotion-checks' && (
         <List
           style={{ padding: '0.5rem' }}
-          dataSource={data.sort((a, b) => sortByRank(a.rank, b.rank))}
+          dataSource={data?.sort((a, b) => sortByRank(a.rank, b.rank))}
           pagination={
             data?.length > 10
               ? {
@@ -583,15 +601,11 @@ const MembersPromotionChecks = ({ props }) => {
               : false
           }
           renderItem={(item) => {
-            const nextRankMessage = item?.profile?.rank ? (
-              <span>
-                <b>Nächster Rang:</b> {ranks[ranks.indexOf(item?.profile?.rank) + 1] || '-'}
-              </span>
-            ) : (
-              <span>
-                <b>Nächster Rang:</b> Kein Rang
-              </span>
-            )
+            console.log(PromotionSettingsCollection.find().fetch())
+            const nextRankMessage =
+              PromotionSettingsCollection.findOne({
+                previousRank: item?.profile?.rank,
+              })?.nextRank ?? '-'
 
             return (
               <List.Item>
@@ -606,7 +620,7 @@ const MembersPromotionChecks = ({ props }) => {
                   >
                     <List.Item.Meta
                       title={item?.profile?.name}
-                      description={nextRankMessage}
+                      description={`Nächster Rang: ${nextRankMessage}`}
                     />
                   </Col>
                   <Col

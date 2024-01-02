@@ -9,14 +9,14 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'promotionSettings.create': (payload) => {
-      const { rank, missions, trainings, skills } = payload
+      const { previousRank, nextRank, missions, trainings, skills } = payload
       Meteor.call('logging.create', {
         key: 'promotionSettings.create',
         before: null,
-        after: { rank, missions, trainings, skills },
+        after: { previousRank, nextRank, missions, trainings, skills },
         userId: Meteor.user()?._id,
       })
-      PromotionSettingsCollection.insert({ rank, missions, trainings, skills }, (err, res) => {
+      PromotionSettingsCollection.insert({ previousRank, nextRank, missions, trainings, skills }, (err, res) => {
         if (!err) {
           return true
         } else {
@@ -26,21 +26,25 @@ if (Meteor.isServer) {
       })
     },
     'promotionSettings.update': (id, payload) => {
-      const { rank, missions, trainings, skills } = payload
+      const { previousRank, nextRank, missions, trainings, skills } = payload
       Meteor.call('logging.create', {
         key: 'promotionSettings.update',
         before: PromotionSettingsCollection.findOne(id),
-        after: { rank, missions, trainings, skills },
+        after: { previousRank, nextRank, missions, trainings, skills },
         userId: Meteor.user()?._id,
       })
-      PromotionSettingsCollection.update(id, { $set: { rank, missions, trainings, skills } }, (err, res) => {
-        if (!err) {
-          return true
-        } else {
-          console.error('Error in "PromotionSettingsCollection.update":', err, res)
-          return false
+      PromotionSettingsCollection.update(
+        id,
+        { $set: { previousRank, nextRank, missions, trainings, skills } },
+        (err, res) => {
+          if (!err) {
+            return true
+          } else {
+            console.error('Error in "PromotionSettingsCollection.update":', err, res)
+            return false
+          }
         }
-      })
+      )
     },
     'promotionSettings.remove': (id) => {
       const skill = PromotionSettingsCollection.findOne(id)
