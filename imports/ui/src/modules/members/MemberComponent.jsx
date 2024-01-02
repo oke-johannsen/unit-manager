@@ -1,5 +1,24 @@
-import { Col, Dropdown, Input, Row, Segmented, Statistic, Table, message } from 'antd'
-import React, { useState } from 'react'
+import {
+  Badge,
+  Button,
+  Col,
+  Dropdown,
+  Form,
+  Input,
+  List,
+  Modal,
+  Progress,
+  Row,
+  Segmented,
+  Select,
+  Spin,
+  Statistic,
+  Table,
+  Tag,
+  Tooltip,
+  message,
+} from 'antd'
+import React, { Suspense, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import { MEMBER_TABLE_COLUMNS } from './MEMBER_TABLE_COLUMNS'
@@ -10,7 +29,601 @@ import UserArchiveModal from './UsersArchiveModal'
 import UserReactivateModal from './UserReactiveModal'
 import UserDeleteModal from './UserDeleteModal'
 import PasswordResetModal from '../../layout/common/PasswordResetModal'
-import { sortByRank } from '../../libs/SORTER_LIB'
+import { ranks, sortByRank } from '../../libs/SORTER_LIB'
+import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
+import { SkillsCollection } from '../../../../api/SkillsApi'
+
+const MembersTable = ({ props }) => {
+  const {
+    data,
+    options,
+    selected,
+    setSelected,
+    setOpenUserCreateModal,
+    setOpenUserUpdateModal,
+    setOpenUserDisplayModal,
+    setOpenUserArchiveModal,
+    setOpenUserReactivateModal,
+    setOpenUserDeleteModal,
+    setOpenPasswordResetModal,
+    rowSelection,
+    setRowSelection,
+    search,
+    setSearch,
+    securityClearance,
+    items,
+    openUserCreateModal,
+    openUserUpdateModal,
+    openUserDisplayModal,
+    openUserArchiveModal,
+    openUserReactivateModal,
+    openUserDeleteModal,
+    openPasswordResetModal,
+  } = props
+  return (
+    <Col span={24}>
+      <Table
+        scroll={{ x: 150 }}
+        title={() => (
+          <Row
+            gutter={[16, 16]}
+            justify='space-between'
+            align='middle'
+          >
+            <Col flex='auto'>
+              <Row
+                gutter={[16, 16]}
+                align='middle'
+              >
+                <Col>
+                  <span
+                    style={{
+                      margin: '0 1.5rem 0 0',
+                      padding: 0,
+                      fontSize: 24,
+                      fontFamily: "'Bebas Neue', sans-serif",
+                    }}
+                  >
+                    Mitgliederliste
+                  </span>
+                </Col>
+                <Col
+                  style={{
+                    width: window.innerWidth < 768 ? '100%' : 'initial',
+                  }}
+                >
+                  <Segmented
+                    options={options}
+                    value={selected}
+                    onChange={setSelected}
+                    block={window.innerWidth < 768}
+                  />
+                </Col>
+                {window.innerWidth > 700 && (
+                  <Col>
+                    <Input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder='Mitglieder suchen'
+                    />
+                  </Col>
+                )}
+              </Row>
+            </Col>
+            {securityClearance > 1 && (
+              <Col>
+                {securityClearance < 3 ? (
+                  <Dropdown.Button
+                    type='primary'
+                    menu={{
+                      items,
+                    }}
+                  >
+                    Aktionen
+                  </Dropdown.Button>
+                ) : (
+                  <Dropdown.Button
+                    type='primary'
+                    onClick={() => setOpenUserCreateModal(true)}
+                    menu={{
+                      items,
+                    }}
+                  >
+                    Erstellen
+                  </Dropdown.Button>
+                )}
+              </Col>
+            )}
+          </Row>
+        )}
+        columns={MEMBER_TABLE_COLUMNS}
+        dataSource={data}
+        pagination={
+          data?.length > 7
+            ? {
+                pageSize: 7,
+                responsive: true,
+                showSizeChanger: false,
+              }
+            : false
+        }
+        loading={!data?.length == null}
+        style={{
+          padding: '0.5rem',
+        }}
+        onRow={(record) => {
+          return {
+            onClick: () => {
+              if (securityClearance === 1) {
+                setOpenUserDisplayModal([record._id])
+              } else {
+                setOpenUserUpdateModal([record._id])
+              }
+            },
+          }
+        }}
+        rowSelection={
+          securityClearance > 1
+            ? {
+                type: 'checkbox',
+                onChange: (selectedRowKeys, selectedRows) => {
+                  setRowSelection({ selectedRows, selectedRowKeys })
+                },
+                selectedRowKeys: rowSelection?.selectedRowKeys || [],
+              }
+            : false
+        }
+      />
+      {openUserCreateModal && (
+        <UserCreateModal
+          openUserCreateModal={openUserCreateModal}
+          setOpenUserCreateModal={setOpenUserCreateModal}
+        />
+      )}
+      {openUserUpdateModal && (
+        <UserUpdateModal
+          openUserUpdateModal={openUserUpdateModal}
+          setOpenUserUpdateModal={setOpenUserUpdateModal}
+        />
+      )}
+      {openUserDisplayModal && (
+        <UserDisplayModal
+          openUserDisplayModal={openUserDisplayModal}
+          setOpenUserDisplayModal={setOpenUserDisplayModal}
+        />
+      )}
+      {openUserArchiveModal && (
+        <UserArchiveModal
+          openUserArchiveModal={openUserArchiveModal}
+          setOpenUserArchiveModal={setOpenUserArchiveModal}
+        />
+      )}
+      {openUserReactivateModal && (
+        <UserReactivateModal
+          openUserReactivateModal={openUserReactivateModal}
+          setOpenUserReactivateModal={setOpenUserReactivateModal}
+        />
+      )}
+      {openUserDeleteModal && (
+        <UserDeleteModal
+          openUserDeleteModal={openUserDeleteModal}
+          setOpenUserDeleteModal={setOpenUserDeleteModal}
+        />
+      )}
+      {openPasswordResetModal && (
+        <PasswordResetModal
+          open={openPasswordResetModal}
+          setOpen={setOpenPasswordResetModal}
+          userId={rowSelection?.selectedRowKeys[0]}
+        />
+      )}
+    </Col>
+  )
+}
+
+const rankOptions = ranks.map((rank) => ({
+  value: rank,
+  label: rank,
+}))
+
+const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
+  const skillsOptions = skills
+    ? skills?.map((skill) => ({
+        value: skill._id,
+        label: (
+          <span>
+            <Badge color={skill.color || '#ccc'} /> {skill.name}
+          </span>
+        ),
+        name: skill.name,
+        color: skill.color || '#ccc',
+      }))
+    : []
+
+  const tagRender = (item) => {
+    const skill = skillsOptions?.filter((option) => option.value === item.value)[0]
+    return skill ? (
+      <Tag
+        style={{ margin: '0.2rem' }}
+        color={skill?.color}
+        value={skill?.value}
+      >
+        {skill?.name}
+      </Tag>
+    ) : (
+      item?.value
+    )
+  }
+
+  const handleClose = () => {
+    setOpenForm(false)
+  }
+
+  const handleError = (error) => {
+    console.error(error)
+  }
+
+  const handleFinish = (values) => {
+    if (openForm?._id) {
+      Meteor.call('promotionSettings.update', openForm._id, values, (error) => {
+        if (error) {
+          handleError(error)
+        } else {
+          handleClose()
+        }
+      })
+    } else {
+      Meteor.call('promotionSettings.create', values, (error) => {
+        if (error) {
+          handleError(error)
+        } else {
+          handleClose()
+        }
+      })
+    }
+  }
+
+  const handleDelete = () => {
+    Meteor.call('promotionSettings.delete', openForm?._id, (error) => {
+      if (error) {
+        handleError(error)
+      } else {
+        handleClose()
+      }
+    })
+  }
+
+  return (
+    <Modal
+      title={`Voraussetzungen ${openForm?._id ? 'bearbeiten' : 'erstellen'}`}
+      open={openForm}
+      width={(window.innerWidth / 100) * 35}
+      onCancel={() => setOpenForm(false)}
+      footer={null}
+    >
+      <Form
+        layout='vertical'
+        onFinish={handleFinish}
+        initialValues={openForm}
+      >
+        <Form.Item
+          label='Rang'
+          name='rank'
+          rules={[
+            {
+              required: true,
+              message: 'Bitte wähle mindesten einen Rang aus!',
+            },
+          ]}
+        >
+          <Select
+            placeholder='Für welche Ränge gelten diese Voraussetzungen?'
+            options={rankOptions}
+            mode='multiple'
+            optionFilterProp='label'
+          />
+        </Form.Item>
+        <Form.Item
+          label='Missionsanzahl'
+          name='missions'
+          rules={[
+            {
+              required: true,
+              message: 'Bitte gib die benötigten Missionsanzahl an!',
+            },
+          ]}
+        >
+          <Input placeholder='Wie viele Missionsanzahl werden (seit letzter Befördferung) benötigt?' />
+        </Form.Item>
+        <Form.Item
+          label='Trainingsanzahl'
+          name='trainings'
+          rules={[
+            {
+              required: true,
+              message: 'Bitte gib die benötigten Trainingsanzahl an!',
+            },
+          ]}
+        >
+          <Input placeholder='Wie viele Trainingsanzahl werden (seit letzter Befördferung) benötigt?' />
+        </Form.Item>
+        <Form.Item
+          label='Ausbildungen / Lehrgänge'
+          name='skills'
+          rules={[
+            {
+              required: true,
+              message: 'Bitte gib die benötigten Ausbildungen / Lehrgänge an!',
+            },
+          ]}
+        >
+          <Select
+            placeholder='Welche Ausbildungen / Lehrgänge werden benötigt?'
+            optionFilterProp='name'
+            mode='multiple'
+            tagRender={tagRender}
+            options={skillsOptions ?? []}
+            loading={!skillsOptions?.length}
+          />
+        </Form.Item>
+        <Row
+          justify='end'
+          align='middle'
+          gutter={16}
+        >
+          {openForm?._id && (
+            <Col>
+              <Button onClick={handleDelete}>Delete</Button>
+            </Col>
+          )}
+          <Col>
+            <Button
+              type='primary'
+              htmlType='submit'
+            >
+              Speichern
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </Modal>
+  )
+}
+
+const PromotionSettings = ({ securityClearance }) => {
+  const { ready, settings, skills } = useTracker(() => {
+    const sub = [Meteor.subscribe('promotionSettings'), Meteor.subscribe('skills')]
+    return {
+      ready: sub.every((s) => s.ready()),
+      settings: PromotionSettingsCollection.find({}).fetch(),
+      skills: SkillsCollection.find({}).fetch(),
+    }
+  }, [])
+
+  const [openForm, setOpenForm] = useState(false)
+
+  return (
+    <Suspense fallback={<Col span={24}>loading...</Col>}>
+      <Spin spinning={!ready}>
+        {openForm && (
+          <PromotionSettingsForm
+            openForm={openForm}
+            setOpenForm={setOpenForm}
+            skills={skills}
+          />
+        )}
+        {securityClearance > 2 && (
+          <Row
+            justify='end'
+            style={{ padding: '0.5rem' }}
+          >
+            <Col>
+              <Button
+                type='primary'
+                onClick={() => setOpenForm(true)}
+                loading={!ready}
+                disabled={!ready}
+              >
+                Voraussetungen erstellen
+              </Button>
+            </Col>
+          </Row>
+        )}
+        <List
+          dataSource={settings}
+          pagination={
+            settings?.length > 7
+              ? {
+                  pageSize: 7,
+                  responsive: true,
+                  showSizeChanger: false,
+                }
+              : false
+          }
+          renderItem={(item) => (
+            <List.Item
+              actions={
+                securityClearance > 2
+                  ? [
+                      <Button
+                        key='edit'
+                        type='primary'
+                        onClick={() => setOpenForm(item)}
+                      >
+                        Bearbeiten
+                      </Button>,
+                    ]
+                  : []
+              }
+            >
+              <Row style={{ gap: '0.5rem', width: '100%' }}>
+                <Col span={24}>
+                  <List.Item.Meta
+                    title={item?.rank?.join(', ')}
+                    description={
+                      <Row gutter={16}>
+                        <Col
+                          xs={24}
+                          md={8}
+                        >
+                          <b>Missionsanzahl (seit letzter Befördferung):</b> {item?.missions}
+                        </Col>
+                        <Col
+                          xs={24}
+                          md={8}
+                        >
+                          <b>Trainingsanzahl (seit letzter Befördferung):</b> {item?.trainings}
+                        </Col>
+                        <Col
+                          xs={24}
+                          md={8}
+                        >
+                          <Tooltip
+                            title={
+                              <div>
+                                {item?.skills?.map((skill) => (
+                                  <div key={skill}>
+                                    <Badge color={skills?.filter((s) => s._id === skill)[0]?.color || '#ccc'} />{' '}
+                                    {skills?.filter((s) => s._id === skill)[0]?.name}
+                                  </div>
+                                ))}
+                              </div>
+                            }
+                          >
+                            <b>Ausbildungen / Lehrgänge:</b> {item?.skills?.length}
+                          </Tooltip>
+                        </Col>
+                      </Row>
+                    }
+                  />
+                </Col>
+              </Row>
+            </List.Item>
+          )}
+        />
+      </Spin>
+    </Suspense>
+  )
+}
+
+const UserPromotionChecks = ({ props }) => {
+  const { } = useTracker(() => {})
+  const nextRank = ranks[ranks.indexOf(props?.profile?.rank) + 1]
+  console.log({ nextRank })
+  const getPromotionSettingForRank = (rank) => {
+    return PromotionSettingsCollection.findOne({ rank: { $in: [rank] } })
+  }
+  const promotionSetting = getPromotionSettingForRank(nextRank)
+  console.log({ promotionSetting:  })
+  return <Progress />
+}
+
+const MembersPromotionChecks = ({ props }) => {
+  const { data, securityClearance } = props
+  const [promotionSettings, setPromotionSettings] = useState('promotion-checks')
+
+  return (
+    <Col span={24}>
+      <Row
+        align='middle'
+        justify='space-between'
+        gutter={16}
+        style={{ padding: '0.5rem' }}
+      >
+        <Col
+          xs={24}
+          md={12}
+        >
+          <span
+            style={{
+              margin: '0px 1.5rem 0px 0px',
+              padding: '0px',
+              fontSize: '24px',
+              fontFamily: '"Bebas Neue", sans-serif',
+            }}
+          >
+            BEFÖRDERUNGSCHEKS
+          </span>
+        </Col>
+        <Col
+          xs={24}
+          md={12}
+        >
+          <Segmented
+            options={[
+              {
+                key: 'promotion-checks',
+                value: 'promotion-checks',
+                label: 'Beförderungschecks',
+              },
+              {
+                key: 'promotion-settings',
+                value: 'promotion-settings',
+                label: 'Einstellungen',
+              },
+            ]}
+            value={promotionSettings}
+            onChange={setPromotionSettings}
+            block
+          />
+        </Col>
+      </Row>
+      {promotionSettings === 'promotion-settings' && <PromotionSettings securityClearance={securityClearance} />}
+      {promotionSettings === 'promotion-checks' && (
+        <List
+          style={{ padding: '0.5rem' }}
+          dataSource={data.sort((a, b) => sortByRank(a.rank, b.rank))}
+          pagination={
+            data?.length > 10
+              ? {
+                  pageSize: 10,
+                  responsive: true,
+                  showSizeChanger: false,
+                }
+              : false
+          }
+          renderItem={(item) => {
+            const nextRankMessage = item?.profile?.rank ? (
+              <span>
+                <b>Nächster Rang:</b> {ranks[ranks.indexOf(item?.profile?.rank) + 1] || '-'}
+              </span>
+            ) : (
+              <span>
+                <b>Nächster Rang:</b> Kein Rang
+              </span>
+            )
+
+            return (
+              <List.Item>
+                <Row
+                  style={{ width: '100%' }}
+                  align='bottom'
+                  gutter={16}
+                >
+                  <Col
+                    xs={24}
+                    md={12}
+                  >
+                    <List.Item.Meta
+                      title={item?.profile?.name}
+                      description={nextRankMessage}
+                    />
+                  </Col>
+                  <Col
+                    xs={24}
+                    md={12}
+                  >
+                    <UserPromotionChecks props={item} />
+                  </Col>
+                </Row>
+              </List.Item>
+            )
+          }}
+        />
+      )}
+    </Col>
+  )
+}
 
 const MembersComponent = () => {
   const [selected, setSelected] = useState('active')
@@ -45,6 +658,8 @@ const MembersComponent = () => {
   const [openPasswordResetModal, setOpenPasswordResetModal] = useState(false)
   const [rowSelection, setRowSelection] = useState(null)
   const [search, setSearch] = useState('')
+  const [selectedComponent, setSelectedComponent] = useState('table')
+
   const options = [
     {
       key: 'active',
@@ -153,10 +768,43 @@ const MembersComponent = () => {
       },
     },
   ]
+  const tableProps = {
+    data,
+    options,
+    selected,
+    setSelected,
+    setOpenUserCreateModal,
+    setOpenUserUpdateModal,
+    setOpenUserDisplayModal,
+    setOpenUserArchiveModal,
+    setOpenUserReactivateModal,
+    setOpenUserDeleteModal,
+    setOpenPasswordResetModal,
+    rowSelection,
+    setRowSelection,
+    search,
+    setSearch,
+    securityClearance,
+    items,
+    openUserCreateModal,
+    openUserUpdateModal,
+    openUserDisplayModal,
+    openUserArchiveModal,
+    openUserReactivateModal,
+    openUserDeleteModal,
+    openPasswordResetModal,
+  }
+  const promotionProps = {
+    data,
+    securityClearance,
+  }
   return (
-    <Row>
+    <Row
+      justify='space-between'
+      align='middle'
+    >
       {selected === 'active' && window.innerWidth > 700 && (
-        <Col span={24}>
+        <Col span={12}>
           <Row
             style={{ padding: '0.5rem' }}
             gutter={16}
@@ -176,163 +824,47 @@ const MembersComponent = () => {
           </Row>
         </Col>
       )}
-      <Col span={24}>
-        <Table
-          scroll={{ x: 150 }}
-          title={() => (
-            <Row
-              gutter={[16, 16]}
-              justify='space-between'
-              align='middle'
-            >
-              <Col flex='auto'>
-                <Row
-                  gutter={[16, 16]}
-                  align='middle'
-                >
-                  <Col>
-                    <span
-                      style={{
-                        margin: '0 1.5rem 0 0',
-                        padding: 0,
-                        fontSize: 24,
-                        fontFamily: "'Bebas Neue', sans-serif",
-                      }}
-                    >
-                      Mitgliederliste
-                    </span>
-                  </Col>
-                  <Col
-                    style={{
-                      width: window.innerWidth < 768 ? '100%' : 'initial',
-                    }}
-                  >
-                    <Segmented
-                      options={options}
-                      value={selected}
-                      onChange={setSelected}
-                      block={window.innerWidth < 768}
-                    />
-                  </Col>
-                  {window.innerWidth > 700 && (
-                    <Col>
-                      <Input
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder='Mitglieder suchen'
-                      />
-                    </Col>
-                  )}
-                </Row>
-              </Col>
-              {securityClearance > 1 && (
-                <Col>
-                  {securityClearance < 3 ? (
-                    <Dropdown.Button
-                      type='primary'
-                      menu={{
-                        items,
-                      }}
-                    >
-                      Aktionen
-                    </Dropdown.Button>
-                  ) : (
-                    <Dropdown.Button
-                      type='primary'
-                      onClick={() => setOpenUserCreateModal(true)}
-                      menu={{
-                        items,
-                      }}
-                    >
-                      Erstellen
-                    </Dropdown.Button>
-                  )}
-                </Col>
-              )}
-            </Row>
-          )}
-          columns={MEMBER_TABLE_COLUMNS}
-          dataSource={data}
-          pagination={
-            data?.length > 7
-              ? {
-                  pageSize: 7,
-                  responsive: true,
-                  showSizeChanger: false,
-                }
-              : false
-          }
-          loading={!data?.length == null}
-          style={{
-            padding: '0.5rem',
-          }}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                if (securityClearance === 1) {
-                  setOpenUserDisplayModal([record._id])
-                } else {
-                  setOpenUserUpdateModal([record._id])
-                }
-              },
-            }
-          }}
-          rowSelection={
-            securityClearance > 1
-              ? {
-                  type: 'checkbox',
-                  onChange: (selectedRowKeys, selectedRows) => {
-                    setRowSelection({ selectedRows, selectedRowKeys })
-                  },
-                  selectedRowKeys: rowSelection?.selectedRowKeys || [],
-                }
-              : false
-          }
-        />
-        {openUserCreateModal && (
-          <UserCreateModal
-            openUserCreateModal={openUserCreateModal}
-            setOpenUserCreateModal={setOpenUserCreateModal}
-          />
-        )}
-        {openUserUpdateModal && (
-          <UserUpdateModal
-            openUserUpdateModal={openUserUpdateModal}
-            setOpenUserUpdateModal={setOpenUserUpdateModal}
-          />
-        )}
-        {openUserDisplayModal && (
-          <UserDisplayModal
-            openUserDisplayModal={openUserDisplayModal}
-            setOpenUserDisplayModal={setOpenUserDisplayModal}
-          />
-        )}
-        {openUserArchiveModal && (
-          <UserArchiveModal
-            openUserArchiveModal={openUserArchiveModal}
-            setOpenUserArchiveModal={setOpenUserArchiveModal}
-          />
-        )}
-        {openUserReactivateModal && (
-          <UserReactivateModal
-            openUserReactivateModal={openUserReactivateModal}
-            setOpenUserReactivateModal={setOpenUserReactivateModal}
-          />
-        )}
-        {openUserDeleteModal && (
-          <UserDeleteModal
-            openUserDeleteModal={openUserDeleteModal}
-            setOpenUserDeleteModal={setOpenUserDeleteModal}
-          />
-        )}
-        {openPasswordResetModal && (
-          <PasswordResetModal
-            open={openPasswordResetModal}
-            setOpen={setOpenPasswordResetModal}
-            userId={rowSelection?.selectedRowKeys[0]}
-          />
-        )}
+      <Col span={selected === 'active' && window.innerWidth > 700 ? 12 : 24}>
+        <Row
+          gutter={16}
+          justify='end'
+          align='middle'
+          style={{ padding: '0.5rem' }}
+        >
+          <Col span={24}>
+            <Segmented
+              block
+              options={[
+                {
+                  key: 'table',
+                  value: 'table',
+                  label: 'Tabelle',
+                },
+                {
+                  key: 'promotion-checks',
+                  value: 'promotion-checks',
+                  label: 'Beförderungschecks',
+                },
+              ]}
+              value={selectedComponent}
+              onChange={setSelectedComponent}
+            />
+          </Col>
+        </Row>
       </Col>
+      <Suspense
+        fallback={
+          <Col
+            span={24}
+            style={{ padding: '0.5rem' }}
+          >
+            loading...
+          </Col>
+        }
+      >
+        {selectedComponent === 'promotion-checks' && <MembersPromotionChecks props={promotionProps} />}
+        {selectedComponent === 'table' && <MembersTable props={tableProps} />}
+      </Suspense>
     </Row>
   )
 }

@@ -172,7 +172,6 @@ const RecruitingModal = ({ open, setOpen }) => {
                       <Select
                         options={members || []}
                         optionFilterProp='label'
-                        showSearch
                       />
                     </Form.Item>
                   </Col>

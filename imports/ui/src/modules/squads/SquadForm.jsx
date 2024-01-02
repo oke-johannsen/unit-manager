@@ -51,7 +51,6 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
         >
           <Select
             optionFilterProp='label'
-            showSearch
             name='designation'
             options={[
               {
@@ -75,7 +74,6 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
         >
           <Select
             optionFilterProp='label'
-            showSearch
             name='squadMember'
             mode='multiple'
             options={userOptions.map((opt) => ({
@@ -90,7 +88,6 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
         >
           <Select
             optionFilterProp='label'
-            showSearch
             allowClear
             name='squadLead'
             options={userOptions.map((opt) => ({

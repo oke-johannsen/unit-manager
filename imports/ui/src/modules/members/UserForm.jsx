@@ -5,29 +5,16 @@ import { useTracker } from 'meteor/react-meteor-data'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { SquadCollection } from '../../../../api/SquadApi'
 import dayjs from 'dayjs'
+import { ranks } from '../../libs/SORTER_LIB'
 
 const PASSWORD_PATTER = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/
 
-const rankOptions = [
-  { value: 'Unteroffizier', label: 'Unteroffizier' },
-  { value: 'Bootsmann', label: 'Bootsmann' },
-  { value: 'Feldwebel', label: 'Feldwebel' },
-  { value: 'Oberbootsmann', label: 'Oberbootsmann' },
-  { value: 'Oberfeldwebel', label: 'Oberfeldwebel' },
-  { value: 'Hauptbootsmann', label: 'Hauptbootsmann' },
-  { value: 'Hauptfeldwebel', label: 'Hauptfeldwebel' },
-  { value: 'Stabsbootsmann', label: 'Stabsbootsmann' },
-  { value: 'Stabsfeldwebel', label: 'Stabsfeldwebel' },
-  { value: 'Oberstabsbootsmann', label: 'Oberstabsbootsmann' },
-  { value: 'Oberstabsfeldwebel', label: 'Oberstabsfeldwebel' },
-  { value: 'Leutnant zur See', label: 'Leutnant zur See' },
-  { value: 'Leutnant', label: 'Leutnant' },
-  { value: 'Oberleutnant zur See', label: 'Oberleutnant zur See' },
-  { value: 'Oberleutnant', label: 'Oberleutnant' },
-  { value: 'Kapitänleutnant', label: 'Kapitänleutnant' },
-  { value: 'Hauptmann', label: 'Hauptmann' },
-  { value: 'Major', label: 'Major' },
-]
+const rankOptions = ranks.map((rank) => {
+  return {
+    value: rank,
+    label: rank,
+  }
+})
 
 const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   const { skillsOptions, squadOptions } = useTracker(() => {
@@ -101,6 +88,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
     const skill = skillsOptions?.filter((option) => option.value === item.value)[0]
     return skill ? (
       <Tag
+        style={{ margin: '0.2rem' }}
         color={skill?.color}
         value={skill?.value}
       >
@@ -209,7 +197,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             <Select
               disabled={securityClearance < 3}
               optionFilterProp='label'
-              showSearch
             >
               <Select.Option value={3}>3</Select.Option>
               <Select.Option value={2}>2</Select.Option>
@@ -231,7 +218,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             <Select
               disabled={securityClearance < 3}
               optionFilterProp='label'
-              showSearch
             >
               <Select.Option value='KSK'>KSK</Select.Option>
               <Select.Option value='KSM'>KSM</Select.Option>
@@ -247,7 +233,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             label='Dienstgrad'
             name='rank'
             optionFilterProp='label'
-            showSearch
           >
             <Select
               disabled={securityClearance < 3}
@@ -270,7 +255,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               disabled={securityClearance < 3}
               options={squadOptions || []}
               optionFilterProp='label'
-              showSearch
             />
           </Form.Item>
         </Col>
@@ -294,7 +278,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
                 { key: 6, label: '6', value: 6 },
                 { key: 7, label: 'Strap', value: 7 },
               ]}
-              showSearch
             ></Select>
           </Form.Item>
         </Col>
@@ -308,7 +291,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       >
         <Select
           optionFilterProp='label'
-          showSearch
           mode='multiple'
           tagRender={tagRender}
           options={skillsOptions || []}
@@ -328,7 +310,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             <Select
               disabled={securityClearance < 4}
               optionFilterProp='label'
-              showSearch
             >
               <Select.Option value='1'>1</Select.Option>
               <Select.Option value='2'>2</Select.Option>

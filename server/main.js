@@ -8,6 +8,7 @@ import '../imports/api/LoggingApi'
 import '../imports/api/SquadApi'
 import '../imports/api/RecruitmentsApi'
 import '../imports/api/SkillsApi'
+import '../imports/api/PromotionSettingsApi'
 
 Meteor.startup(async () => {
   const defaultAdmin = UsersCollection.findOne({ username: 'mando' })
