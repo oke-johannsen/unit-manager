@@ -536,7 +536,7 @@ const MembersPromotionChecks = ({ props }) => {
     return {
       settings: sub.ready() ? PromotionSettingsCollection.find({}).fetch() : [],
     }
-  })
+  }, [])
   const { data, securityClearance } = props
   const [promotionSettings, setPromotionSettings] = useState('promotion-checks')
 
@@ -601,7 +601,6 @@ const MembersPromotionChecks = ({ props }) => {
               : false
           }
           renderItem={(item) => {
-            console.log(PromotionSettingsCollection.find().fetch())
             const nextRankMessage =
               PromotionSettingsCollection.findOne({
                 previousRank: item?.profile?.rank,
