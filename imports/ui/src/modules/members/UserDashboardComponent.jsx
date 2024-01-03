@@ -15,8 +15,14 @@ const UserDashboardComponent = ({ userProp }) => {
     const sub = Meteor.subscribe('attendence.by.user', user?._id)
     return {
       user,
-      trainings: AttendenceCollection.find({ type: 'training', userIds: user?._id }, { sort: { date: -1 } }).fetch(),
-      operations: AttendenceCollection.find({ type: 'mission', userIds: user?._id }, { sort: { date: -1 } }).fetch(),
+      trainings: AttendenceCollection.find(
+        { type: 'training', userIds: user?._id, date: { $lte: new Date() } },
+        { sort: { date: -1 } }
+      ).fetch(),
+      operations: AttendenceCollection.find(
+        { type: 'mission', userIds: user?._id, date: { $lte: new Date() } },
+        { sort: { date: -1 } }
+      ).fetch(),
       ready: squadSub.ready() && skillsSub.ready() && sub.ready(),
     }
   })
@@ -239,7 +245,7 @@ const UserDashboardComponent = ({ userProp }) => {
       }
     })
 
-    type = isPilot ? 'skills' : 'special'
+    type = isPilot ? 'skill' : 'special'
     const newSpecialOptionsOptions = SkillsCollection.find({ type, designation }).map((skill) => {
       const index = user?.profile?.skills?.findIndex((userSkill) => userSkill === skill._id)
       return {
