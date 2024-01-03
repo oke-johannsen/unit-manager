@@ -32,6 +32,48 @@ import PasswordResetModal from '../../layout/common/PasswordResetModal'
 import { ranks, sortByRank } from '../../libs/SORTER_LIB'
 import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
+import { AttendenceCollection } from '../../../../api/AttendenceApi'
+
+function generateGradientColors(startColor, endColor, steps) {
+  const start = hexToRgb(startColor)
+  const end = hexToRgb(endColor)
+
+  const step = {
+    r: (end.r - start.r) / steps,
+    g: (end.g - start.g) / steps,
+    b: (end.b - start.b) / steps,
+  }
+
+  const colors = []
+
+  for (let i = 0; i <= steps; i++) {
+    const r = Math.round(start.r + step.r * i)
+    const g = Math.round(start.g + step.g * i)
+    const b = Math.round(start.b + step.b * i)
+
+    colors.push(rgbToHex(r, g, b))
+  }
+
+  return colors
+}
+
+function hexToRgb(hex) {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null
+}
+
+function rgbToHex(r, g, b) {
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
+}
 
 const MembersTable = ({ props }) => {
   const {
@@ -320,6 +362,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
             placeholder='Welchen Rang muss man mindestens haben?'
             options={rankOptions}
             optionFilterProp='label'
+            mode='multiple'
           />
         </Form.Item>
         <Form.Item
@@ -336,6 +379,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
             placeholder='Welchen Rang bekommt man?'
             options={rankOptions}
             optionFilterProp='label'
+            mode='multiple'
           />
         </Form.Item>
         <Form.Item
@@ -360,7 +404,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
             },
           ]}
         >
-          <Input placeholder='Wie viele Trainingsanzahl werden (seit letzter Befördferung) benötigt?' />
+          <Input placeholder='Wie viele Trainingsanzahl werden benötigt?' />
         </Form.Item>
         <Form.Item
           label='Ausbildungen / Lehrgänge'
@@ -526,12 +570,38 @@ const UserPromotionChecks = ({ props }) => {
   const getPromotionSettingForRank = (rank) => {
     return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
-  const promotionSetting = getPromotionSettingForRank(props?.item?.profile?.rank)
-  return <Progress />
+  const { ready, skills, missionsSinceLastPromotion, trainingsCount, promotionSetting } = useTracker(() => {
+    const sub = [Meteor.subscribe('skills'), Meteor.subscribe('attendence.by.user', props?._id)]
+    const profile = props?.profile
+    const date = profile?.promotionHistory?.length ? profile.promotionHistory[0] : props?.createdAt
+    const settings = getPromotionSettingForRank(profile?.rank)
+
+    return {
+      ready: sub.every((s) => s.ready()),
+      skills: settings ? profile.skills?.filter((skill) => settings?.skills?.includes(skill)) : [],
+      missionsSinceLastPromotion: AttendenceCollection.find({
+        userIds: props?._id,
+        type: 'mission',
+        date: { $gte: date },
+      }).count(),
+      trainingsCount: AttendenceCollection.find({
+        userIds: props?._id,
+        type: 'training',
+      }).count(),
+      promotionSetting: settings,
+    }
+  }, [])
+
+  const lengthSettings =
+    promotionSetting?.skills?.length + Number(promotionSetting?.missions) + Number(promotionSetting?.trainings)
+  const lengthCompleted = skills?.length + missionsSinceLastPromotion + trainingsCount
+  const percent = promotionSetting ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
+
+  return promotionSetting ? <Progress percent={percent} /> : <></>
 }
 
 const MembersPromotionChecks = ({ props }) => {
-  const { settings } = useTracker(() => {
+  useTracker(() => {
     const sub = Meteor.subscribe('promotionSettings')
     return {
       settings: sub.ready() ? PromotionSettingsCollection.find({}).fetch() : [],
@@ -604,7 +674,7 @@ const MembersPromotionChecks = ({ props }) => {
             const nextRankMessage =
               PromotionSettingsCollection.findOne({
                 previousRank: item?.profile?.rank,
-              })?.nextRank ?? '-'
+              })?.nextRank.join(', ') ?? '-'
 
             return (
               <List.Item>
@@ -612,6 +682,7 @@ const MembersPromotionChecks = ({ props }) => {
                   style={{ width: '100%' }}
                   align='bottom'
                   gutter={16}
+                  justify='space-between'
                 >
                   <Col
                     xs={24}
