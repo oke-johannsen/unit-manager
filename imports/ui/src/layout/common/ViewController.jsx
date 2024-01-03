@@ -30,8 +30,9 @@ const ViewController = ({ view, setView }) => {
         <Result
           icon={
             <img
-              style={{ height: '20vh' }}
-              src='/images/logo.png'
+              style={{ height: '20vh', aspectRatio: 1 }}
+              src='/images/logo.webp'
+              rel='preload'
             />
           }
           title='ERROR - 404'
