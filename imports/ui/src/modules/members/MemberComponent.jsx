@@ -517,7 +517,6 @@ const PromotionSettings = ({ securityClearance }) => {
             >
               <Row style={{ gap: '0.5rem', width: '100%' }}>
                 <Col span={24}>
-                  {console.log(item.previousRank)}
                   <List.Item.Meta
                     title={`${item?.previousRank} -> ${item?.nextRank}`}
                     description={
