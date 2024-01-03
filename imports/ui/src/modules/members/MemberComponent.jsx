@@ -569,7 +569,7 @@ const UserPromotionChecks = ({ props }) => {
   const getPromotionSettingForRank = (rank) => {
     return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
-  const { ready, skills, missionsSinceLastPromotion, trainingsCount, promotionSetting } = useTracker(() => {
+  const { skills, missionsSinceLastPromotion, trainingsCount, promotionSetting } = useTracker(() => {
     const sub = [Meteor.subscribe('skills'), Meteor.subscribe('attendence.by.user', props?._id)]
     const profile = props?.profile
     const date = profile?.promotionHistory?.length ? profile.promotionHistory[0] : props?.createdAt
