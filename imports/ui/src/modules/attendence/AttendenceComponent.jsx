@@ -488,7 +488,7 @@ const AttendenceComponent = () => {
             label: 'Einsatzarten',
             children: (
               <Row gutter={[16, 16]}>
-                {securityClearance > 1 && (
+                {securityClearance > 3 && (
                   <Col span={24}>
                     <Row justify='end'>
                       <Col>
@@ -516,7 +516,7 @@ const AttendenceComponent = () => {
                       <Card
                         bordered={false}
                         actions={
-                          securityClearance > 1
+                          securityClearance > 3
                             ? [
                                 <EditOutlined
                                   key={item.key + '-edit'}
