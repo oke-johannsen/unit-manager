@@ -85,7 +85,7 @@ const UserDashboardComponent = ({ userProp }) => {
               {user?.profile?.promotionHistory?.length
                 ? AttendenceCollection?.find({
                     date: {
-                      $gte: user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1],
+                      $gt: user?.profile?.promotionHistory[user?.profile?.promotionHistory?.length - 1],
                     },
                     type: 'mission',
                     userIds: user?._id,
