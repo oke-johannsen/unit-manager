@@ -17,6 +17,9 @@ export const getTypeName = (type) => {
     case 'special':
       displayName = 'Speziallehrgang'
       break
+    case 'test':
+      displayName = 'Prüfung'
+      break
     default:
       displayName = '-'
       break

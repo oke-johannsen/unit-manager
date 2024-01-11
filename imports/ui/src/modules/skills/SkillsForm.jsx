@@ -141,6 +141,10 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
   ]
   const skillTypes = [
     {
+      label: 'Prüfung',
+      value: 'test',
+    },
+    {
       label: 'Ausbildung',
       value: 'skill',
     },
