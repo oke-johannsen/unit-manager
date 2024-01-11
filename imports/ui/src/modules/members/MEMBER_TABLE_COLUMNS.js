@@ -56,6 +56,11 @@ export const MEMBER_TABLE_COLUMNS = [
       </Tooltip>
     ),
     sorter: (a, b) => a.skills?.length - b.skills?.length,
+    filters: SkillsCollection.find({}).map((skill) => ({
+      text: skill?.name,
+      value: skill._id,
+    })),
+    onFilter: (value, record) => record.skills?.includes(value),
   },
   {
     title: 'Betrittsdatum',
