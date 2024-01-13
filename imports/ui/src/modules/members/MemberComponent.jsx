@@ -7,6 +7,7 @@ import {
   Input,
   List,
   Modal,
+  Popover,
   Progress,
   Row,
   Segmented,
@@ -33,47 +34,6 @@ import { ranks, sortByRank } from '../../libs/SORTER_LIB'
 import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
-
-function generateGradientColors(startColor, endColor, steps) {
-  const start = hexToRgb(startColor)
-  const end = hexToRgb(endColor)
-
-  const step = {
-    r: (end.r - start.r) / steps,
-    g: (end.g - start.g) / steps,
-    b: (end.b - start.b) / steps,
-  }
-
-  const colors = []
-
-  for (let i = 0; i <= steps; i++) {
-    const r = Math.round(start.r + step.r * i)
-    const g = Math.round(start.g + step.g * i)
-    const b = Math.round(start.b + step.b * i)
-
-    colors.push(rgbToHex(r, g, b))
-  }
-
-  return colors
-}
-
-function hexToRgb(hex) {
-  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
-  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b)
-
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null
-}
-
-function rgbToHex(r, g, b) {
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
-}
 
 const MembersTable = ({ props }) => {
   const {
@@ -181,11 +141,11 @@ const MembersTable = ({ props }) => {
         columns={MEMBER_TABLE_COLUMNS}
         dataSource={data}
         pagination={
-          data?.length > 7
+          data?.length > 10
             ? {
-                pageSize: 7,
                 responsive: true,
-                showSizeChanger: false,
+                showSizeChanger: true,
+                hideOnSinglePage: true,
               }
             : false
         }
@@ -471,7 +431,7 @@ const PromotionSettings = ({ securityClearance }) => {
             skills={skills}
           />
         )}
-        {securityClearance > 2 && (
+        {securityClearance > 3 && (
           <Row
             justify='end'
             style={{ padding: '0.5rem' }}
@@ -491,18 +451,18 @@ const PromotionSettings = ({ securityClearance }) => {
         <List
           dataSource={settings}
           pagination={
-            settings?.length > 7
+            settings?.length > 10
               ? {
-                  pageSize: 7,
                   responsive: true,
-                  showSizeChanger: false,
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
                 }
               : false
           }
           renderItem={(item) => (
             <List.Item
               actions={
-                securityClearance > 2
+                securityClearance > 3
                   ? [
                       <Button
                         key='edit'
@@ -565,11 +525,24 @@ const PromotionSettings = ({ securityClearance }) => {
   )
 }
 
+const PromotionTooltip = ({ settings }) => {
+  return (
+    <Row>
+      <Col span={12}>Noch benötigte Ausbildungen:</Col>
+      <Col span={12}>{settings?.skills.length ? settings?.skills?.join(', ') : '-'}</Col>
+      <Col span={12}>Noch Benötigte Trainings:</Col>
+      <Col span={12}>{settings?.trainings}</Col>
+      <Col span={12}>Noch Benötigte Missionen</Col>
+      <Col span={12}>{settings?.missions}</Col>
+    </Row>
+  )
+}
+
 const UserPromotionChecks = ({ props }) => {
   const getPromotionSettingForRank = (rank) => {
     return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
-  const { skills, missionsSinceLastPromotion, trainingsCount, promotionSetting } = useTracker(() => {
+  const { skills, missionsSinceLastPromotion, trainingsCount, settings } = useTracker(() => {
     const sub = [Meteor.subscribe('skills'), Meteor.subscribe('attendence.by.user', props?._id)]
     const profile = props?.profile
     const date = profile?.promotionHistory?.length ? profile.promotionHistory[0] : props?.createdAt
@@ -587,19 +560,42 @@ const UserPromotionChecks = ({ props }) => {
         userIds: props?._id,
         type: 'training',
       }).count(),
-      promotionSetting: settings,
+      settings,
     }
   }, [])
 
-  const lengthSettings =
-    promotionSetting?.skills?.length + Number(promotionSetting?.missions) + Number(promotionSetting?.trainings)
+  const lengthSettings = settings?.skills?.length + Number(settings?.missions) + Number(settings?.trainings)
   const lengthCompleted = skills?.length + missionsSinceLastPromotion + trainingsCount
-  const percent = promotionSetting ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
+  const percent = settings ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
 
-  return promotionSetting ? <Progress percent={percent} /> : <></>
+  return settings ? (
+    <Popover
+      content={
+        <PromotionTooltip
+          settings={{
+            skills: skills
+              ?.filter((skill) => (settings?.skills ?? []).includes(skill))
+              .map((skill) => SkillsCollection.findOne(skill)?.name),
+            missions:
+              missionsSinceLastPromotion - (Number(settings?.missions) ?? 0) <= 0
+                ? 0
+                : missionsSinceLastPromotion - (Number(settings?.missions) ?? 0),
+            trainings:
+              trainingsCount - (Number(settings?.trainings) ?? 0) <= 0
+                ? 0
+                : trainingsCount - (Number(settings?.trainings) ?? 0),
+          }}
+        />
+      }
+    >
+      <Progress percent={percent} />
+    </Popover>
+  ) : (
+    <></>
+  )
 }
 
-const MembersPromotionChecks = ({ props }) => {
+export const MembersPromotionChecks = ({ props }) => {
   useTracker(() => {
     const sub = Meteor.subscribe('promotionSettings')
     return {
@@ -611,50 +607,52 @@ const MembersPromotionChecks = ({ props }) => {
 
   return (
     <Col span={24}>
-      <Row
-        align='middle'
-        justify='space-between'
-        gutter={16}
-        style={{ padding: '0.5rem' }}
-      >
-        <Col
-          xs={24}
-          md={12}
+      {props.hideOptions && (
+        <Row
+          align='middle'
+          justify='space-between'
+          gutter={16}
+          style={{ padding: '0.5rem' }}
         >
-          <span
-            style={{
-              margin: '0px 1.5rem 0px 0px',
-              padding: '0px',
-              fontSize: '24px',
-              fontFamily: '"Bebas Neue", sans-serif',
-            }}
+          <Col
+            xs={24}
+            md={12}
           >
-            BEFÖRDERUNGSCHEKS
-          </span>
-        </Col>
-        <Col
-          xs={24}
-          md={12}
-        >
-          <Segmented
-            options={[
-              {
-                key: 'promotion-checks',
-                value: 'promotion-checks',
-                label: 'Beförderungschecks',
-              },
-              {
-                key: 'promotion-settings',
-                value: 'promotion-settings',
-                label: 'Einstellungen',
-              },
-            ]}
-            value={promotionSettings}
-            onChange={setPromotionSettings}
-            block
-          />
-        </Col>
-      </Row>
+            <span
+              style={{
+                margin: '0px 1.5rem 0px 0px',
+                padding: '0px',
+                fontSize: '24px',
+                fontFamily: '"Bebas Neue", sans-serif',
+              }}
+            >
+              BEFÖRDERUNGSCHEKS
+            </span>
+          </Col>
+          <Col
+            xs={24}
+            md={12}
+          >
+            <Segmented
+              options={[
+                {
+                  key: 'promotion-checks',
+                  value: 'promotion-checks',
+                  label: 'Beförderungschecks',
+                },
+                {
+                  key: 'promotion-settings',
+                  value: 'promotion-settings',
+                  label: 'Einstellungen',
+                },
+              ]}
+              value={promotionSettings}
+              onChange={setPromotionSettings}
+              block
+            />
+          </Col>
+        </Row>
+      )}
       {promotionSettings === 'promotion-settings' && <PromotionSettings securityClearance={securityClearance} />}
       {promotionSettings === 'promotion-checks' && (
         <List
@@ -663,9 +661,9 @@ const MembersPromotionChecks = ({ props }) => {
           pagination={
             data?.length > 10
               ? {
-                  pageSize: 10,
                   responsive: true,
-                  showSizeChanger: false,
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
                 }
               : false
           }
