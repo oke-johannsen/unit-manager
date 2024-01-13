@@ -129,12 +129,12 @@ const SquadsComponent = () => {
           columns={SQUAD_TABLE_COLUMNS}
           dataSource={data}
           pagination={
-            data?.length > 7
+            data?.length > 10
               ? {
-                  pageSize: 7,
                   responsive: true,
                   showTotal: () => <span>{`Insgegsamt: ${data.length} Trupps`}</span>,
-                  showSizeChanger: false,
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
                 }
               : false
           }
