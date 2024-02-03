@@ -170,6 +170,7 @@ const SidebarComponent = ({ setView }) => {
             paddingTop: 32,
             background: '#80808',
             height: 'calc(100% - 90px)',
+            overflow: 'auto',
           }}
         >
           <Row gutter={[0, 16]}>
