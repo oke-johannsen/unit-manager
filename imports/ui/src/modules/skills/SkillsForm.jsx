@@ -244,6 +244,7 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
             mode='multiple'
             optionFilterProp='label'
             options={userOptions}
+            showSearch
           />
         </Form.Item>
         <Form.Item
@@ -253,6 +254,8 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           <Select
             name='color'
             options={colors}
+            optionFilterProp='label'
+            showSearch
           />
         </Form.Item>
         <Form.Item
