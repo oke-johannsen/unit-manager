@@ -80,4 +80,12 @@ export const SKILLS_COLUMNS = [
     sorter: (a, b) => getTypeName(a.type).localeCompare(getTypeName(b.type)),
     defaultSortOrder: 'ascend',
   },
+  {
+    title: 'Mitglieder',
+    dataIndex: '_id',
+    key: '_id',
+    render: (_id) => Meteor.users.find({ 'profile.skills': _id }).count(),
+    sorter: (a, b) =>
+      Meteor.users.find({ 'profile.skills': a._id }).count() - Meteor.users.find({ 'profile.skills': b._id }).count(),
+  },
 ]
