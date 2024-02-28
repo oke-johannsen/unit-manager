@@ -32,7 +32,7 @@ Meteor.startup(async () => {
         trainings: 0,
         missions: 0,
         skills: [],
-        promitionHistory: [],
+        promotionHistory: [],
       },
     })
   }
@@ -52,7 +52,7 @@ Meteor.startup(async () => {
         trainings: 0,
         missions: 0,
         skills: [],
-        promitionHistory: [],
+        promotionHistory: [],
       },
     })
   }

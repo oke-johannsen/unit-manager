@@ -72,7 +72,7 @@ const getTypeName = (attencence) => {
     return '###'
   }
 }
-const submitCallback = (error) => {
+const submitCallback = (error, onCancel = () => null) => {
   if (error) {
     console.error(error)
   } else {
@@ -81,7 +81,7 @@ const submitCallback = (error) => {
   }
 }
 
-const BriefingForm = ({ model, onCancel }) => {
+const BriefingForm = ({ model, onCancel = () => null }) => {
   const initialValues = useMemo(() => handleModel(model), [model])
   const attendenceOptions = useMemo(
     () =>
@@ -103,9 +103,9 @@ const BriefingForm = ({ model, onCancel }) => {
   )
   const handleSubmit = (values) => {
     if (model?._id) {
-      Meteor.call('briefings.update', model._id, values, submitCallback)
+      Meteor.call('briefings.update', model?._id, values, (error) => submitCallback(error, onCancel))
     } else {
-      Meteor.call('briefings.create', values, submitCallback)
+      Meteor.call('briefings.create', values, (error) => submitCallback(error, onCancel))
     }
   }
 

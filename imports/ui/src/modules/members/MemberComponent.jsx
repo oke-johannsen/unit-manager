@@ -600,12 +600,12 @@ export const MembersPromotionChecks = ({ props }) => {
       settings: sub.ready() ? PromotionSettingsCollection.find({}).fetch() : [],
     }
   }, [])
-  const { data, securityClearance } = props
+  const { data, securityClearance, hideOptions } = props
   const [promotionSettings, setPromotionSettings] = useState('promotion-checks')
 
   return (
     <Col span={24}>
-      {props.hideOptions && (
+      {hideOptions !== true && (
         <Row
           align='middle'
           justify='space-between'
