@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, Row, Select, Spin } from 'antd'
+import { Button, Col, DatePicker, Form, Input, Row, Select, Spin, Switch } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
@@ -76,7 +76,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
             <Input />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col span={10}>
           <Row
             gutter={8}
             align='bottom'
@@ -108,20 +108,32 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
             </Col>
           </Row>
         </Col>
-        <Col span={12}>
-          <Form.Item
-            label='Datum'
-            name='date'
-            rules={[{ required: true }]}
-          >
-            <DatePicker
-              style={{ width: '100%' }}
-              format='DD.MM.YYYY HH:mm'
-              allowClear={false}
-              showHour
-              showMinute
-            />
-          </Form.Item>
+        <Col span={14}>
+          <Row style={{ flexWrap: 'nowrap', gap: 8 }}>
+            <Col flex='auto'>
+              <Form.Item
+                label='Datum'
+                name='date'
+                rules={[{ required: true }]}
+              >
+                <DatePicker
+                  style={{ width: '100%' }}
+                  format='DD.MM.YYYY HH:mm'
+                  allowClear={false}
+                  showHour
+                  showMinute
+                />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item
+                label='Ganztägig'
+                name='wholeDay'
+              >
+                <Switch />
+              </Form.Item>
+            </Col>
+          </Row>
         </Col>
       </Row>
       <Form.Item

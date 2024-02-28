@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
 import React from 'react'
 import { BriefingCollection } from '../../../../api/BriefingsApi'
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 
 export const ATTENDENCE_TABLE_COLUMNS = [
   {
@@ -14,10 +15,23 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     ellispis: true,
   },
   {
+    title: 'Ganztägig',
+    dataIndex: 'wholeDay',
+    key: 'wholeDay',
+    align: 'center',
+    render: (wholeDay) =>
+      !!wholeDay ? (
+        <CheckCircleOutlined style={{ color: 'green' }} />
+      ) : (
+        <CloseCircleOutlined style={{ color: 'red' }} />
+      ),
+    sorter: (a, b) => !!a.wholeDay - !!b.wholeDay,
+  },
+  {
     title: 'Datum',
     dataIndex: 'date',
     key: 'date',
-    render: (date) => dayjs(date).format('DD.MM.YYYY'),
+    render: (date) => dayjs(date).format('DD.MM.YYYY HH:mm'),
     sorter: (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix(),
     defaultSortOrder: 'descend',
   },

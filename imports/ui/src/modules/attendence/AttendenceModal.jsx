@@ -39,6 +39,8 @@ const AttendenceModal = ({
     type: 'mission',
     userIds: [],
     promotedMembers: [],
+    title: '',
+    wholeDay: false,
   }
   const [form, setForm] = useState()
   const { type, initialFormState } = useTracker(() => {
@@ -54,7 +56,8 @@ const AttendenceModal = ({
               type: attendence?.type,
               userIds: attendence?.userIds,
               promotedMembers: attendence?.promotedMembers,
-              title: attendence.title,
+              title: attendence?.title,
+              wholeDay: attendence?.wholeDay,
             }
           })
     setForm(initialFormState)

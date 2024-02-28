@@ -53,7 +53,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'attendence.create': (payload) => {
-      const { userIds, type, date, promotedMembers, title } = payload
+      const { userIds, type, date, promotedMembers, title, wholeDay } = payload
       setPromotionForUsers(promotedMembers, date)
       Meteor.call('logging.create', {
         key: 'attendence.create',
@@ -64,10 +64,11 @@ if (Meteor.isServer) {
           date,
           promotedMembers,
           title,
+          wholeDay,
         },
         userId: Meteor.user()?._id,
       })
-      AttendenceCollection.insert({ userIds, type, date, promotedMembers, title }, (err, res) => {
+      AttendenceCollection.insert({ userIds, type, date, promotedMembers, title, wholeDay }, (err, res) => {
         if (!err) {
           return true
         } else {
@@ -77,7 +78,7 @@ if (Meteor.isServer) {
       })
     },
     'attendence.update': (id, payload) => {
-      const { userIds, type, date, promotedMembers, spentPoints, title } = payload
+      const { userIds, type, date, promotedMembers, spentPoints, title, wholeDay } = payload
       setPromotionForUsers(promotedMembers, date, id)
       Meteor.call('logging.create', {
         key: 'attendence.update',
@@ -90,12 +91,13 @@ if (Meteor.isServer) {
           promotedMembers,
           spentPoints,
           title,
+          wholeDay,
         },
         userId: Meteor.user()?._id,
       })
       AttendenceCollection.update(
         id,
-        { $set: { userIds, type, date, promotedMembers, spentPoints, title } },
+        { $set: { userIds, type, date, promotedMembers, spentPoints, title, wholeDay } },
         (err, res) => {
           if (!err) {
             return true

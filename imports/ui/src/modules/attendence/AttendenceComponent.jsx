@@ -290,7 +290,7 @@ const AttendenceComponent = () => {
                                 : attendence.type === 'training'
                                 ? 'Training'
                                 : attendence.type)}
-                            : {dayjs(attendence.date).format('HH:mm')}
+                            : {dayjs(attendence.date).format('HH:mm')} {attendence.wholeDay ? '(Ganztägig)' : ''}
                           </Col>
                         )
                       })
@@ -332,7 +332,8 @@ const AttendenceComponent = () => {
                                 : attendence.type === 'training'
                                 ? 'Training'
                                 : attendence.type)}
-                            : {dayjs(attendence.date).format('DD.MM.YYYY HH:mm')}
+                            : {dayjs(attendence.date).format('DD.MM.YYYY HH:mm')}{' '}
+                            {attendence.wholeDay ? '(Ganztägig)' : ''}
                           </Col>
                         )
                       })
