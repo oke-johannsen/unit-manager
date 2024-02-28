@@ -348,11 +348,11 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
           rules={[
             {
               required: true,
-              message: 'Bitte gib die benötigten Missionsanzahl an!',
+              message: 'Bitte gib die benötigte Missionsanzahl an!',
             },
           ]}
         >
-          <Input placeholder='Wie viele Missionsanzahl werden (seit letzter Befördferung) benötigt?' />
+          <Input placeholder='Wie viele Missionen werden (seit letzter Befördferung) benötigt?' />
         </Form.Item>
         <Form.Item
           label='Trainingsanzahl'
@@ -360,11 +360,11 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
           rules={[
             {
               required: true,
-              message: 'Bitte gib die benötigten Trainingsanzahl an!',
+              message: 'Bitte gib die benötigte Trainingsanzahl an!',
             },
           ]}
         >
-          <Input placeholder='Wie viele Trainingsanzahl werden benötigt?' />
+          <Input placeholder='Wie viele Trainings werden benötigt?' />
         </Form.Item>
         <Form.Item
           label='Ausbildungen / Lehrgänge'
@@ -568,22 +568,20 @@ const UserPromotionChecks = ({ props }) => {
   const lengthCompleted = skills?.length + missionsSinceLastPromotion + trainingsCount
   const percent = settings ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
 
+  const missingSkills = settings?.skills
+    ?.filter((skill) => !skills?.includes(skill))
+    ?.map((s) => SkillsCollection.findOne(s)?.name)
+  const missingMissions = missionsSinceLastPromotion - Number(settings?.missions)
+  const missingTrainings = trainingsCount - Number(settings?.trainings)
+
   return settings ? (
     <Popover
       content={
         <PromotionTooltip
           settings={{
-            skills: skills
-              ?.filter((skill) => (settings?.skills ?? []).includes(skill))
-              .map((skill) => SkillsCollection.findOne(skill)?.name),
-            missions:
-              missionsSinceLastPromotion - (Number(settings?.missions) ?? 0) <= 0
-                ? 0
-                : missionsSinceLastPromotion - (Number(settings?.missions) ?? 0),
-            trainings:
-              trainingsCount - (Number(settings?.trainings) ?? 0) <= 0
-                ? 0
-                : trainingsCount - (Number(settings?.trainings) ?? 0),
+            skills: missingSkills,
+            missions: missingMissions < 1 ? 0 : missingMissions,
+            trainings: missingTrainings < 1 ? 0 : missingTrainings,
           }}
         />
       }
