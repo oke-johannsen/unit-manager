@@ -91,7 +91,6 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
                   options={attendenceTypeOptions}
                   optionFilterProp='label'
                   style={{ width: '100%' }}
-                  showSearch
                 />
               </Form.Item>
             </Col>
@@ -132,7 +131,6 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
       >
         <Select
           optionFilterProp='label'
-          showSearch
           mode='multiple'
           value={userIds}
           onChange={setUserIds}
@@ -145,7 +143,6 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
       >
         <Select
           optionFilterProp='label'
-          showSearch
           mode='multiple'
           disabled={disabled || userIds?.length === 0 || Number(Meteor.user()?.profile?.securityClearance) < 3}
           placeholder={

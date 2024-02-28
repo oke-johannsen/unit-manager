@@ -80,12 +80,12 @@ const LogComponent = () => {
             dataSource={loggings}
             columns={LOG_COLUMNS}
             pagination={
-              loggings?.length > 7
+              loggings?.length > 10
                 ? {
-                    pageSize: 7,
                     responsive: true,
-                    showTotal: () => <span>{`Insgegsamt: ${loggings.length} Logs`}</span>,
-                    showSizeChanger: false,
+                    showTotal: () => <span>{`Insgegsamt: ${data.length} Logs`}</span>,
+                    showSizeChanger: true,
+                    hideOnSinglePage: true,
                   }
                 : false
             }

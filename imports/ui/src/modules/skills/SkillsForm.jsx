@@ -141,6 +141,10 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
   ]
   const skillTypes = [
     {
+      label: 'Prüfung',
+      value: 'test',
+    },
+    {
       label: 'Ausbildung',
       value: 'skill',
     },
@@ -216,7 +220,6 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           <Select
             options={skillTypes}
             optionFilterProp='label'
-            showSearch
           />
         </Form.Item>
         <Form.Item
@@ -232,7 +235,6 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           <Select
             options={skillDesignationOptions}
             optionFilterProp='label'
-            showSearch
           />
         </Form.Item>
         <Form.Item

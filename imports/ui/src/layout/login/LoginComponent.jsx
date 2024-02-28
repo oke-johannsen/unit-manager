@@ -86,6 +86,7 @@ const LoginComponent = () => {
           >
             <Input
               prefix={<UserOutlined className='site-form-item-icon' />}
+              autoComplete='username'
               placeholder='Benutzername'
             />
           </Form.Item>
@@ -102,6 +103,7 @@ const LoginComponent = () => {
               prefix={<LockOutlined className='site-form-item-icon' />}
               type='password'
               placeholder='Passwort'
+              autoComplete='current-password'
               visibilityToggle
             />
           </Form.Item>

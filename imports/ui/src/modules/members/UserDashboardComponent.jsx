@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import { SquadCollection } from '../../../../api/SquadApi'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
+import { MembersPromotionChecks } from './MemberComponent'
 
 const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations, ready } = useTracker(() => {
@@ -271,11 +272,20 @@ const UserDashboardComponent = ({ userProp }) => {
     updateOptions(designation)
   }, [designation, ready])
 
+  const promotionProps = {
+    data: [user],
+    securityClearance: user?.profile?.securityClearance,
+    hideOptions: true,
+  }
+
   return (
     <Row
       justify={!ready ? 'center' : 'start'}
       align={!ready ? 'middle' : 'stretch'}
     >
+      <Col span={24}>
+        <MembersPromotionChecks props={promotionProps} />
+      </Col>
       <Col span={24}>
         <Row
           justify='end'
