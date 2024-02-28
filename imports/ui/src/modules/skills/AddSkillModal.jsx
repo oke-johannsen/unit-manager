@@ -78,7 +78,6 @@ const AddSkillModal = ({ open, setOpen, title }) => {
                 value={skill}
                 onChange={(value) => setSkill(value)}
                 options={skillOptions}
-                showSearch
               />
             </Form.Item>
             <Form.Item
@@ -97,7 +96,6 @@ const AddSkillModal = ({ open, setOpen, title }) => {
                 mode='multiple'
                 placeholder={!skill ? 'Wähle zuerst eine Ausbildung aus!' : 'Wähle mindestens ein Mitglied aus'}
                 disabled={!skill}
-                showSearch
               />
             </Form.Item>
             <Row

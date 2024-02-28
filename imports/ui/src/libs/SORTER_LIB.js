@@ -1,30 +1,32 @@
+export const ranks = [
+  '-',
+  'Unteroffizier',
+  'Fähnricht (FD)',
+  'Bootsmann',
+  'Feldwebel',
+  'Oberfähnrich (FD)',
+  'Oberbootsmann',
+  'Oberfeldwebel',
+  'Leutnant (FD)',
+  'Hauptbootsmann',
+  'Oberleutnant (FD)',
+  'Hauptfeldwebel',
+  'Stabsbootsmann',
+  'Hauptmann (FD)',
+  'Stabsfeldwebel',
+  'Oberstabsbootsmann',
+  'Oberstabsfeldwebel',
+  'Leutnant zur See',
+  'Leutnant',
+  'Oberleutnant zur See',
+  'Oberleutnant',
+  'Kapitänleutnant',
+  'Hauptmann',
+  'Major',
+]
+
 const getRankPower = (rank) => {
-  return [
-    '',
-    'Unteroffizier',
-    'Bootsmann',
-    'Fähnrich (FD)',
-    'Feldwebel',
-    'Oberbootsmann',
-    'Oberfähnrich (FD)',
-    'Oberfeldwebel',
-    'Hauptbootsmann',
-    'Leutnant (FD)',
-    'Hauptfeldwebel',
-    'Stabsbootsmann',
-    'Oberleutnant (FD)',
-    'Stabsfeldwebel',
-    'Oberstabsbootsmann',
-    'Hauptmann (FD)',
-    'Oberstabsfeldwebel',
-    'Leutnant zur See',
-    'Leutnant',
-    'Oberleutnant zur See',
-    'Oberleutnant',
-    'Kapitänleutnant',
-    'Hauptmann',
-    'Major',
-  ].indexOf(rank)
+  return ranks.indexOf(rank)
 }
 
 export const sortByRank = (rankA, rankB) => {
