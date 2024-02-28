@@ -1,9 +1,18 @@
-import { Tooltip } from 'antd'
+import { Button, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
 import React from 'react'
+import { BriefingCollection } from '../../../../api/BriefingsApi'
 
 export const ATTENDENCE_TABLE_COLUMNS = [
+  {
+    title: 'Titel',
+    dataIndex: 'title',
+    key: 'title',
+    sorter: (a, b) => a.title.localeCompare(b.title),
+    render: (title) => title ?? '-',
+    ellispis: true,
+  },
   {
     title: 'Datum',
     dataIndex: 'date',
@@ -24,10 +33,13 @@ export const ATTENDENCE_TABLE_COLUMNS = [
     title: 'Teilnehmer',
     dataIndex: 'userIds',
     key: 'userIds',
-    render: (userIds) => {
+    render: (userIds, record) => {
+      const briefing = BriefingCollection.findOne({ attendenceId: record._id })
       return (
         <Tooltip title={userIds?.map((userId) => Meteor.users.findOne(userId)?.profile?.name).join(', ')}>
-          <span style={{ display: 'block', width: '100%' }}>{userIds?.length}</span>
+          <span style={{ display: 'block', width: '100%' }}>
+            {userIds?.length} / {briefing?.attendees?.length ?? '-'}
+          </span>
         </Tooltip>
       )
     },
@@ -45,5 +57,35 @@ export const ATTENDENCE_TABLE_COLUMNS = [
       )
     },
     sorter: (a, b) => a.promotedMembers?.length - b.promotedMembers?.length,
+  },
+  {
+    title: 'Anmelden',
+    dataIndex: '_id',
+    key: '_id',
+    render: (_id) => {
+      const briefing = BriefingCollection.findOne({ attendenceId: _id })
+      if (briefing) {
+        const included = briefing?.attendees?.includes(Meteor.userId())
+        return (
+          <Button
+            type={included ? 'default' : 'primary'}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              const payload = included
+                ? briefing.attendees.filter((userId) => userId !== Meteor.userId())
+                : [...(briefing.attendees ?? []), Meteor.userId()]
+              Meteor.call('briefings.update', _id, { attendees: payload }, (error) =>
+                handleCallback(error, `Erfolgreich ${included ? 'abgemeldet' : 'angemeldet'}`)
+              )
+            }}
+          >
+            {included ? 'Abmelden' : 'Anmelden'}
+          </Button>
+        )
+      } else {
+        return 'Kein Briefing gefunden'
+      }
+    },
   },
 ]

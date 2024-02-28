@@ -25,11 +25,17 @@ import { AttendenceTypeCollection } from '../../../../api/AttendenceTypesApi'
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import AttendenceTypeModal from './AttendenceTypeModal'
 import locale from 'antd/es/calendar/locale/de_DE'
+import BriefingsComponent from './briefings/BrifingsComponent'
 
 const AttendenceComponent = () => {
   const [selected, setSelected] = useState('all')
   const { attendences, attendenceTypeOptions, attendenceTypes } = useTracker(() => {
-    const subs = [Meteor.subscribe('attendence'), Meteor.subscribe('users'), Meteor.subscribe('attendenceTypes')]
+    const subs = [
+      Meteor.subscribe('attendence'),
+      Meteor.subscribe('users'),
+      Meteor.subscribe('attendenceTypes'),
+      Meteor.subscribe('briefings'),
+    ]
     const filter = selected !== 'all' ? { type: selected } : {}
     const attendenceTypes = AttendenceTypeCollection.find({}).map((item) => ({
       key: item._id,
@@ -541,6 +547,17 @@ const AttendenceComponent = () => {
                     </Col>
                   )
                 })}
+              </Row>
+            ),
+          },
+          {
+            key: '4',
+            label: 'Briefings',
+            children: (
+              <Row gutter={[16, 16]}>
+                <Col span={24}>
+                  <BriefingsComponent />
+                </Col>
               </Row>
             ),
           },

@@ -8,11 +8,11 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.6",
-    "@babel/runtime": "^7.22.15",
-    "antd": "^5.12.5",
+    "@ant-design/icons": "^5.3.0",
+    "@babel/runtime": "^7.23.9",
+    "antd": "^5.14.0",
     "dayjs": "^1.11.10",
-    "meteor-node-stubs": "^1.2.5",
+    "meteor-node-stubs": "^1.2.7",
     "mup": "^1.5.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
