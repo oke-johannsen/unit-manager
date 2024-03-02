@@ -34,6 +34,7 @@ import { ranks, sortByRank } from '../../libs/SORTER_LIB'
 import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
+import { runTierCheck } from './member.lib'
 
 const MembersTable = ({ props }) => {
   const {
@@ -152,6 +153,10 @@ const MembersTable = ({ props }) => {
         loading={!data?.length == null}
         style={{
           padding: '0.5rem',
+        }}
+        rowClassName={(record) => {
+          console.log(runTierCheck(record.tier, record?._id)?.color ?? 'white')
+          return runTierCheck(record.tier, record?._id)?.color ?? 'white'
         }}
         onRow={(record) => {
           return {
@@ -708,6 +713,7 @@ const MembersComponent = () => {
   const [selected, setSelected] = useState('active')
   const { users } = useTracker(() => {
     const sub = Meteor.subscribe('users', {})
+    const attendenceSub = Meteor.subscribe('attendence')
     const squadSub = Meteor.subscribe('squads')
     const skillsSub = Meteor.subscribe('skills')
     const status = selected
@@ -726,6 +732,7 @@ const MembersComponent = () => {
         : null,
       squadsReady: squadSub.ready(),
       skillsSub: skillsSub.ready(),
+      attendences: attendenceSub.ready() ? AttendenceCollection.find({}).fetch() : null,
     }
   }, [selected])
   const [openUserCreateModal, setOpenUserCreateModal] = useState(false)

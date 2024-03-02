@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Card, Checkbox, Col, Empty, Row, Segmented, Spin, Statistic } from 'antd'
+import { Badge, Card, Checkbox, Col, Empty, Row, Segmented, Spin, Statistic, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import { SquadCollection } from '../../../../api/SquadApi'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { MembersPromotionChecks } from './MemberComponent'
+import { runTierCheck } from './member.lib'
 
 const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations, ready } = useTracker(() => {
@@ -32,6 +33,7 @@ const UserDashboardComponent = ({ userProp }) => {
   const [cardsArray, setCardsArray] = useState([])
 
   const buildCardsArray = (skillOptions, tier2Options, specialOptionsOptions, tier1Options) => {
+    const check = runTierCheck(user?.profile?.tier, user?._id)
     const newCardsArray = [
       {
         title: 'PERSONALDATEN',
@@ -42,7 +44,14 @@ const UserDashboardComponent = ({ userProp }) => {
             <Col span={12}>Dienstgrad:</Col>
             <Col span={12}>{user?.profile?.rank || '-'}</Col>
             <Col span={12}>Tier-Stufe:</Col>
-            <Col span={12}>{user?.profile?.tier || '-'}</Col>
+            <Col span={12}>
+              <Tooltip title={check?.text}>
+                <Badge
+                  color={check?.color}
+                  text={(user?.profile?.tier || '-') + ' (' + check?.text + ')'}
+                />
+              </Tooltip>
+            </Col>
             <Col span={12}>Trupp:</Col>
             <Col span={12}>
               {SquadCollection?.findOne(user?.profile?.squad)?.squadName || 'Keinen Trupp ausgewählt!'}

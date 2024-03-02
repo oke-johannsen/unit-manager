@@ -1,9 +1,10 @@
-import { Tooltip } from 'antd'
+import { Badge, Tooltip } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 import { SquadCollection } from '../../../../api/SquadApi'
 import { sortByRank } from '../../libs/SORTER_LIB'
 import { SkillsCollection } from '../../../../api/SkillsApi'
+import { runTierCheck } from './member.lib'
 
 export const MEMBER_TABLE_COLUMNS = [
   {
@@ -29,6 +30,25 @@ export const MEMBER_TABLE_COLUMNS = [
     title: 'Tier',
     dataIndex: 'tier',
     key: 'tier',
+    sorter: (a, b) => a.tier - b.tier,
+    filters: [
+      { text: '1', value: 1 },
+      { text: '2', value: 2 },
+      { text: '3', value: 3 },
+    ],
+    onFilter: (value, record) => record.tier === value,
+    render: (tier, record) => {
+      const check = runTierCheck(record.tier, record?._id)
+      return (
+        <Tooltip title={check?.text}>
+          <Badge
+            style={{ color: check?.color }}
+            color={check?.color}
+            text={tier}
+          />
+        </Tooltip>
+      )
+    },
   },
   {
     title: 'Trupp',

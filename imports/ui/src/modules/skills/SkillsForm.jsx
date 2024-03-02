@@ -4,6 +4,41 @@ import { SkillsCollection } from '../../../../api/SkillsApi'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 
+export const skillTypes = [
+  {
+    label: 'Prüfung',
+    value: 'test',
+  },
+  {
+    label: 'Ausbildung',
+    value: 'skill',
+  },
+  {
+    label: 'Speziallehrgang',
+    value: 'special',
+  },
+  {
+    label: 'Tier-1 Lehrgang',
+    value: 'tier-1',
+  },
+  {
+    label: 'Tier-2 Lehrgang',
+    value: 'tier-2',
+  },
+  {
+    label: 'Fliegerische Module',
+    value: 'flying',
+  },
+  {
+    label: 'Infanteristische Module',
+    value: 'infantry',
+  },
+  {
+    label: 'Combat Ready Stufe',
+    value: 'crs',
+  },
+]
+
 const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
   const { skillsReady, usersReady, userOptions } = useTracker(() => {
     const sub = Meteor.subscribe('skills')
@@ -137,40 +172,6 @@ const SkillsForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
           text='Hellgrün'
         />
       ),
-    },
-  ]
-  const skillTypes = [
-    {
-      label: 'Prüfung',
-      value: 'test',
-    },
-    {
-      label: 'Ausbildung',
-      value: 'skill',
-    },
-    {
-      label: 'Speziallehrgang',
-      value: 'special',
-    },
-    {
-      label: 'Tier-1 Lehrgang',
-      value: 'tier-1',
-    },
-    {
-      label: 'Tier-2 Lehrgang',
-      value: 'tier-2',
-    },
-    {
-      label: 'Fliegerische Module',
-      value: 'flying',
-    },
-    {
-      label: 'Infanteristische Module',
-      value: 'infantry',
-    },
-    {
-      label: 'Combat Ready Stufe',
-      value: 'crs',
     },
   ]
 

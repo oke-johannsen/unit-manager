@@ -1,7 +1,19 @@
 :root,
 * {
   box-sizing: border-box;
-  font-family: "Rajdhani", sans-serif;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.white td.ant-table-cell {
+  color: white;
+}
+
+.red td.ant-table-cell {
+  color: red;
+}
+
+.green td.ant-table-cell {
+  color: green;
 }
 
 body {
@@ -24,7 +36,7 @@ body {
 }
 
 .dashboard-card .ant-card-head {
-  font-family: "Bebas Neue", sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   font-weight: 500;
   border-bottom: none;
 }
@@ -72,7 +84,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background-image: url("/images/bg_map.webp");
+  background-image: url('/images/bg_map.webp');
   background-size: cover;
   z-index: 1;
 }
@@ -93,7 +105,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("/images/login-background.png");
+  background-image: url('/images/login-background.png');
   background-repeat: no-repeat;
   background-position-y: 100%;
   background-position-x: 50%;
