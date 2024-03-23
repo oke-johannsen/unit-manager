@@ -745,17 +745,22 @@ const MembersComponent = () => {
   const [search, setSearch] = useState('')
   const [selectedComponent, setSelectedComponent] = useState('table')
 
+  const securityClearance = Number(Meteor.user()?.profile?.securityClearance)
   const options = [
     {
       key: 'active',
       value: 'active',
       label: 'Aktiv',
     },
-    {
-      key: 'new',
-      value: 'new',
-      label: 'Anwärter',
-    },
+    ...(securityClearance > 2
+      ? [
+          {
+            key: 'new',
+            value: 'new',
+            label: 'Anwärter',
+          },
+        ]
+      : []),
     {
       key: 'inactive',
       value: 'inactive',
@@ -769,7 +774,6 @@ const MembersComponent = () => {
       userProfile?.rank?.toLowerCase().includes(search?.toLowerCase())
     )
   })
-  const securityClearance = Number(Meteor.user()?.profile?.securityClearance)
   const items = [
     {
       key: 'read',
