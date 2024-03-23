@@ -155,7 +155,6 @@ const MembersTable = ({ props }) => {
           padding: '0.5rem',
         }}
         rowClassName={(record) => {
-          console.log(runTierCheck(record.tier, record?._id)?.color ?? 'white')
           return runTierCheck(record.tier, record?._id)?.color ?? 'white'
         }}
         onRow={(record) => {
@@ -348,7 +347,7 @@ const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
           />
         </Form.Item>
         <Form.Item
-          label='Missionsanzahl'
+          label='Missionsanzahl (seit letzter Befördung)'
           name='missions'
           rules={[
             {
@@ -496,7 +495,7 @@ const PromotionSettings = ({ securityClearance }) => {
                           xs={24}
                           md={8}
                         >
-                          <b>Trainingsanzahl (seit letzter Befördferung):</b> {item?.trainings}
+                          <b>Trainingsanzahl:</b> {item?.trainings}
                         </Col>
                         <Col
                           xs={24}
@@ -576,8 +575,8 @@ const UserPromotionChecks = ({ props }) => {
   const missingSkills = settings?.skills
     ?.filter((skill) => !skills?.includes(skill))
     ?.map((s) => SkillsCollection.findOne(s)?.name)
-  const missingMissions = missionsSinceLastPromotion - Number(settings?.missions)
-  const missingTrainings = trainingsCount - Number(settings?.trainings)
+  const missingMissions = Number(settings?.missions) - missionsSinceLastPromotion
+  const missingTrainings = Number(settings?.trainings) - trainingsCount
 
   return settings ? (
     <Popover
