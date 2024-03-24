@@ -174,7 +174,9 @@ if (Meteor.isServer) {
       const user = Meteor.users.findOne(userId ?? null)
       if (user) {
         const profile = user?.profile
-        const date = profile?.promotionHistory?.length ? profile.promotionHistory[0] : user?.createdAt
+        const date = profile?.promotionHistory?.length
+          ? profile.promotionHistory[profile?.promotionHistory?.length - 1]
+          : user?.createdAt
         const settings = getPromotionSettingForRank(profile?.rank)
         const skills = settings ? profile.skills?.filter((skill) => settings?.skills?.includes(skill)) : []
         const missionsSinceLastPromotion = AttendenceCollection.find({
