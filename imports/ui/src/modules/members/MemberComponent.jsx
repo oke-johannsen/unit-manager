@@ -19,7 +19,7 @@ import {
   Tooltip,
   message,
 } from 'antd'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import { MEMBER_TABLE_COLUMNS } from './MEMBER_TABLE_COLUMNS'
@@ -30,7 +30,7 @@ import UserArchiveModal from './UsersArchiveModal'
 import UserReactivateModal from './UserReactiveModal'
 import UserDeleteModal from './UserDeleteModal'
 import PasswordResetModal from '../../layout/common/PasswordResetModal'
-import { ranks, sortByRank } from '../../libs/SORTER_LIB'
+import { ranks, sortByNumber, sortByRank } from '../../libs/SORTER_LIB'
 import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
@@ -546,51 +546,21 @@ const UserPromotionChecks = ({ props }) => {
   const getPromotionSettingForRank = (rank) => {
     return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
-  const { skills, missionsSinceLastPromotion, trainingsCount, settings } = useTracker(() => {
-    const sub = [Meteor.subscribe('skills'), Meteor.subscribe('attendence.by.user', props?._id)]
-    const profile = props?.profile
-    const date = profile?.promotionHistory?.length ? profile.promotionHistory[0] : props?.createdAt
-    const settings = getPromotionSettingForRank(profile?.rank)
-
-    return {
-      ready: sub.every((s) => s.ready()),
-      skills: settings ? profile.skills?.filter((skill) => settings?.skills?.includes(skill)) : [],
-      missionsSinceLastPromotion: AttendenceCollection.find({
-        userIds: props?._id,
-        type: 'mission',
-        date: { $gte: date },
-      }).count(),
-      trainingsCount: AttendenceCollection.find({
-        userIds: props?._id,
-        type: 'training',
-      }).count(),
-      settings,
-    }
-  }, [])
-
-  const lengthSettings = settings?.skills?.length + Number(settings?.missions) + Number(settings?.trainings)
-  const lengthCompleted = skills?.length + missionsSinceLastPromotion + trainingsCount
-  const percent = settings ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
-
-  const missingSkills = settings?.skills
-    ?.filter((skill) => !skills?.includes(skill))
-    ?.map((s) => SkillsCollection.findOne(s)?.name)
-  const missingMissions = Number(settings?.missions) - missionsSinceLastPromotion
-  const missingTrainings = Number(settings?.trainings) - trainingsCount
+  const settings = useMemo(() => getPromotionSettingForRank(props?.profile?.rank), [props])
 
   return settings ? (
     <Popover
       content={
         <PromotionTooltip
           settings={{
-            skills: missingSkills,
-            missions: missingMissions < 1 ? 0 : missingMissions,
-            trainings: missingTrainings < 1 ? 0 : missingTrainings,
+            skills: props?.missingSkills,
+            missions: props?.missingMissions < 1 ? 0 : props?.missingMissions,
+            trainings: props?.missingTrainings < 1 ? 0 : props?.missingTrainings,
           }}
         />
       }
     >
-      <Progress percent={percent} />
+      <Progress percent={props?.percent} />
     </Popover>
   ) : (
     <></>
@@ -605,6 +575,20 @@ export const MembersPromotionChecks = ({ props }) => {
     }
   }, [])
   const { data, securityClearance, hideOptions } = props
+  const [membersWithPercent, setMembersWithPercent] = useState([])
+  const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    setLoading(true)
+    Meteor.call(
+      'users.get.promotion.data',
+      data.map((user) => user._id),
+      (error, result) => {
+        if (!error) setMembersWithPercent(result)
+        else console.error(error)
+        setLoading(false)
+      }
+    )
+  }, [data])
   const [promotionSettings, setPromotionSettings] = useState('promotion-checks')
 
   return (
@@ -659,7 +643,8 @@ export const MembersPromotionChecks = ({ props }) => {
       {promotionSettings === 'promotion-checks' && (
         <List
           style={{ padding: '0.5rem' }}
-          dataSource={data?.sort((a, b) => sortByRank(a.rank, b.rank))}
+          loading={loading}
+          dataSource={membersWithPercent?.sort((a, b) => sortByNumber(a.percent, b.percent, -1))}
           pagination={
             data?.length > 10
               ? {

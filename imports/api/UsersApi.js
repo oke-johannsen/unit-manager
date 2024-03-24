@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
 import { SquadCollection } from './SquadApi'
 import { SkillsCollection } from './SkillsApi'
+import { AttendenceCollection } from './AttendenceApi'
+import { PromotionSettingsCollection } from './PromotionSettingsApi'
 
 export const UsersCollection = Meteor.users
 
@@ -80,6 +82,9 @@ if (Meteor.isServer) {
         SquadCollection.update({ _id: newSquad._id }, { $set: { squadMember: newSquad.squadMember } })
       }
     }
+  }
+  const getPromotionSettingForRank = (rank) => {
+    return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
   Meteor.publish(
     'users',
@@ -163,6 +168,62 @@ if (Meteor.isServer) {
         Accounts.setPassword(user._id, newPassword, options)
       } else {
         return new Meteor.Error('Error 404', 'user was not found', userId)
+      }
+    },
+    'user.get.promotion.data': (userId) => {
+      const user = Meteor.users.findOne(userId ?? null)
+      if (user) {
+        const profile = user?.profile
+        const date = profile?.promotionHistory?.length ? profile.promotionHistory[0] : user?.createdAt
+        const settings = getPromotionSettingForRank(profile?.rank)
+        const skills = settings ? profile.skills?.filter((skill) => settings?.skills?.includes(skill)) : []
+        const missionsSinceLastPromotion = AttendenceCollection.find({
+          userIds: user?._id,
+          type: 'mission',
+          date: { $gte: date },
+        }).count()
+        const trainingsCount = AttendenceCollection.find({
+          userIds: user?._id,
+          type: 'training',
+        }).count()
+
+        const lengthSettings = settings?.skills?.length + Number(settings?.missions) + Number(settings?.trainings)
+        const lengthCompleted =
+          skills?.length +
+          (missionsSinceLastPromotion > Number(settings?.missions)
+            ? Number(settings?.missions)
+            : missionsSinceLastPromotion) +
+          (trainingsCount > Number(settings?.trainings) ? Number(settings?.trainings) : trainingsCount)
+        const percent = settings ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
+
+        const missingSkills = settings?.skills
+          ?.filter((skill) => !skills?.includes(skill))
+          ?.map((s) => SkillsCollection.findOne(s)?.name)
+        const missingMissions = Number(settings?.missions) - missionsSinceLastPromotion
+        const missingTrainings = Number(settings?.trainings) - trainingsCount
+        return { percent, missingSkills, missingMissions, missingTrainings }
+      } else {
+        return new Meteor.Error('Error', 'user was not found', userId)
+      }
+    },
+    'users.get.promotion.data': (userIds) => {
+      if (Array.isArray(userIds)) {
+        const users = Meteor.users.find({ _id: { $in: userIds } }).map((user) => {
+          const { percent, missingSkills, missingMissions, missingTrainings } = Meteor.call(
+            'user.get.promotion.data',
+            user._id
+          )
+          return {
+            ...user,
+            percent,
+            missingSkills,
+            missingMissions,
+            missingTrainings,
+          }
+        })
+        return users
+      } else {
+        return new Meteor.Error('Error', 'userIds were no array', userIds)
       }
     },
   })

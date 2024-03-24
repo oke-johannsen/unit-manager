@@ -32,3 +32,7 @@ const getRankPower = (rank) => {
 export const sortByRank = (rankA, rankB) => {
   return getRankPower(rankB) - getRankPower(rankA)
 }
+
+export const sortByNumber = (a, b, direction) => {
+  return direction === 1 ? a - b : b - a
+}
