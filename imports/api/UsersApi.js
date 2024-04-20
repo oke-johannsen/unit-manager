@@ -179,6 +179,9 @@ if (Meteor.isServer) {
           : user?.createdAt
         const settings = getPromotionSettingForRank(profile?.rank)
         const skills = settings ? profile.skills?.filter((skill) => settings?.skills?.includes(skill)) : []
+        const optionalSkills = settings
+          ? profile.skills?.filter((skill) => (settings?.optionalSkills ?? [])?.includes(skill))
+          : []
         const missionsSinceLastPromotion = AttendenceCollection.find({
           userIds: user?._id,
           type: 'mission',
@@ -189,13 +192,18 @@ if (Meteor.isServer) {
           type: 'training',
         }).count()
 
-        const lengthSettings = settings?.skills?.length + Number(settings?.missions) + Number(settings?.trainings)
+        const lengthSettings =
+          settings?.skills?.length +
+          Number(settings?.missions) +
+          Number(settings?.trainings) +
+          Number(settings?.optionalSkillsAmount ?? 0)
         const lengthCompleted =
           skills?.length +
           (missionsSinceLastPromotion > Number(settings?.missions)
             ? Number(settings?.missions)
             : missionsSinceLastPromotion) +
-          (trainingsCount > Number(settings?.trainings) ? Number(settings?.trainings) : trainingsCount)
+          (trainingsCount > Number(settings?.trainings) ? Number(settings?.trainings) : trainingsCount) +
+          optionalSkills?.length
         const percent = settings ? Math.round((lengthCompleted / lengthSettings) * 100) : 0
 
         const missingSkills = settings?.skills
@@ -203,7 +211,8 @@ if (Meteor.isServer) {
           ?.map((s) => SkillsCollection.findOne(s)?.name)
         const missingMissions = Number(settings?.missions) - missionsSinceLastPromotion
         const missingTrainings = Number(settings?.trainings) - trainingsCount
-        return { percent, missingSkills, missingMissions, missingTrainings }
+        const missingOptionalSkillsAmount = Number(settings?.optionalSkillsAmount ?? 0) - optionalSkills?.length
+        return { percent, missingSkills, missingMissions, missingTrainings, missingOptionalSkillsAmount }
       } else {
         return new Meteor.Error('Error', 'user was not found', userId)
       }
@@ -211,16 +220,15 @@ if (Meteor.isServer) {
     'users.get.promotion.data': (userIds) => {
       if (Array.isArray(userIds)) {
         const users = Meteor.users.find({ _id: { $in: userIds } }).map((user) => {
-          const { percent, missingSkills, missingMissions, missingTrainings } = Meteor.call(
-            'user.get.promotion.data',
-            user._id
-          )
+          const { percent, missingSkills, missingMissions, missingTrainings, missingOptionalSkillsAmount } =
+            Meteor.call('user.get.promotion.data', user._id)
           return {
             ...user,
             percent,
             missingSkills,
             missingMissions,
             missingTrainings,
+            missingOptionalSkillsAmount,
           }
         })
         return users

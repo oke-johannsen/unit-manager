@@ -9,33 +9,36 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'promotionSettings.create': (payload) => {
-      const { previousRank, nextRank, missions, trainings, skills } = payload
+      const { previousRank, nextRank, missions, trainings, skills, optionalSkillsAmount, optionalSkills } = payload
       Meteor.call('logging.create', {
         key: 'promotionSettings.create',
         before: null,
-        after: { previousRank, nextRank, missions, trainings, skills },
+        after: { previousRank, nextRank, missions, trainings, skills, optionalSkillsAmount, optionalSkills },
         userId: Meteor.user()?._id,
       })
-      PromotionSettingsCollection.insert({ previousRank, nextRank, missions, trainings, skills }, (err, res) => {
-        if (!err) {
-          return true
-        } else {
-          console.error('Error in "PromotionSettingsCollection.insert":', err, res)
-          return false
+      PromotionSettingsCollection.insert(
+        { previousRank, nextRank, missions, trainings, skills, optionalSkillsAmount, optionalSkills },
+        (err, res) => {
+          if (!err) {
+            return true
+          } else {
+            console.error('Error in "PromotionSettingsCollection.insert":', err, res)
+            return false
+          }
         }
-      })
+      )
     },
     'promotionSettings.update': (id, payload) => {
-      const { previousRank, nextRank, missions, trainings, skills } = payload
+      const { previousRank, nextRank, missions, trainings, skills, optionalSkillsAmount, optionalSkills } = payload
       Meteor.call('logging.create', {
         key: 'promotionSettings.update',
         before: PromotionSettingsCollection.findOne(id),
-        after: { previousRank, nextRank, missions, trainings, skills },
+        after: { previousRank, nextRank, missions, trainings, skills, optionalSkillsAmount, optionalSkills },
         userId: Meteor.user()?._id,
       })
       PromotionSettingsCollection.update(
         id,
-        { $set: { previousRank, nextRank, missions, trainings, skills } },
+        { $set: { previousRank, nextRank, missions, trainings, skills, optionalSkillsAmount, optionalSkills } },
         (err, res) => {
           if (!err) {
             return true
