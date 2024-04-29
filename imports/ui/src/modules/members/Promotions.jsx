@@ -365,9 +365,9 @@ const PromotionTooltip = ({ settings }) => {
     <Row style={{ maxWidth: 800 }}>
       <Col span={12}>Noch benötigte Ausbildungen:</Col>
       <Col span={12}>{settings?.skills?.length ? settings?.skills?.join(', ') : '-'}</Col>
-      <Col span={12}>Noch Benötigte Trainings:</Col>
+      <Col span={12}>Noch benötigte Trainings:</Col>
       <Col span={12}>{settings?.trainings}</Col>
-      <Col span={12}>Noch Benötigte Missionen</Col>
+      <Col span={12}>Noch benötigte Missionen:</Col>
       <Col span={12}>{settings?.missions}</Col>
       <Col span={12}>Noch benötigte Anzahl an optionalen Ausbildungen:</Col>
       <Col span={12}>{settings?.optionalSkills}</Col>

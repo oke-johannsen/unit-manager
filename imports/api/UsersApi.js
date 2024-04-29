@@ -185,7 +185,7 @@ if (Meteor.isServer) {
         const missionsSinceLastPromotion = AttendenceCollection.find({
           userIds: user?._id,
           type: 'mission',
-          date: { $gte: date },
+          date: { $gt: date },
         }).count()
         const trainingsCount = AttendenceCollection.find({
           userIds: user?._id,
