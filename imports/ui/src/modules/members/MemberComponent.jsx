@@ -1,25 +1,5 @@
-import {
-  Badge,
-  Button,
-  Col,
-  Dropdown,
-  Form,
-  Input,
-  List,
-  Modal,
-  Popover,
-  Progress,
-  Row,
-  Segmented,
-  Select,
-  Spin,
-  Statistic,
-  Table,
-  Tag,
-  Tooltip,
-  message,
-} from 'antd'
-import React, { Suspense, useEffect, useMemo, useState } from 'react'
+import { Col, Dropdown, Input, List, Row, Segmented, Statistic, Table, message } from 'antd'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import { MEMBER_TABLE_COLUMNS } from './MEMBER_TABLE_COLUMNS'
@@ -30,9 +10,8 @@ import UserArchiveModal from './UsersArchiveModal'
 import UserReactivateModal from './UserReactiveModal'
 import UserDeleteModal from './UserDeleteModal'
 import PasswordResetModal from '../../layout/common/PasswordResetModal'
-import { ranks, sortByNumber, sortByRank } from '../../libs/SORTER_LIB'
+import { sortByNumber, sortByRank } from '../../libs/SORTER_LIB'
 import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
-import { SkillsCollection } from '../../../../api/SkillsApi'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { runTierCheck } from './member.lib'
 import { PromotionSettings, UserPromotionChecks } from './Promotions'

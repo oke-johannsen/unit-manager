@@ -22,10 +22,7 @@ import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsAp
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { ranks } from '../../libs/SORTER_LIB'
 
-const rankOptions = ranks.map((rank) => ({
-  value: rank,
-  label: rank,
-}))
+const rankOptions = ranks
 
 const PromotionSettingsForm = ({ openForm, setOpenForm, skills }) => {
   const skillsOptions = skills

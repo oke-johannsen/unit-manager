@@ -9,12 +9,7 @@ import { ranks } from '../../libs/SORTER_LIB'
 
 const PASSWORD_PATTER = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/
 
-const rankOptions = ranks.map((rank) => {
-  return {
-    value: rank,
-    label: rank,
-  }
-})
+const rankOptions = ranks
 
 const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   const { skillsOptions, squadOptions } = useTracker(() => {
@@ -219,7 +214,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               disabled={securityClearance < 3}
               optionFilterProp='label'
             >
-              <Select.Option value='KSK'>KSK</Select.Option>
               <Select.Option value='KSM'>KSM</Select.Option>
               <Select.Option value='Luftwaffe'>Luftwaffe</Select.Option>
             </Select>

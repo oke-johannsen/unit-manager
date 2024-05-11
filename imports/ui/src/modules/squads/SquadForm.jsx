@@ -54,10 +54,6 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
             name='designation'
             options={[
               {
-                label: 'KSK',
-                value: 'KSK',
-              },
-              {
                 label: 'KSM',
                 value: 'KSM',
               },
