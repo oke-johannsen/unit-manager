@@ -83,7 +83,7 @@ const LogComponent = () => {
               loggings?.length > 10
                 ? {
                     responsive: true,
-                    showTotal: () => <span>{`Insgegsamt: ${data.length} Logs`}</span>,
+                    showTotal: (data) => <span>{`Insgegsamt: ${data.length} Logs`}</span>,
                     showSizeChanger: true,
                     hideOnSinglePage: true,
                   }
