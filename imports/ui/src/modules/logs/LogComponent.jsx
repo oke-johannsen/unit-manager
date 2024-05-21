@@ -17,8 +17,8 @@ const LogComponent = () => {
       dateRange
         ? {
             timestamp: {
-              $gte: dateRange[0].toDate(),
-              $lte: dateRange[1].toDate(),
+              $gte: dateRange[0].startOf('day').toDate(),
+              $lte: dateRange[1].endOf('day').toDate(),
             },
           }
         : {},
