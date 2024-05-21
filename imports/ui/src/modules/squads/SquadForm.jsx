@@ -20,7 +20,7 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
     }
   }, [])
   const defaultValues = {
-    designation: 'KSK',
+    designation: 'KSM',
   }
 
   return (
@@ -74,7 +74,7 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
             mode='multiple'
             options={userOptions.map((opt) => ({
               ...opt,
-              key: 'multi-' + opt.value,
+              key: `multi-${opt.value}`,
             }))}
           />
         </Form.Item>
@@ -88,7 +88,7 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
             name='squadLead'
             options={userOptions.map((opt) => ({
               ...opt,
-              key: 'single-' + opt.value,
+              key: `single-${opt.value}`,
             }))}
           />
         </Form.Item>

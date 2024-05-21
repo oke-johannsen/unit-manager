@@ -1,5 +1,5 @@
 export const ranks = [
-  { value: '-', label: '-' },
+  { value: '-', label: 'Keinen Dienstgrad' },
   { value: 'Unteroffizier', label: 'Maat' },
   { value: 'Fähnrich (FD)', label: 'Fähnricht (FD)' },
   { value: 'Bootsmann', label: 'Bootsmann' },

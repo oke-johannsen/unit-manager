@@ -14,6 +14,13 @@ const rankOptions = ranks
 const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
   const { skillsOptions, squadOptions } = useTracker(() => {
     Meteor.subscribe('skills')
+    const squads = SquadCollection.find().map((squad) => {
+      return {
+        value: squad._id,
+        label: squad.squadName,
+      }
+    })
+    squads.push({ value: null, label: 'Nicht besetzt' })
     return {
       skillsOptions: SkillsCollection.find().map((skill) => {
         return {
@@ -27,12 +34,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
           color: skill.color || '#ccc',
         }
       }),
-      squadOptions: SquadCollection.find().map((squad) => {
-        return {
-          value: squad._id,
-          label: squad.squadName,
-        }
-      }),
+      squadOptions: squads,
     }
   }, [])
   const onFinish = () => {
@@ -54,7 +56,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
         name: undefined,
         tier: 3,
         rank: 'Unteroffizier',
-        designation: 'KSK',
+        designation: 'KSM',
         squadPosition: 7,
         securityClearance: 1,
         points: 0,
@@ -214,6 +216,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               disabled={securityClearance < 3}
               optionFilterProp='label'
             >
+              <Select.Option value={null}>Keine Zugehörigkeit</Select.Option>
               <Select.Option value='KSM'>KSM</Select.Option>
               <Select.Option value='Luftwaffe'>Luftwaffe</Select.Option>
             </Select>
@@ -266,6 +269,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
               disabled={securityClearance < 3}
               optionFilterProp='label'
               options={[
+                { key: 0, label: 'Keine Position', value: null },
                 { key: 1, label: '1', value: 1 },
                 { key: 2, label: '2', value: 2 },
                 { key: 3, label: '3', value: 3 },
@@ -274,7 +278,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
                 { key: 6, label: '6', value: 6 },
                 { key: 7, label: 'Strap', value: 7 },
               ]}
-            ></Select>
+            />
           </Form.Item>
         </Col>
       </Row>
