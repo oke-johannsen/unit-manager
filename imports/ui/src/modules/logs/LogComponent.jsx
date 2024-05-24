@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import { LoggingCollection } from '../../../../api/LoggingApi'
-import { Col, DatePicker, Modal, Row, Spin, Table } from 'antd'
+import { Col, DatePicker, Modal, Row, Segmented, Spin, Table } from 'antd'
 import { LOG_COLUMNS } from './LOG_COLUMNS'
 import dayjs from 'dayjs'
+import { diffJson } from 'diff'
 const { RangePicker } = DatePicker
 
 const LogComponent = () => {
   const [dateRange, setDateRange] = useState([dayjs().startOf('month'), dayjs().endOf('month')])
   const [open, setOpen] = useState(false)
+  const [segmentedSelection, setSegmentedSelection] = useState('all')
   const { ready, loggings } = useTracker(() => {
     const sub = Meteor.subscribe('users')
     const subLogging = Meteor.subscribe('logging')
@@ -44,7 +46,16 @@ const LogComponent = () => {
             onRow={(record) => {
               return {
                 onClick: () => {
-                  setOpen(record)
+                  const before = record?.before
+                  if (before?._id) before._id = undefined
+                  if (before?.createdAt) before.createdAt = undefined
+                  if (before?.services) before.services = undefined
+                  const after = record?.after?.modifier ?? record?.after
+                  if (after?._id) after._id = undefined
+                  if (after?.createdAt) after.createdAt = undefined
+                  if (after?.services) after.services = undefined
+                  const diff = diffJson(before, after)
+                  setOpen(diff)
                 },
               }
             }}
@@ -101,43 +112,34 @@ const LogComponent = () => {
           centered
         >
           <Row gutter={[16, 16]}>
-            <Col
-              xs={24}
-              xl={12}
-            >
-              <Row>
-                <Col
-                  span={24}
-                  style={{ fontWeight: 'bold' }}
-                >
-                  Vorher
-                </Col>
-                <Col
-                  span={24}
-                  style={{ whiteSpace: 'pre-wrap' }}
-                >
-                  {JSON.stringify(open.before, null, 2)}
-                </Col>
-              </Row>
+            <Col span={24}>
+              <Segmented
+                value={segmentedSelection}
+                onChange={setSegmentedSelection}
+                options={[
+                  { label: 'Alle', value: 'all' },
+                  { label: 'Nur Veränderungen', value: 'changed' },
+                ]}
+                block
+              />
             </Col>
             <Col
               xs={24}
-              xl={12}
+              style={{ whiteSpace: 'pre-wrap' }}
             >
-              <Row>
-                <Col
-                  span={24}
-                  style={{ fontWeight: 'bold' }}
-                >
-                  Nachher
-                </Col>
-                <Col
-                  span={24}
-                  style={{ whiteSpace: 'pre-wrap' }}
-                >
-                  {JSON.stringify(open.after, null, 2)}
-                </Col>
-              </Row>
+              {(segmentedSelection === 'all' ? open : open.filter((item) => item?.added !== item?.removed)).map(
+                (part, index) => {
+                  const color = part.added ? 'green' : part.removed ? 'red' : 'grey'
+                  return (
+                    <span
+                      key={`part-${index}`}
+                      style={{ color }}
+                    >
+                      {part.value}
+                    </span>
+                  )
+                }
+              )}
             </Col>
           </Row>
         </Modal>
