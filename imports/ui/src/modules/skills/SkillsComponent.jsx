@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Button, Col, Dropdown, Row, Segmented, Spin, Table, message } from 'antd'
+import { Button, Col, Dropdown, Grid, Row, Segmented, Spin, Table, message } from 'antd'
 import { SKILLS_COLUMNS, getTypeName } from './SKILLS_COLUMNS'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import SkillsModal from './SkillsModal'
@@ -78,6 +78,7 @@ const SkillsComponent = () => {
       },
     },
   ]
+  const breakpoints = Grid.useBreakpoint()
   return (
     <Row align='middle'>
       <Col span={24}>
@@ -86,7 +87,7 @@ const SkillsComponent = () => {
             scroll={{ x: 150 }}
             title={() => (
               <Row
-                gutter={16}
+                gutter={[16, 16]}
                 justify='space-between'
                 align='middle'
               >
@@ -94,36 +95,41 @@ const SkillsComponent = () => {
                   flex='auto'
                   style={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <span
-                    style={{
-                      margin: '0 1.5rem 0 0',
-                      padding: 0,
-                      fontSize: 24,
-                      fontFamily: "'Bebas Neue', sans-serif",
-                    }}
-                  >
-                    Ausbildungen
-                  </span>
-                  <span>
-                    <Segmented
-                      onChange={(value) => setType(value)}
-                      value={type}
-                      options={[
-                        {
-                          label: 'Alle',
-                          value: 'all',
-                        },
-                        {
-                          label: 'Kommando',
-                          value: 'infantry',
-                        },
-                        {
-                          label: 'Luftwaffe',
-                          value: 'pilot',
-                        },
-                      ]}
-                    />
-                  </span>
+                  <Row gutter={[16, 16]}>
+                    <Col>
+                      <span
+                        style={{
+                          margin: '0 1.5rem 0 0',
+                          padding: 0,
+                          fontSize: 24,
+                          fontFamily: "'Bebas Neue', sans-serif",
+                        }}
+                      >
+                        Ausbildungen
+                      </span>
+                    </Col>
+                    <Col flex={breakpoints.xs ? 'undefined' : 'auto'}>
+                      <Segmented
+                        onChange={(value) => setType(value)}
+                        value={type}
+                        options={[
+                          {
+                            label: 'Alle',
+                            value: 'all',
+                          },
+                          {
+                            label: 'Kommando',
+                            value: 'infantry',
+                          },
+                          {
+                            label: 'Luftwaffe',
+                            value: 'pilot',
+                          },
+                        ]}
+                        block={breakpoints.xs}
+                      />
+                    </Col>
+                  </Row>
                 </Col>
                 <Col>
                   <Row gutter={8}>

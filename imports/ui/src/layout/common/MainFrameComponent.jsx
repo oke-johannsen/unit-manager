@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Button, Col, Layout, Row, Tooltip, message } from 'antd'
+import { Button, Col, Drawer, Grid, Layout, Row, Tooltip, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
-import { LogoutOutlined, UnlockOutlined } from '@ant-design/icons'
+import { LogoutOutlined, MenuOutlined, UnlockOutlined } from '@ant-design/icons'
 import ViewController from './ViewController'
 import PasswordResetModal from './PasswordResetModal'
 import SidebarComponent from './SidebarComponent'
@@ -12,8 +12,9 @@ const MainFrameComponent = () => {
   const [view, setView] = useState('dashboard')
   const [open, setOpen] = useState(false)
   const user = Meteor.user()
+  const breakpoints = Grid.useBreakpoint()
   const headerStyle = {
-    height: window.innerWidth < 768 ? 'auto' : 90,
+    height: !breakpoints.sm ? 'auto' : 90,
     lineHeight: '90px',
     paddingInline: '0.5rem',
   }
@@ -26,9 +27,10 @@ const MainFrameComponent = () => {
   const footerStyle = {
     textAlign: 'center',
   }
+  const [openDrawer, setOpenDrawer] = useState(false)
   return (
     <Layout style={{ height: '100%' }}>
-      <SidebarComponent setView={setView} />
+      {!breakpoints.xs && <SidebarComponent setView={setView} />}
       <Layout>
         <Header style={headerStyle}>
           <Row
@@ -36,11 +38,54 @@ const MainFrameComponent = () => {
             align='middle'
             style={{ height: 80 }}
           >
-            {window.innerWidth > 700 && (
+            {breakpoints.xs && (
+              <Col className='layer-2'>
+                <Row gutter={[8, 8]}>
+                  <Col
+                    className='layer-2'
+                    style={{ height: 82 }}
+                  >
+                    <img
+                      src='/images/logo.webp'
+                      alt=''
+                      style={{
+                        padding: '0.5rem',
+                        height: 82,
+                        position: 'relative',
+                        zIndex: 2,
+                        aspectRatio: 1,
+                      }}
+                      fetchpriority='high'
+                      rel='preload'
+                    />
+                  </Col>
+                  <Col className='layer-2'>
+                    <Button
+                      size='large'
+                      icon={<MenuOutlined />}
+                      onClick={() => setOpenDrawer(true)}
+                    />
+                    <Drawer
+                      title='Navigation'
+                      open={openDrawer}
+                      onClose={() => setOpenDrawer(false)}
+                    >
+                      <SidebarComponent
+                        setView={(e) => {
+                          setView(e)
+                          setOpenDrawer(false)
+                        }}
+                      />
+                    </Drawer>
+                  </Col>
+                </Row>
+              </Col>
+            )}
+            {breakpoints.lg && (
               <Col
                 className='layer-2'
                 style={{
-                  fontSize: window.innerWidth < 768 ? '1.2rem' : '1.5rem',
+                  fontSize: !breakpoints.sm ? '1.2rem' : '1.5rem',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                 }}
@@ -49,10 +94,7 @@ const MainFrameComponent = () => {
                 {`Willkommen, ${user?.profile?.name}!`}
               </Col>
             )}
-            <Col
-              className='layer-2'
-              span={window.innerWidth > 700 ? null : 24}
-            >
+            <Col className='layer-2'>
               <Row
                 gutter={16}
                 justify='end'
@@ -122,7 +164,7 @@ const MainFrameComponent = () => {
             setView={setView}
           />
         </Content>
-        {window.innerWidth > 700 && (
+        {breakpoints.lg && (
           <Footer style={footerStyle}>
             <Row
               gutter={16}

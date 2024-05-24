@@ -35,6 +35,7 @@ const BriefingsComponent = () => {
       )}
       <Col span={24}>
         <Table
+          scroll={{ x: 150 }}
           dataSource={briefings}
           columns={BRIEFINGS_TABLE_COLUMNS}
           pagination={{ pageSize: 10, hideOnSinglePage: true }}

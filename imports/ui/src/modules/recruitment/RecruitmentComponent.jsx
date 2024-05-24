@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Col, List, Modal, Row, Segmented, message } from 'antd'
+import { Button, Col, Grid, List, Modal, Row, Segmented, message } from 'antd'
 import { RecruitmentCollection } from '../../../../api/RecruitmentsApi'
 
 const RecruitmentComponent = () => {
@@ -21,6 +21,7 @@ const RecruitmentComponent = () => {
       recruitment,
     }
   }, [selected])
+  const breakpoints = Grid.useBreakpoint()
   return (
     <>
       <List
@@ -62,7 +63,9 @@ const RecruitmentComponent = () => {
             <List.Item
               key={item.key}
               actions={[
-                <a
+                <Button
+                  type='link'
+                  key={`${item.key}-1`}
                   onClick={() => {
                     Meteor.call(
                       'recruitment.update',
@@ -82,37 +85,52 @@ const RecruitmentComponent = () => {
                   }}
                 >
                   {item.status === 'open' ? 'Abschließen' : 'Wiedereröffnen'}
-                </a>,
-                <a onClick={() => setDeleteModal(item)}>Löschen</a>,
+                </Button>,
+                <Button
+                  type='link'
+                  key={`${item.key}-2`}
+                  onClick={() => setDeleteModal(item)}
+                >
+                  Löschen
+                </Button>,
               ]}
             >
               <List.Item.Meta
                 title={item.preferredName}
                 description={
-                  <Row>
-                    <Col span={8}>Alter:</Col>
-                    <Col span={16}>{item.age}</Col>
-                    <Col span={8}>Discord:</Col>
-                    <Col span={16}>{item.discordId}</Col>
-                    <Col span={8}>Steam:</Col>
-                    <Col span={16}>
+                  <Row style={{ width: '100%' }}>
+                    <Col span={breakpoints.xs ? 24 : 8}>Alter:</Col>
+                    <Col span={breakpoints.xs ? 24 : 16}>{item.age}</Col>
+                    <Col span={breakpoints.xs ? 24 : 8}>Discord:</Col>
+                    <Col span={breakpoints.xs ? 24 : 16}>{item.discordId}</Col>
+                    <Col span={breakpoints.xs ? 24 : 8}>Steam:</Col>
+                    <Col
+                      span={breakpoints.xs ? 24 : 16}
+                      style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                    >
                       <a
                         href={item.steamProfile}
                         target='_blank'
+                        rel='noopener noreferrer'
                       >
                         {item.steamProfile}
                       </a>
                     </Col>
-                    <Col span={8}>Stunden:</Col>
-                    <Col span={16}>{item.amountOfHours}</Col>
-                    <Col span={8}>Anwesenheit:</Col>
-                    <Col span={16}>{item.attendenceBehaviour}</Col>
-                    <Col span={8}>MilSim Erfahrung:</Col>
-                    <Col span={16}>{item.experience}</Col>
+                    <Col span={breakpoints.xs ? 24 : 8}>Stunden:</Col>
+                    <Col span={breakpoints.xs ? 24 : 16}>{item.amountOfHours}</Col>
+                    <Col span={breakpoints.xs ? 24 : 8}>Anwesenheit:</Col>
+                    <Col span={breakpoints.xs ? 24 : 16}>{item.attendenceBehaviour}</Col>
+                    <Col span={breakpoints.xs ? 24 : 8}>MilSim Erfahrung:</Col>
+                    <Col
+                      span={breakpoints.xs ? 24 : 16}
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
+                      {item.experience}
+                    </Col>
                     {item.referred && (
                       <>
-                        <Col span={8}>Rekrutiert durch:</Col>
-                        <Col span={16}>{Meteor.users.findOne(item.referrer)?.profile?.name}</Col>
+                        <Col span={breakpoints.xs ? 24 : 8}>Rekrutiert durch:</Col>
+                        <Col span={breakpoints.xs ? 24 : 16}>{Meteor.users.findOne(item.referrer)?.profile?.name}</Col>
                       </>
                     )}
                   </Row>
@@ -128,7 +146,6 @@ const RecruitmentComponent = () => {
         <Modal
           open={deleteModal}
           title='Bewerbung löschen'
-          children='Bist du sicher, dass du diese Bewerbung löschen möchtest?'
           okText='Löschen'
           okButtonProps={{ danger: true }}
           onOk={() => {
@@ -145,7 +162,9 @@ const RecruitmentComponent = () => {
           cancelText='Abbrechen'
           onCancel={() => setDeleteModal(false)}
           centered
-        />
+        >
+          Bist du sicher, dass du diese Bewerbung löschen möchtest?
+        </Modal>
       )}
     </>
   )

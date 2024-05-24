@@ -1,5 +1,5 @@
 import { AppstoreFilled, HddFilled } from '@ant-design/icons'
-import { Badge, Button, Col, Divider, Layout, Row } from 'antd'
+import { Badge, Button, Col, Divider, Grid, Layout, Row } from 'antd'
 import React from 'react'
 import { Meteor } from 'meteor/meteor'
 import HeaderComponent from './HeaderComponent'
@@ -151,75 +151,96 @@ const SidebarComponent = ({ setView }) => {
         ]
       : []),
   ]
+  const breakpoints = Grid.useBreakpoint()
+  if (breakpoints.xs) {
+    return (
+      <Options
+        setView={setView}
+        options={options}
+      />
+    )
+  }
   return (
     <Sider
       style={siderStyle}
       width={150}
     >
-      <Row
-        justify='center'
-        align='top'
-        style={{ height: '100%' }}
-      >
+      <Options
+        setView={setView}
+        options={options}
+      />
+    </Sider>
+  )
+}
+
+const Options = ({ setView, options }) => {
+  const breakpoints = Grid.useBreakpoint()
+  return (
+    <Row
+      justify='center'
+      align='top'
+      style={{ height: '100%' }}
+    >
+      {!breakpoints.xs && (
         <Col className='layer-2'>
           <HeaderComponent />
         </Col>
-        <Col
-          span={24}
-          style={{
-            paddingTop: 32,
-            background: '#80808',
-            height: 'calc(100% - 90px)',
-            overflow: 'auto',
-          }}
-        >
-          <Row gutter={[0, 16]}>
-            {options.map((option, index) => {
-              return (
-                <Col
-                  span={24}
-                  key={option.view}
+      )}
+      <Col
+        span={24}
+        style={{
+          paddingTop: 32,
+          background: '#80808',
+          height: 'calc(100% - 90px)',
+          overflow: 'auto',
+        }}
+      >
+        <Row gutter={[0, 16]}>
+          {options.map((option, index) => {
+            return (
+              <Col
+                span={24}
+                key={option.view}
+              >
+                <Button
+                  className='sider-button'
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    color: option.color,
+                  }}
+                  type='ghost'
+                  onClick={() => {
+                    setView(option.view)
+                  }}
                 >
-                  <Button
-                    className='sider-button'
-                    style={{
-                      height: '100%',
-                      width: '100%',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      color: option.color,
-                    }}
-                    type='ghost'
-                    onClick={() => {
-                      setView(option.view)
-                    }}
+                  <Row
+                    justify='center'
+                    align='middle'
+                    style={{ flexDirection: 'column' }}
                   >
-                    <Row
-                      justify='center'
-                      align='middle'
-                      style={{ flexDirection: 'column' }}
-                    >
-                      <Col>{option.icon}</Col>
-                      <Col>{option.text}</Col>
-                    </Row>
-                  </Button>
-                  {index !== options.length - 1 && (
-                    <Divider
-                      style={{
-                        margin: '0 auto',
-                        width: '80%',
-                        minWidth: '80%',
-                      }}
-                    />
-                  )}
-                </Col>
-              )
-            })}
-          </Row>
-        </Col>
-      </Row>
-    </Sider>
+                    <Col>{option.icon}</Col>
+                    <Col>{option.text}</Col>
+                  </Row>
+                </Button>
+                {index !== options.length - 1 && (
+                  <Divider
+                    style={{
+                      margin: '0 auto',
+                      width: '80%',
+                      minWidth: '80%',
+                    }}
+                  />
+                )}
+              </Col>
+            )
+          })}
+        </Row>
+      </Col>
+    </Row>
   )
 }
 
