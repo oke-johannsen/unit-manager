@@ -178,7 +178,7 @@ const SidebarComponent = ({ setView }) => {
               return (
                 <Col
                   span={24}
-                  key={option.view + index}
+                  key={option.view}
                 >
                   <Button
                     className='sider-button'

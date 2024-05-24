@@ -148,6 +148,7 @@ const MainFrameComponent = () => {
                     <a
                       href='http://steamcommunity.com/groups/TaskForce-11'
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       Steam Gruppe
                     </a>
@@ -156,6 +157,7 @@ const MainFrameComponent = () => {
                     <a
                       href='https://units.arma3.com/unit/taskforce11'
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       Arma 3 Unit
                     </a>
@@ -164,6 +166,7 @@ const MainFrameComponent = () => {
                     <a
                       href='ts3server://ts.TaskForce11.de'
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       TeamSpeak
                     </a>
@@ -172,6 +175,7 @@ const MainFrameComponent = () => {
                     <a
                       href='https://discord.gg/74cPDMcyaU'
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       Discord
                     </a>
@@ -181,6 +185,7 @@ const MainFrameComponent = () => {
                     <a
                       href='https://www.taskforce11.de/'
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       Task Force 11 <sup>TM</sup>
                     </a>

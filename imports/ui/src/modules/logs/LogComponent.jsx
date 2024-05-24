@@ -128,11 +128,11 @@ const LogComponent = () => {
               style={{ whiteSpace: 'pre-wrap' }}
             >
               {(segmentedSelection === 'all' ? open : open.filter((item) => item?.added !== item?.removed)).map(
-                (part, index) => {
+                (part) => {
                   const color = part.added ? 'green' : part.removed ? 'red' : 'grey'
                   return (
                     <span
-                      key={`part-${index}`}
+                      key={`part-${part.value}`}
                       style={{ color }}
                     >
                       {part.value}
