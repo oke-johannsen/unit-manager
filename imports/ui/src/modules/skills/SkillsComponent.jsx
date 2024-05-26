@@ -39,7 +39,7 @@ const SkillsComponent = () => {
       key: 'read',
       label: 'Anzeigen',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setFormDisabled(true)
           setOpen(true)
           setIsDelete(false)
@@ -53,7 +53,7 @@ const SkillsComponent = () => {
       key: 'edit',
       label: 'Bearbeiten',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setFormDisabled(false)
           setOpen(true)
           setIsDelete(false)
@@ -67,7 +67,7 @@ const SkillsComponent = () => {
       key: 'delete',
       label: 'Löschen',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setFormDisabled(false)
           setIsDelete(true)
           setOpen(true)
@@ -91,77 +91,88 @@ const SkillsComponent = () => {
                 justify='space-between'
                 align='middle'
               >
-                <Col
-                  flex='auto'
-                  style={{ display: 'flex', alignItems: 'center' }}
-                >
-                  <Row gutter={[16, 16]}>
-                    <Col>
-                      <span
-                        style={{
-                          margin: '0 1.5rem 0 0',
-                          padding: 0,
-                          fontSize: 24,
-                          fontFamily: "'Bebas Neue', sans-serif",
-                        }}
-                      >
-                        Ausbildungen
-                      </span>
-                    </Col>
-                    <Col flex={breakpoints.xs ? 'undefined' : 'auto'}>
-                      <Segmented
-                        onChange={(value) => setType(value)}
-                        value={type}
-                        options={[
-                          {
-                            label: 'Alle',
-                            value: 'all',
-                          },
-                          {
-                            label: 'Kommando',
-                            value: 'infantry',
-                          },
-                          {
-                            label: 'Luftwaffe',
-                            value: 'pilot',
-                          },
-                        ]}
-                        block={breakpoints.xs}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
                 <Col>
-                  <Row gutter={8}>
-                    {securityClearance > 1 && (
-                      <Col>
-                        <Button onClick={() => setAddContextOpen(true)}>Ausbildung zuweisen</Button>
-                      </Col>
-                    )}
-                    {securityClearance > 3 && (
-                      <Col>
-                        <Dropdown.Button
-                          type='primary'
-                          onClick={() => {
-                            setFormDisabled(false)
-                            setIsDelete(false)
-                            setOpen(true)
-                            setTitle('Ausbildung erstellen')
-                            setRowSelection({
-                              selectedRows: [],
-                              selectedRowKeys: [],
-                            })
-                          }}
-                          menu={{
-                            items,
-                          }}
-                        >
-                          Erstellen
-                        </Dropdown.Button>
-                      </Col>
-                    )}
-                  </Row>
+                  <span
+                    style={{
+                      margin: '0 1.5rem 0 0',
+                      padding: 0,
+                      fontSize: 24,
+                      fontFamily: "'Bebas Neue', sans-serif",
+                    }}
+                  >
+                    Ausbildungen
+                  </span>
                 </Col>
+                {breakpoints.xs && securityClearance > 3 && (
+                  <Col>
+                    <Dropdown.Button
+                      type='primary'
+                      onClick={() => {
+                        setFormDisabled(false)
+                        setIsDelete(false)
+                        setOpen(true)
+                        setTitle('Ausbildung erstellen')
+                        setRowSelection({
+                          selectedRows: [],
+                          selectedRowKeys: [],
+                        })
+                      }}
+                      menu={{
+                        items,
+                      }}
+                    >
+                      Erstellen
+                    </Dropdown.Button>
+                  </Col>
+                )}
+                <Col flex='auto'>
+                  <Segmented
+                    onChange={(value) => setType(value)}
+                    value={type}
+                    options={[
+                      {
+                        label: 'Alle',
+                        value: 'all',
+                      },
+                      {
+                        label: 'Kommando',
+                        value: 'infantry',
+                      },
+                      {
+                        label: 'Luftwaffe',
+                        value: 'pilot',
+                      },
+                    ]}
+                    block
+                  />
+                </Col>
+                {!breakpoints.xs && securityClearance > 1 && (
+                  <Col>
+                    <Button onClick={() => setAddContextOpen(true)}>Ausbildung zuweisen</Button>
+                  </Col>
+                )}
+                {!breakpoints.xs && securityClearance > 3 && (
+                  <Col>
+                    <Dropdown.Button
+                      type='primary'
+                      onClick={() => {
+                        setFormDisabled(false)
+                        setIsDelete(false)
+                        setOpen(true)
+                        setTitle('Ausbildung erstellen')
+                        setRowSelection({
+                          selectedRows: [],
+                          selectedRowKeys: [],
+                        })
+                      }}
+                      menu={{
+                        items,
+                      }}
+                    >
+                      Erstellen
+                    </Dropdown.Button>
+                  </Col>
+                )}
               </Row>
             )}
             style={{ padding: '0.5rem' }}

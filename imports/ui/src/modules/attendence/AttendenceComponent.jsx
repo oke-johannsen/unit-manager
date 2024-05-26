@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   Dropdown,
+  Grid,
   Modal,
   Radio,
   Row,
@@ -12,6 +13,7 @@ import {
   Statistic,
   Table,
   Tabs,
+  Tag,
   message,
 } from 'antd'
 import React, { useState } from 'react'
@@ -97,7 +99,7 @@ const AttendenceComponent = () => {
       key: 'read',
       label: 'Anzeigen',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setOpenAttendenceDisplayModal(rowSelection.selectedRowKeys)
         } else {
           message.warning(errorText)
@@ -108,7 +110,7 @@ const AttendenceComponent = () => {
       key: 'edit',
       label: 'Bearbeiten',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setOpenAttendenceUpdateModal(rowSelection.selectedRowKeys)
         } else {
           message.warning(errorText)
@@ -119,7 +121,7 @@ const AttendenceComponent = () => {
       key: 'delete',
       label: 'Löschen',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setOpenAttendenceDeleteModal(rowSelection.selectedRowKeys)
         } else {
           message.warning(errorText)
@@ -128,27 +130,29 @@ const AttendenceComponent = () => {
     },
   ]
   const handleAddPoints = () => {
-    rowSelection?.selectedRowKeys?.forEach((item) => {
-      const attendence = AttendenceCollection.findOne(item)
-      if (attendence.spentPoints !== true) {
-        attendence.userIds?.forEach((id) => {
-          const user = Meteor.users.findOne(id)
-          if (user) {
-            const newUser = { ...user }
-            newUser.profile.points = newUser?.profile?.points + (attendence.type === 'mission' ? 5 : 10)
-            Meteor.call('users.update', newUser)
+    if (rowSelection?.selectedRowKeys?.length) {
+      for (const item of rowSelection.selectedRowKeys) {
+        const attendence = AttendenceCollection.findOne(item)
+        if (attendence.spentPoints !== true) {
+          for (const id of attendence.userIds) {
+            const user = Meteor.users.findOne(id)
+            if (user) {
+              const newUser = { ...user }
+              newUser.profile.points = newUser?.profile?.points + (attendence.type === 'mission' ? 5 : 10)
+              Meteor.call('users.update', newUser)
+            }
           }
-        })
-        const { userIds, type, date, promotedMembers } = attendence
-        Meteor.call('attendence.update', attendence._id, {
-          userIds,
-          type,
-          date,
-          promotedMembers,
-          spentPoints: true,
-        })
+          const { userIds, type, date, promotedMembers } = attendence
+          Meteor.call('attendence.update', attendence._id, {
+            userIds,
+            type,
+            date,
+            promotedMembers,
+            spentPoints: true,
+          })
+        }
       }
-    })
+    }
   }
   const getAverageParticipants = () => {
     if (attendences?.length) {
@@ -162,14 +166,14 @@ const AttendenceComponent = () => {
       )
       const averageParticipants = totalParticipants / totalEntries
       return Math.floor(averageParticipants)
-    } else {
-      return 0
     }
+    return 0
   }
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState(null)
   const [title, setTitle] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
+  const breakpoints = Grid.useBreakpoint()
 
   return (
     <>
@@ -215,7 +219,7 @@ const AttendenceComponent = () => {
                       }}
                     >
                       <Row
-                        gutter={8}
+                        gutter={[8, 8]}
                         justify='end'
                       >
                         <Col>
@@ -233,7 +237,7 @@ const AttendenceComponent = () => {
                               const now = value.clone().year(newYear)
                               onChange(now)
                             }}
-                          ></Select>
+                          />
                         </Col>
                         <Col>
                           <Select
@@ -284,13 +288,20 @@ const AttendenceComponent = () => {
                               })
                             }}
                           >
-                            {attendence.title ||
-                              (attendence.type === 'mission'
-                                ? 'Mission'
-                                : attendence.type === 'training'
-                                ? 'Training'
-                                : attendence.type)}
-                            : {dayjs(attendence.date).format('HH:mm')} {attendence.wholeDay ? '(Ganztägig)' : ''}
+                            {!breakpoints.xs &&
+                              (attendence.title ||
+                                (attendence.type === 'mission'
+                                  ? 'Mission'
+                                  : attendence.type === 'training'
+                                  ? 'Training'
+                                  : attendence.type))}
+                            {!breakpoints.xs &&
+                              `: ${dayjs(attendence.date).format('HH:mm')} ${attendence.wholeDay ? '(Ganztägig)' : ''}`}
+                            {breakpoints.xs && (
+                              <Tag color='#842121'>{`${dayjs(attendence.date).format('HH:mm')} ${
+                                attendence.wholeDay ? '(Ganztägig)' : ''
+                              }`}</Tag>
+                            )}
                           </Col>
                         )
                       })
@@ -390,9 +401,10 @@ const AttendenceComponent = () => {
                         justify='space-between'
                         align='middle'
                       >
-                        <Col flex='auto'>
+                        <Col span={breakpoints.xs ? 24 : undefined}>
                           <Row
                             gutter={[16, 16]}
+                            justify='space-between'
                             align='middle'
                           >
                             <Col>
@@ -526,7 +538,7 @@ const AttendenceComponent = () => {
                           securityClearance > 3
                             ? [
                                 <EditOutlined
-                                  key={item.key + '-edit'}
+                                  key={`${item.key}-edit`}
                                   onClick={() => {
                                     setTitle('Einsatzart bearbeiten')
                                     setOpen(true)
@@ -534,7 +546,7 @@ const AttendenceComponent = () => {
                                   }}
                                 />,
                                 <DeleteOutlined
-                                  key={item.key + '-delete'}
+                                  key={`${item.key}-delete`}
                                   onClick={() => setDeleteModal(item)}
                                 />,
                               ]

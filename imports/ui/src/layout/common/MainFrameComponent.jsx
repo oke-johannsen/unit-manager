@@ -69,6 +69,7 @@ const MainFrameComponent = () => {
                       title='Navigation'
                       open={openDrawer}
                       onClose={() => setOpenDrawer(false)}
+                      width={'100vw'}
                     >
                       <SidebarComponent
                         setView={(e) => {
@@ -81,7 +82,7 @@ const MainFrameComponent = () => {
                 </Row>
               </Col>
             )}
-            {breakpoints.lg && (
+            {breakpoints.md && (
               <Col
                 className='layer-2'
                 style={{

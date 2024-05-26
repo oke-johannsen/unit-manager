@@ -1,4 +1,4 @@
-import { Col, Dropdown, Input, List, Row, Segmented, Statistic, Table, message } from 'antd'
+import { Col, Dropdown, Grid, Input, List, Row, Segmented, Statistic, Table, message } from 'antd'
 import React, { Suspense, useEffect, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
@@ -15,6 +15,213 @@ import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsAp
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { runTierCheck } from './member.lib'
 import { PromotionSettings, UserPromotionChecks } from './Promotions'
+
+const Header = ({
+  options,
+  selected,
+  setSelected,
+  search,
+  setSearch,
+  securityClearance,
+  items,
+  setOpenUserCreateModal,
+}) => {
+  const breakpoints = Grid.useBreakpoint()
+  if (!breakpoints.lg && !breakpoints.xl && !breakpoints.xxl) {
+    return (
+      <Row
+        gutter={[16, 16]}
+        justify='space-between'
+      >
+        <Col span={24}>
+          <Row
+            gutter={[16, 16]}
+            justify='space-between'
+            align='middle'
+            style={{
+              flexWrap: 'nowrap',
+            }}
+          >
+            <Col>
+              <span
+                style={{
+                  margin: '0 1.5rem 0 0',
+                  padding: 0,
+                  fontSize: 24,
+                  fontFamily: "'Bebas Neue', sans-serif",
+                }}
+              >
+                Mitgliederliste
+              </span>
+            </Col>
+            {!breakpoints.xs ? (
+              <Col flex='auto'>
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder='Mitglieder durchsuchen'
+                />
+              </Col>
+            ) : (
+              securityClearance > 1 && (
+                <Col>
+                  {securityClearance < 3 ? (
+                    <Dropdown.Button
+                      type='primary'
+                      menu={{
+                        items,
+                      }}
+                    >
+                      Aktionen
+                    </Dropdown.Button>
+                  ) : (
+                    <Dropdown.Button
+                      type='primary'
+                      onClick={() => setOpenUserCreateModal(true)}
+                      menu={{
+                        items,
+                      }}
+                    >
+                      Erstellen
+                    </Dropdown.Button>
+                  )}
+                </Col>
+              )
+            )}
+          </Row>
+        </Col>
+        <Col span={24}>
+          <Row
+            gutter={[16, 16]}
+            justify='space-between'
+            align='middle'
+            style={{
+              flexWrap: 'nowrap',
+            }}
+          >
+            <Col flex='auto'>
+              <Segmented
+                options={options}
+                value={selected}
+                onChange={setSelected}
+                block={breakpoints.xs}
+              />
+            </Col>
+            {!breakpoints.xs && securityClearance > 1 && (
+              <Col>
+                {securityClearance < 3 ? (
+                  <Dropdown.Button
+                    type='primary'
+                    menu={{
+                      items,
+                    }}
+                  >
+                    Aktionen
+                  </Dropdown.Button>
+                ) : (
+                  <Dropdown.Button
+                    type='primary'
+                    onClick={() => setOpenUserCreateModal(true)}
+                    menu={{
+                      items,
+                    }}
+                  >
+                    Erstellen
+                  </Dropdown.Button>
+                )}
+              </Col>
+            )}
+          </Row>
+        </Col>
+      </Row>
+    )
+  }
+  return (
+    <Row
+      gutter={[16, 16]}
+      justify='space-between'
+      align='middle'
+      style={{
+        flexWrap: 'nowrap',
+      }}
+    >
+      <Col span={12}>
+        <Row
+          gutter={[16, 16]}
+          justify='space-between'
+          align='middle'
+          style={{
+            flexWrap: 'nowrap',
+          }}
+        >
+          <Col>
+            <span
+              style={{
+                margin: '0 1.5rem 0 0',
+                padding: 0,
+                fontSize: 24,
+                fontFamily: "'Bebas Neue', sans-serif",
+              }}
+            >
+              Mitgliederliste
+            </span>
+          </Col>
+          <Col flex='auto'>
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder='Mitglieder suchen'
+              style={{ width: '100%' }}
+            />
+          </Col>
+        </Row>
+      </Col>
+      <Col span={12}>
+        <Row
+          gutter={[16, 16]}
+          justify='space-between'
+          align='middle'
+          style={{
+            flexWrap: 'nowrap',
+          }}
+        >
+          <Col flex='auto'>
+            <Segmented
+              options={options}
+              value={selected}
+              onChange={setSelected}
+              block
+            />
+          </Col>
+          {securityClearance > 1 && (
+            <Col>
+              {securityClearance < 3 ? (
+                <Dropdown.Button
+                  type='primary'
+                  menu={{
+                    items,
+                  }}
+                >
+                  Aktionen
+                </Dropdown.Button>
+              ) : (
+                <Dropdown.Button
+                  type='primary'
+                  onClick={() => setOpenUserCreateModal(true)}
+                  menu={{
+                    items,
+                  }}
+                >
+                  Erstellen
+                </Dropdown.Button>
+              )}
+            </Col>
+          )}
+        </Row>
+      </Col>
+    </Row>
+  )
+}
 
 const MembersTable = ({ props }) => {
   const {
@@ -43,81 +250,22 @@ const MembersTable = ({ props }) => {
     openUserDeleteModal,
     openPasswordResetModal,
   } = props
+  const breakpoints = Grid.useBreakpoint()
   return (
     <Col span={24}>
       <Table
         scroll={{ x: 150 }}
         title={() => (
-          <Row
-            gutter={[16, 16]}
-            justify='space-between'
-            align='middle'
-          >
-            <Col flex='auto'>
-              <Row
-                gutter={[16, 16]}
-                align='middle'
-              >
-                <Col>
-                  <span
-                    style={{
-                      margin: '0 1.5rem 0 0',
-                      padding: 0,
-                      fontSize: 24,
-                      fontFamily: "'Bebas Neue', sans-serif",
-                    }}
-                  >
-                    Mitgliederliste
-                  </span>
-                </Col>
-                <Col
-                  style={{
-                    width: window.innerWidth < 768 ? '100%' : 'initial',
-                  }}
-                >
-                  <Segmented
-                    options={options}
-                    value={selected}
-                    onChange={setSelected}
-                    block={window.innerWidth < 768}
-                  />
-                </Col>
-                {window.innerWidth > 700 && (
-                  <Col>
-                    <Input
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder='Mitglieder suchen'
-                    />
-                  </Col>
-                )}
-              </Row>
-            </Col>
-            {securityClearance > 1 && (
-              <Col>
-                {securityClearance < 3 ? (
-                  <Dropdown.Button
-                    type='primary'
-                    menu={{
-                      items,
-                    }}
-                  >
-                    Aktionen
-                  </Dropdown.Button>
-                ) : (
-                  <Dropdown.Button
-                    type='primary'
-                    onClick={() => setOpenUserCreateModal(true)}
-                    menu={{
-                      items,
-                    }}
-                  >
-                    Erstellen
-                  </Dropdown.Button>
-                )}
-              </Col>
-            )}
-          </Row>
+          <Header
+            options={options}
+            selected={selected}
+            setSelected={setSelected}
+            search={search}
+            setSearch={setSearch}
+            securityClearance={securityClearance}
+            items={items}
+            setOpenUserCreateModal={setOpenUserCreateModal}
+          />
         )}
         columns={MEMBER_TABLE_COLUMNS}
         dataSource={data}
@@ -404,7 +552,7 @@ const MembersComponent = () => {
       key: 'read',
       label: 'Anzeigen',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setOpenUserDisplayModal(rowSelection.selectedRowKeys)
         } else {
           message.warning('Bitte wähle zuerst ein oder mehr Mitglieder aus!')
@@ -415,7 +563,7 @@ const MembersComponent = () => {
       key: 'edit',
       label: 'Bearbeiten',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           setOpenUserUpdateModal(rowSelection.selectedRowKeys)
         } else {
           message.warning('Bitte wähle zuerst ein oder mehr Mitglieder aus!')
@@ -427,7 +575,7 @@ const MembersComponent = () => {
         key: 'archive',
         label: 'Archivieren',
         onClick: () => {
-          if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+          if (rowSelection?.selectedRowKeys?.length) {
             setOpenUserArchiveModal(rowSelection.selectedRowKeys)
           } else {
             message.warning('Bitte wähle zuerst ein oder mehr Mitglieder aus!')
@@ -439,7 +587,7 @@ const MembersComponent = () => {
         key: 'reactivate',
         label: selected === 'new' ? 'Aktivieren' : 'Reaktivieren',
         onClick: () => {
-          if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+          if (rowSelection?.selectedRowKeys?.length) {
             setOpenUserReactivateModal(rowSelection.selectedRowKeys)
           } else {
             message.warning('Bitte wähle zuerst ein oder mehr Mitglieder aus!')
@@ -451,7 +599,7 @@ const MembersComponent = () => {
         key: 'delete',
         label: 'Löschen',
         onClick: () => {
-          if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+          if (rowSelection?.selectedRowKeys?.length) {
             setOpenUserDeleteModal(rowSelection.selectedRowKeys)
           } else {
             message.warning('Bitte wähle zuerst ein oder mehr Mitglieder aus!')
@@ -462,7 +610,7 @@ const MembersComponent = () => {
       key: 'resetPassword',
       label: 'Passwort ändern',
       onClick: () => {
-        if (rowSelection && rowSelection?.selectedRowKeys?.length) {
+        if (rowSelection?.selectedRowKeys?.length) {
           if (rowSelection?.selectedRowKeys?.length > 1) {
             message.warning('Bitte wähle nur ein Mitglied aus!')
           } else {
