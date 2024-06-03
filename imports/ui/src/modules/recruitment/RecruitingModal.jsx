@@ -19,7 +19,7 @@ import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 
-const RecruitingModal = ({ open, setOpen }) => {
+const RecruitingModal = ({ open, setOpen, finishHandler }) => {
   const { usersReady, members } = useTracker(() => {
     const sub = Meteor.subscribe('users')
     const members = Meteor.users.find({ 'profile.status': 'active' }, { $sort: { 'profile.name': 1 } }).map((user) => {
@@ -34,8 +34,8 @@ const RecruitingModal = ({ open, setOpen }) => {
       members,
     }
   }, [])
-  const [wasReferred, setWasReferred] = useState(false)
-  const [rulesAccepted, setRulesAccepted] = useState(false)
+  const [wasReferred, setWasReferred] = useState(open?.wasReferred ?? false)
+  const [rulesAccepted, setRulesAccepted] = useState(open?.rulesAccepted ?? false)
   const steamIdHelpText = (
     <Row gutter={[8, 8]}>
       <Col span={24}>1. Öffne dein Steam-Profil</Col>
@@ -47,6 +47,9 @@ const RecruitingModal = ({ open, setOpen }) => {
     </Row>
   )
   const handleFinish = (values) => {
+    if (finishHandler) {
+      return finishHandler(values)
+    }
     Meteor.call('recruitment.create', values, (err, res) => {
       if (!err) {
         message.success('Deine Bewerbung wurde erfolgreich eingereicht!')
@@ -63,6 +66,7 @@ const RecruitingModal = ({ open, setOpen }) => {
     <Modal
       open={open}
       width='70vw'
+      styles={{ body: { maxHeight: '80vh', overflow: 'auto' } }}
       title='Jetzt bewerben'
       footer={false}
       onCancel={() => setOpen(false)}
@@ -72,10 +76,12 @@ const RecruitingModal = ({ open, setOpen }) => {
     >
       <Spin spinning={!usersReady}>
         <Form
+          style={{ width: '97%' }}
           labelCol={24}
           layout='vertical'
           onFinish={handleFinish}
           onFinishFailed={handleFinishFailed}
+          initialValues={open}
         >
           <Row
             gutter={8}
@@ -128,57 +134,59 @@ const RecruitingModal = ({ open, setOpen }) => {
           >
             <Input.TextArea style={{ width: '100%' }} />
           </Form.Item>
-          <Row className={wasReferred ? 'ant-form-item ant-form-item-row' : ''}>
-            <Col
-              span={24}
-              className={wasReferred ? 'ant-form-item-label' : ''}
-              style={{ marginBottom: wasReferred ? 0 : 8 }}
-            >
-              <label
-                htmlFor='referred'
-                className={wasReferred ? 'ant-form-item-required' : ''}
+          {!finishHandler && (
+            <Row className={wasReferred ? 'ant-form-item ant-form-item-row' : ''}>
+              <Col
+                span={24}
+                className={wasReferred ? 'ant-form-item-label' : ''}
+                style={{ marginBottom: wasReferred ? 0 : 8 }}
               >
-                Wurdest du von einem Mitglied aus der Einheit angeworben und wenn ja, von wem?
-              </label>
-            </Col>
-            <Col span={24}>
-              <Row gutter={8}>
-                <Col span={12}>
-                  <Form.Item
-                    name='referred'
-                    style={{ marginBottom: wasReferred ? 0 : 24 }}
-                  >
-                    <Switch
-                      checked={wasReferred}
-                      onChange={setWasReferred}
-                    />
-                  </Form.Item>
-                </Col>
-                {wasReferred && (
-                  <Col
-                    span={12}
-                    flex='auto'
-                  >
+                <label
+                  htmlFor='referred'
+                  className={wasReferred ? 'ant-form-item-required' : ''}
+                >
+                  Wurdest du von einem Mitglied aus der Einheit angeworben und wenn ja, von wem?
+                </label>
+              </Col>
+              <Col span={24}>
+                <Row gutter={8}>
+                  <Col span={12}>
                     <Form.Item
-                      name='referrer'
-                      rules={[
-                        {
-                          required: true,
-                          message: 'Bitte wähle ein Mitglied aus!',
-                        },
-                      ]}
+                      name='referred'
                       style={{ marginBottom: wasReferred ? 0 : 24 }}
                     >
-                      <Select
-                        options={members || []}
-                        optionFilterProp='label'
+                      <Switch
+                        checked={wasReferred}
+                        onChange={setWasReferred}
                       />
                     </Form.Item>
                   </Col>
-                )}
-              </Row>
-            </Col>
-          </Row>
+                  {wasReferred && (
+                    <Col
+                      span={12}
+                      flex='auto'
+                    >
+                      <Form.Item
+                        name='referrer'
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Bitte wähle ein Mitglied aus!',
+                          },
+                        ]}
+                        style={{ marginBottom: wasReferred ? 0 : 24 }}
+                      >
+                        <Select
+                          options={members || []}
+                          optionFilterProp='label'
+                        />
+                      </Form.Item>
+                    </Col>
+                  )}
+                </Row>
+              </Col>
+            </Row>
+          )}
           <Form.Item
             name='attendenceBehaviour'
             label='Kannst du eine überwiegende Anwesenheit garantieren und bist bereit an Trainings abseits der Missionen teilzunehmen?'
@@ -237,41 +245,51 @@ const RecruitingModal = ({ open, setOpen }) => {
           >
             <Input />
           </Form.Item>
-          <Row
-            gutter={[8, 8]}
-            justify='space-between'
-            align='middle'
-          >
-            <Col span={24}>
-              Hast du unsere{' '}
-              <a
-                href='https://www.taskforce11.de/regelhandbuch'
-                target='_blank'
-              >
-                Regeln
-              </a>{' '}
-              gelesen und akzeptierst diese?
-            </Col>
-            <Col span={24}>
-              <Row gutter={16}>
-                <Col>
-                  <Radio.Group
-                    value={rulesAccepted}
-                    onChange={(e) => setRulesAccepted(e.target.value)}
-                    options={[
-                      {
-                        key: 'accept',
-                        value: true,
-                        label: 'Akzeptieren',
-                      },
-                      { key: 'reject', value: false, label: 'Ablehnen' },
-                    ]}
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+          {!finishHandler && (
+            <Row
+              gutter={[8, 8]}
+              justify='space-between'
+              align='middle'
+            >
+              <Col span={24}>
+                Hast du unsere{' '}
+                <a
+                  href='https://www.taskforce11.de/regelhandbuch'
+                  target='_blank'
+                >
+                  Regeln
+                </a>{' '}
+                gelesen und akzeptierst diese?
+              </Col>
+              <Col span={24}>
+                <Row gutter={16}>
+                  <Col>
+                    <Radio.Group
+                      value={rulesAccepted}
+                      onChange={(e) => setRulesAccepted(e.target.value)}
+                      options={[
+                        {
+                          key: 'accept',
+                          value: true,
+                          label: 'Akzeptieren',
+                        },
+                        { key: 'reject', value: false, label: 'Ablehnen' },
+                      ]}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          )}
           <Divider />
+          {finishHandler && (
+            <Form.Item name='description'>
+              <Input.TextArea
+                placeholder='Beschreibung'
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          )}
           <Row
             gutter={16}
             justify='end'
@@ -287,7 +305,7 @@ const RecruitingModal = ({ open, setOpen }) => {
             <Col>
               <Button
                 htmlType='submit'
-                disabled={!rulesAccepted}
+                disabled={finishHandler ? false : !rulesAccepted}
                 type='primary'
                 style={{ paddingInline: '1rem' }}
               >

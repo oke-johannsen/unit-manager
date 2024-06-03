@@ -1,12 +1,34 @@
 import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Button, Col, Grid, List, Modal, Row, Segmented, message } from 'antd'
+import {
+  Button,
+  Col,
+  Divider,
+  Dropdown,
+  Form,
+  Grid,
+  Input,
+  InputNumber,
+  List,
+  Modal,
+  Radio,
+  Row,
+  Segmented,
+  Select,
+  Switch,
+  Tooltip,
+  message,
+} from 'antd'
 import { RecruitmentCollection } from '../../../../api/RecruitmentsApi'
+import { InfoCircleOutlined } from '@ant-design/icons'
+import RecruitingModal from './RecruitingModal'
+import { values } from '@babel/runtime/regenerator'
 
 const RecruitmentComponent = () => {
   const [selected, setSelected] = useState('open')
   const [deleteModal, setDeleteModal] = useState(false)
+  const [editModal, setEditModal] = useState(false)
   const { ready, recruitment } = useTracker(() => {
     const sub = Meteor.subscribe('users')
     const subRecruitments = Meteor.subscribe('recruitments')
@@ -65,36 +87,44 @@ const RecruitmentComponent = () => {
                     !breakpoints.lg
                       ? []
                       : [
-                          <Button
-                            type='link'
-                            key={`${item.key}-1`}
-                            onClick={() => {
-                              Meteor.call(
-                                'recruitment.update',
-                                item.key,
+                          <Dropdown
+                            key='actions-dropdown'
+                            menu={{
+                              items: [
                                 {
-                                  status: item.status === 'open' ? 'closed' : 'open',
+                                  key: selected === 'open' ? 'close' : 'open',
+                                  label: selected === 'open' ? 'Abschließen' : 'Wiedereröffnen',
                                 },
-                                (err, res) => {
-                                  if (!err) {
-                                    message.success('Bewerbung erfolgreich verschoben!')
-                                  } else {
-                                    console.error('error in recruitment.remove', err, res)
-                                    message.error('Es was ist schief gelaufen, bitte versuche es erneut!')
-                                  }
+                                { key: 'edit', label: 'Bearbeiten' },
+                                { key: 'delete', label: 'Löschen', danger: true },
+                              ],
+                              onClick: ({ key }) => {
+                                if (key === 'delete') {
+                                  setDeleteModal(true)
+                                } else if (key === 'edit') {
+                                  setEditModal(item)
+                                } else if (key === 'close' || key === 'open') {
+                                  Meteor.call(
+                                    'recruitment.update',
+                                    item.key,
+                                    {
+                                      status: item.status === 'open' ? 'closed' : 'open',
+                                    },
+                                    (err, res) => {
+                                      if (!err) {
+                                        message.success('Bewerbung erfolgreich verschoben!')
+                                      } else {
+                                        console.error('error in recruitment.remove', err, res)
+                                        message.error('Es was ist schief gelaufen, bitte versuche es erneut!')
+                                      }
+                                    }
+                                  )
                                 }
-                              )
+                              },
                             }}
                           >
-                            {item.status === 'open' ? 'Abschließen' : 'Wiedereröffnen'}
-                          </Button>,
-                          <Button
-                            type='link'
-                            key={`${item.key}-2`}
-                            onClick={() => setDeleteModal(item)}
-                          >
-                            Löschen
-                          </Button>,
+                            <Button>Aktionen</Button>
+                          </Dropdown>,
                         ]
                   }
                 >
@@ -144,36 +174,44 @@ const RecruitmentComponent = () => {
                               gutter={[8, 8]}
                               justify='end'
                             >
-                              <Button
-                                type='link'
-                                key={`${item.key}-1`}
-                                onClick={() => {
-                                  Meteor.call(
-                                    'recruitment.update',
-                                    item.key,
+                              <Dropdown
+                                key='actions-dropdown'
+                                menu={{
+                                  items: [
                                     {
-                                      status: item.status === 'open' ? 'closed' : 'open',
+                                      key: selected === 'open' ? 'close' : 'open',
+                                      label: selected === 'open' ? 'Abschließen' : 'Wiedereröffnen',
                                     },
-                                    (err, res) => {
-                                      if (!err) {
-                                        message.success('Bewerbung erfolgreich verschoben!')
-                                      } else {
-                                        console.error('error in recruitment.remove', err, res)
-                                        message.error('Es was ist schief gelaufen, bitte versuche es erneut!')
-                                      }
+                                    { key: 'edit', label: 'Bearbeiten' },
+                                    { key: 'delete', label: 'Löschen', danger: true },
+                                  ],
+                                  onClick: ({ key }) => {
+                                    if (key === 'delete') {
+                                      setDeleteModal(true)
+                                    } else if (key === 'edit') {
+                                      setEditModal(item)
+                                    } else if (key === 'close' || key === 'open') {
+                                      Meteor.call(
+                                        'recruitment.update',
+                                        item.key,
+                                        {
+                                          status: item.status === 'open' ? 'closed' : 'open',
+                                        },
+                                        (err, res) => {
+                                          if (!err) {
+                                            message.success('Bewerbung erfolgreich verschoben!')
+                                          } else {
+                                            console.error('error in recruitment.remove', err, res)
+                                            message.error('Es was ist schief gelaufen, bitte versuche es erneut!')
+                                          }
+                                        }
+                                      )
                                     }
-                                  )
+                                  },
                                 }}
                               >
-                                {item.status === 'open' ? 'Abschließen' : 'Wiedereröffnen'}
-                              </Button>
-                              <Button
-                                type='link'
-                                key={`${item.key}-2`}
-                                onClick={() => setDeleteModal(item)}
-                              >
-                                Löschen
-                              </Button>
+                                <Button>Aktionen</Button>
+                              </Dropdown>
                             </Row>
                           </Col>
                         )}
@@ -211,6 +249,23 @@ const RecruitmentComponent = () => {
         >
           Bist du sicher, dass du diese Bewerbung löschen möchtest?
         </Modal>
+      )}
+      {editModal && (
+        <RecruitingModal
+          open={editModal}
+          setOpen={setEditModal}
+          finishHandler={(values) => {
+            Meteor.call('recruitment.update', editModal?.key, values, (err, res) => {
+              if (!err) {
+                message.success('Bewerbung erfolgreich aktualisiert!')
+                setEditModal(false)
+              } else {
+                console.error('error in recruitment.update', err, res)
+                message.error('Es was ist schief gelaufen, bitte versuche es erneut!')
+              }
+            })
+          }}
+        />
       )}
     </>
   )
