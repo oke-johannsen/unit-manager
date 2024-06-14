@@ -14,7 +14,7 @@ const MainFrameComponent = () => {
   const user = Meteor.user()
   const breakpoints = Grid.useBreakpoint()
   const headerStyle = {
-    height: !breakpoints.sm ? 'auto' : 90,
+    height: 90,
     lineHeight: '90px',
     paddingInline: '0.5rem',
   }
