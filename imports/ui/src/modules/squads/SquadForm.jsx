@@ -22,6 +22,10 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
   const defaultValues = {
     designation: 'KSM',
   }
+  const values = SquadCollection.findOne(id)
+  if (values) {
+    values.squadMember = (values.squadMember || []).filter((id) => userOptions.find((user) => user.value === id))
+  }
 
   return (
     <Spin spinning={!squadsReady || !usersReady}>
@@ -31,7 +35,7 @@ const SquadForm = ({ id, handleFormChange, handleSubmit, formDisabled }) => {
         labelCol={24}
         onValuesChange={(_, values) => handleFormChange(values)}
         onFinish={() => handleSubmit()}
-        initialValues={SquadCollection.findOne(id) || defaultValues}
+        initialValues={values || defaultValues}
       >
         <Form.Item
           label='Truppname'

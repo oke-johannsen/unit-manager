@@ -1,5 +1,5 @@
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin, Switch } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import { PlusOutlined } from '@ant-design/icons'
@@ -18,7 +18,12 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
     }
   }, [])
   let render
-  const formDefaults = activeKey ? form?.filter((item) => item._id === activeKey)[0] : form
+  const defaults = activeKey ? form?.filter((item) => item._id === activeKey)[0] : form
+  defaults.userIds = (defaults.userIds || [])?.filter((id) => userOptions.find((user) => user.value === id))
+  defaults.promotedMembers = (defaults.promotedMembers || [])?.filter((id) =>
+    userOptions.find((user) => user.value === id)
+  )
+  const formDefaults = defaults
   const [userIds, setUserIds] = useState(
     (activeKey ? form?.filter((item) => item._id === activeKey)[0]?.userIds : form.userIds) || []
   )
@@ -144,7 +149,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
         <Select
           optionFilterProp='label'
           mode='multiple'
-          value={userIds}
+          value={userIds?.filter((id) => userOptions?.find((user) => user?.key === id))}
           onChange={setUserIds}
           options={userOptions}
         />

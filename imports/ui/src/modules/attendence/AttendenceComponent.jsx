@@ -31,19 +31,9 @@ import BriefingsComponent from './briefings/BrifingsComponent'
 
 const AttendenceComponent = () => {
   const [selected, setSelected] = useState('all')
-  const { attendences, attendenceTypeOptions, attendenceTypes } = useTracker(() => {
-    const subs = [
-      Meteor.subscribe('attendence'),
-      Meteor.subscribe('users'),
-      Meteor.subscribe('attendenceTypes'),
-      Meteor.subscribe('briefings'),
-    ]
+  const { attendences } = useTracker(() => {
+    const subs = [Meteor.subscribe('attendence')]
     const filter = selected !== 'all' ? { type: selected } : {}
-    const attendenceTypes = AttendenceTypeCollection.find({}).map((item) => ({
-      key: item._id,
-      value: item.value,
-      label: item.label,
-    }))
     return {
       attendences: subs.every((sub) => sub.ready())
         ? AttendenceCollection.find(filter)
@@ -55,6 +45,21 @@ const AttendenceComponent = () => {
             })
             .sort((a, b) => a.type.localeCompare(b.type))
         : null,
+    }
+  }, [selected])
+  const { attendenceTypeOptions, attendenceTypes } = useTracker(() => {
+    const userIds = [...new Set(attendences?.map((attendence) => attendence.userIds)?.flat())]
+    const subs = [
+      Meteor.subscribe('users', { _id: { $in: userIds } }),
+      Meteor.subscribe('attendenceTypes'),
+      Meteor.subscribe('briefings'),
+    ]
+    const attendenceTypes = AttendenceTypeCollection.find({}).map((item) => ({
+      key: item._id,
+      value: item.value,
+      label: item.label,
+    }))
+    return {
       attendenceTypeOptions: [
         { key: 'all', label: 'Alle', value: 'all' },
         { key: 'mission', label: 'Mission', value: 'mission' },
@@ -63,7 +68,7 @@ const AttendenceComponent = () => {
       ],
       attendenceTypes: attendenceTypes,
     }
-  }, [selected])
+  }, [attendences])
   const [openAttendenceCreateModal, setOpenAttendenceCreateModal] = useState(false)
   const [openAttendenceDisplayModal, setOpenAttendenceDisplayModal] = useState(false)
   const [openAttendenceUpdateModal, setOpenAttendenceUpdateModal] = useState(false)
