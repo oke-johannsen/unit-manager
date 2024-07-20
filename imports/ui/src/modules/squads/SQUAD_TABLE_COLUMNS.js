@@ -1,6 +1,6 @@
 import { Tooltip } from 'antd'
-import React from 'react'
 import { Meteor } from 'meteor/meteor'
+import React from 'react'
 
 export const SQUAD_TABLE_COLUMNS = [
   {
@@ -30,18 +30,25 @@ export const SQUAD_TABLE_COLUMNS = [
     title: 'Truppmitglieder',
     dataIndex: 'squadMember',
     key: 'squadMember',
-    render: (squadMember) => (
-      <Tooltip
-        title={squadMember
-          ?.map((member) => {
-            return Meteor.users.findOne(member)?.profile?.name || '-'
-          })
-          .join(', ')}
-      >
-        <span style={{ display: 'block', width: '100%' }}>{squadMember?.length || 0}</span>
-      </Tooltip>
-    ),
-    sorter: (a, b) => a.squadMember?.length - b.squadMember?.length,
+    render: (squadMember) => {
+      const activeMembers = getActiveMembers(squadMember)
+      return (
+        <Tooltip
+          title={activeMembers
+            ?.map((member) => {
+              return Meteor.users.findOne(member)?.profile?.name || '-'
+            })
+            .join(', ')}
+        >
+          <span style={{ display: 'block', width: '100%' }}>{activeMembers?.length || 0}</span>
+        </Tooltip>
+      )
+    },
+    sorter: (a, b) => {
+      const activeMembersA = getActiveMembers(a.squadMember)
+      const activeMembersB = getActiveMembers(b.squadMember)
+      return activeMembersA?.length - activeMembersB?.length
+    },
   },
   {
     title: 'Spezialisierung',
@@ -50,3 +57,15 @@ export const SQUAD_TABLE_COLUMNS = [
     sorter: (a, b) => a.speciality.localeCompare(b.speciality),
   },
 ]
+
+export const getActiveMembers = (member = []) => {
+  if (!Array.isArray(member)) member = []
+  const userOptions = Meteor.users.find({ 'profile.status': { $in: ['active', 'new'] } }).map((user) => {
+    return {
+      label: user?.profile?.name,
+      value: user?._id,
+    }
+  })
+  const activeMembers = (member || []).filter((id) => userOptions.find((user) => user.value === id))
+  return activeMembers
+}

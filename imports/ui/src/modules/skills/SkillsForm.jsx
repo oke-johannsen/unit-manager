@@ -1,8 +1,8 @@
 import { Badge, Form, Input, Select, Spin } from 'antd'
-import React from 'react'
-import { SkillsCollection } from '../../../../api/SkillsApi'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
+import React from 'react'
+import { SkillsCollection } from '../../../../api/SkillsApi'
 
 export const skillTypes = [
   {

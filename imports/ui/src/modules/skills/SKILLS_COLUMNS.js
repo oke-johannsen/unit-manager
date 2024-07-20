@@ -1,6 +1,7 @@
 import { Button, Tooltip } from 'antd'
 import { Meteor } from 'meteor/meteor'
-import React from 'react'
+import React, { act } from 'react'
+import { getActiveMembers } from '../squads/SQUAD_TABLE_COLUMNS'
 
 export const getTypeName = (type) => {
   let displayName
@@ -39,19 +40,24 @@ export const SKILLS_COLUMNS = [
     dataIndex: 'trainers',
     key: 'trainers',
     render: (trainers) => {
+      const activeTrainers = getActiveMembers(trainers)
       return (
         <Tooltip
-          title={trainers
+          title={activeTrainers
             ?.map((trainer) => {
               return Meteor.users.findOne(trainer)?.profile?.name || '-'
             })
             .join(', ')}
         >
-          <span style={{ display: 'block', width: '100%' }}>{trainers?.length || 0}</span>
+          <span style={{ display: 'block', width: '100%' }}>{activeTrainers?.length || 0}</span>
         </Tooltip>
       )
     },
-    sorter: (a, b) => a.squadMember?.length - b.squadMember?.length,
+    sorter: (a, b) => {
+      const activeTrainersA = getActiveMembers(a.trainers)
+      const activeTrainersB = getActiveMembers(b.trainers)
+      return activeTrainersA?.length - activeTrainersB?.length
+    },
   },
   {
     title: 'Link',
@@ -74,6 +80,11 @@ export const SKILLS_COLUMNS = [
         '-'
       )
     },
+    sorter: (a, b) => {
+      if (!a.link) a.link = '-'
+      if (!b.link) b.link = '-'
+      return a.link.localeCompare(b.link)
+    },
   },
   {
     title: 'Ausbildungsart',
@@ -87,8 +98,27 @@ export const SKILLS_COLUMNS = [
     title: 'Mitglieder',
     dataIndex: '_id',
     key: '_id',
-    render: (_id) => Meteor.users.find({ 'profile.skills': _id }).count(),
-    sorter: (a, b) =>
-      Meteor.users.find({ 'profile.skills': a._id }).count() - Meteor.users.find({ 'profile.skills': b._id }).count(),
+    render: (_id) => {
+      const users = Meteor.users.find({ 'profile.skills': _id }).map(u => u._id)
+      const activeUsers = getActiveMembers(users)
+      return (
+        <Tooltip
+          title={activeUsers
+            ?.map((user) => {
+              return Meteor.users.findOne(user)?.profile?.name || '-'
+            })
+            .join(', ')}
+        >
+          <span style={{ display: 'block', width: '100%' }}>{activeUsers?.length || 0}</span>
+        </Tooltip>
+      )
+    },
+    sorter: (a, b) => {
+      const usersA = Meteor.users.find({ 'profile.skills': a._id }).map(u => u._id)
+      const usersB = Meteor.users.find({ 'profile.skills': b._id }).map(u => u._id)
+      const activeUsersA = getActiveMembers(usersA)
+      const activeUsersB = getActiveMembers(usersB)
+      return activeUsersA?.length - activeUsersB?.length
+    },
   },
 ]

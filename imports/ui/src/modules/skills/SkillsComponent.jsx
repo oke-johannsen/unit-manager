@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import { Button, Col, Dropdown, Grid, Row, Segmented, Spin, Table, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { Button, Col, Dropdown, Grid, Row, Segmented, Spin, Table, message } from 'antd'
-import { SKILLS_COLUMNS, getTypeName } from './SKILLS_COLUMNS'
+import React, { useState } from 'react'
 import { SkillsCollection } from '../../../../api/SkillsApi'
-import SkillsModal from './SkillsModal'
 import AddSkillModal from './AddSkillModal'
+import { SKILLS_COLUMNS, getTypeName } from './SKILLS_COLUMNS'
+import SkillsModal from './SkillsModal'
 
 const SkillsComponent = () => {
   const [type, setType] = useState('all')
@@ -207,7 +207,7 @@ const SkillsComponent = () => {
                       selectedRows: [record],
                       selectedRowKeys: [record.key],
                     })
-                    setTitle('Squad anzeigen')
+                    setTitle('Ausbildung anzeigen')
                     setFormDisabled(true)
                     setOpen(true)
                   } else {
@@ -215,7 +215,7 @@ const SkillsComponent = () => {
                       selectedRows: [record],
                       selectedRowKeys: [record.key],
                     })
-                    setTitle('Squad bearbeiten')
+                    setTitle('Ausbildung bearbeiten')
                     setOpen(true)
                   }
                 },

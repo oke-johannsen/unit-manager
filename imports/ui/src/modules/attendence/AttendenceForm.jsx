@@ -1,14 +1,14 @@
+import { PlusOutlined } from '@ant-design/icons'
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin, Switch } from 'antd'
-import React, { useEffect, useMemo, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { PlusOutlined } from '@ant-design/icons'
+import React, { useEffect, useMemo, useState } from 'react'
 import AttendenceTypeModal from './AttendenceTypeModal'
 
 const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTypeOptions }) => {
   const { userOptions } = useTracker(() => {
     return {
-      userOptions: Meteor.users.find({ 'profile.status': 'active' }).map((user) => {
+      userOptions: Meteor.users.find({}).map((user) => {
         return {
           key: user._id,
           value: user._id,

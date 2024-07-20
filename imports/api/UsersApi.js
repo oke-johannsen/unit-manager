@@ -1,16 +1,16 @@
-import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
-import { SquadCollection } from './SquadApi'
-import { SkillsCollection } from './SkillsApi'
+import { Meteor } from 'meteor/meteor'
 import { AttendenceCollection } from './AttendenceApi'
 import { PromotionSettingsCollection } from './PromotionSettingsApi'
+import { SkillsCollection } from './SkillsApi'
+import { SquadCollection } from './SquadApi'
 
 export const UsersCollection = Meteor.users
 
 if (Meteor.isServer) {
   const cleanupBeforeUserRemove = (user) => {
     const profile = user?.profile || {}
-    const { squad, skills } = profile
+    const { squad } = profile
     if (squad) {
       const newSquad = SquadCollection.findOne(squad)
       const squadMember = newSquad?.squadMember
@@ -32,15 +32,11 @@ if (Meteor.isServer) {
         }
       )
     }
-    if (skills) {
-      skills.forEach((skill) => {
-        const newSkill = SkillsCollection.findOne(skill._id)
-        if (newSkill?.trainers && newSkill?.trainers === user?._id) {
-          newSkill.trainers = null
-          SkillsCollection.update({ _id: newSkill._id }, { $set: { trainers: newSkill.trainers } })
-        }
-      })
-    }
+    SkillsCollection.find({ trainers: user?._id }).forEach((skill) => {
+      const newSkill = skill
+      newSkill.trainers = newSkill.trainers.filter((trainer) => trainer !== user?._id)
+      SkillsCollection.update({ _id: newSkill._id }, { $set: { trainers: newSkill.trainers } })
+    })
   }
   const handleUserUpdateForLinkedFields = (user, modifier) => {
     if (user?.profile?.squad !== modifier?.profile?.squad) {
@@ -82,17 +78,19 @@ if (Meteor.isServer) {
         SquadCollection.update({ _id: newSquad._id }, { $set: { squadMember: newSquad.squadMember } })
       }
     }
+    if (modifier?.profile?.status === 'inactive') {
+      SkillsCollection.find({ trainers: user?._id }).forEach((skill) => {
+        const newSkill = skill
+        newSkill.trainers = newSkill.trainers.filter((trainer) => trainer !== user?._id)
+        SkillsCollection.update({ _id: newSkill._id }, { $set: { trainers: newSkill.trainers } })
+      })
+    }
   }
   const getPromotionSettingForRank = (rank) => {
     return PromotionSettingsCollection.findOne({ previousRank: rank })
   }
-  Meteor.publish(
-    'users',
-    function (
-      filter = {
-        $or: [{ 'profile.status': 'active' }, { 'profile.status': 'new' }],
-      }
-    ) {
+  Meteor.publish('users',
+    function (filter = { $or: [{ 'profile.status': 'active' }, { 'profile.status': 'new' }] }) {
       return UsersCollection.find(filter)
     }
   )
@@ -148,7 +146,7 @@ if (Meteor.isServer) {
       }
     },
     'users.remove': (userId) => {
-      const user = Meteor.users.findOne(userId)
+      const user = Meteor.users.findOne({ _id: userId ?? null })
       if (user) {
         Meteor.call('logging.create', {
           key: 'users.remove',
@@ -157,7 +155,7 @@ if (Meteor.isServer) {
           userId: Meteor.user()?._id,
         })
         cleanupBeforeUserRemove(user)
-        Meteor.users.remove(user)
+        Meteor.users.remove({ _id: user?._id })
       } else {
         return new Meteor.Error('Error 404', 'user was not found', userId)
       }

@@ -1,7 +1,7 @@
 import { Col, Dropdown, Row, Table, message } from 'antd'
-import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState } from 'react'
 import { SquadCollection } from '../../../../api/SquadApi'
 import { SQUAD_TABLE_COLUMNS } from './SQUAD_TABLE_COLUMNS'
 import SquadModal from './SquadModal'
@@ -153,7 +153,7 @@ const SquadsComponent = () => {
                 }
               : false
           }
-          onRow={(record, index) => {
+          onRow={(record) => {
             return {
               onClick: () => {
                 if (securityClearance < 4) {
