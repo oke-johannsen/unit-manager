@@ -1,10 +1,10 @@
 import { Badge, Button, Col, DatePicker, Divider, Form, Input, InputNumber, Row, Select, Tag } from 'antd'
-import React from 'react'
+import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
+import React from 'react'
 import { SkillsCollection } from '../../../../api/SkillsApi'
 import { SquadCollection } from '../../../../api/SquadApi'
-import dayjs from 'dayjs'
 import { ranks } from '../../libs/SORTER_LIB'
 
 const PASSWORD_PATTER = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[\*\.\-!"§\$%&\*+#':;<>@\d]).{8,}$/
@@ -345,6 +345,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
           >
             <InputNumber
               style={{ width: '100%' }}
+              step={5}
               disabled={securityClearance < 4}
             />
           </Form.Item>
