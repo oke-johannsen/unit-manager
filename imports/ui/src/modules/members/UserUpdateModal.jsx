@@ -1,8 +1,8 @@
 import { Modal, Tabs, message } from 'antd'
+import dayjs from 'dayjs'
+import { Meteor } from 'meteor/meteor'
 import React, { useState } from 'react'
 import UserForm from './UserForm'
-import { Meteor } from 'meteor/meteor'
-import dayjs from 'dayjs'
 
 const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
   const [forms, setForms] = useState({})
@@ -52,6 +52,8 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
       title='Mitglied bearbeiten'
       open={openUserUpdateModal}
       onCancel={() => setOpenUserUpdateModal(false)}
+      width={'85vw'}
+      styles={{ body: { maxHeight: '85vh', overflow: 'hidden auto', paddingRight: 10 } }}
       footer={false}
       centered
       destroyOnClose

@@ -1,20 +1,20 @@
 import { Col, Dropdown, Grid, Input, List, Row, Segmented, Statistic, Table, message } from 'antd'
-import React, { Suspense, useEffect, useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import { MEMBER_TABLE_COLUMNS } from './MEMBER_TABLE_COLUMNS'
-import UserCreateModal from './UserCreateModal'
-import UserUpdateModal from './UserUpdateModal'
-import UserDisplayModal from './UserDisplayModal'
-import UserArchiveModal from './UsersArchiveModal'
-import UserReactivateModal from './UserReactiveModal'
-import UserDeleteModal from './UserDeleteModal'
+import React, { Suspense, useEffect, useState } from 'react'
+import { AttendenceCollection } from '../../../../api/AttendenceApi'
+import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
 import PasswordResetModal from '../../layout/common/PasswordResetModal'
 import { sortByNumber, sortByRank } from '../../libs/SORTER_LIB'
-import { PromotionSettingsCollection } from '../../../../api/PromotionSettingsApi'
-import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { runTierCheck } from './member.lib'
+import { MEMBER_TABLE_COLUMNS } from './MEMBER_TABLE_COLUMNS'
 import { PromotionSettings, UserPromotionChecks } from './Promotions'
+import UserCreateModal from './UserCreateModal'
+import UserDeleteModal from './UserDeleteModal'
+import UserDisplayModal from './UserDisplayModal'
+import UserReactivateModal from './UserReactiveModal'
+import UserArchiveModal from './UsersArchiveModal'
+import UserUpdateModal from './UserUpdateModal'
 
 const Header = ({
   options,
@@ -250,7 +250,6 @@ const MembersTable = ({ props }) => {
     openUserDeleteModal,
     openPasswordResetModal,
   } = props
-  const breakpoints = Grid.useBreakpoint()
   return (
     <Col span={24}>
       <Table
