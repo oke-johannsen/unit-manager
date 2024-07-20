@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import { LogoutOutlined, MenuOutlined, UnlockOutlined } from '@ant-design/icons'
 import { Button, Col, Drawer, Grid, Layout, Row, Tooltip, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
-import { LogoutOutlined, MenuOutlined, UnlockOutlined } from '@ant-design/icons'
-import ViewController from './ViewController'
+import React, { useState } from 'react'
+import { LegalInfo } from '../login/LoginComponent'
 import PasswordResetModal from './PasswordResetModal'
 import SidebarComponent from './SidebarComponent'
-import { LegalInfo } from '../login/LoginComponent'
+import ViewController from './ViewController'
 const { Header, Content, Footer } = Layout
 
 const MainFrameComponent = () => {
@@ -178,6 +178,8 @@ const MainFrameComponent = () => {
                     background: '#101010',
                     padding: '0.5rem 1rem',
                     borderRadius: 8,
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
                 />
               </Col>

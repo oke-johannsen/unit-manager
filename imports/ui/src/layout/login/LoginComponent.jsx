@@ -1,10 +1,12 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Col, Divider, Form, Input, Row, Typography, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
 import React, { useState } from 'react'
 import RecruitingModal from '../../modules/recruitment/RecruitingModal'
 
 export const LegalInfo = ({ style = {} }) => {
+  const loggedIn = useTracker(() => !!Meteor.userId(), [])
   return (
     <div
       style={{
@@ -26,6 +28,23 @@ export const LegalInfo = ({ style = {} }) => {
       >
         Datenschutz
       </a>
+      {loggedIn && (
+        <>
+          <Divider type='vertical' />
+          <a
+            href='https://trello.com/b/bMXMUQnh/taskforce11-einheitsverwaltung-project-tracker'
+            target='_blank'
+            rel='noopener noreferrer'
+            style={{ height: 20.8 }}
+            className='hoverable'
+          >
+            <img
+              src='/images/trello_tf11.png'
+              style={{ height: 18 }}
+            />
+          </a>
+        </>
+      )}
     </div>
   )
 }

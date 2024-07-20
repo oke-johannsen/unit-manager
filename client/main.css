@@ -4,6 +4,11 @@
   font-family: 'Rajdhani', sans-serif;
 }
 
+.hoverable:hover {
+  transition: ease-in-out 0.3s;
+  opacity: 0.6;
+}
+
 .white td.ant-table-cell {
   color: white;
 }
