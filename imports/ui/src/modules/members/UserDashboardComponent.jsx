@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { Meteor } from 'meteor/meteor'
-import { useTracker } from 'meteor/react-meteor-data'
 import { Badge, Card, Checkbox, Col, Empty, Row, Segmented, Spin, Statistic, Tooltip } from 'antd'
 import dayjs from 'dayjs'
-import { SquadCollection } from '../../../../api/SquadApi'
+import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
+import React, { useEffect, useState } from 'react'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { SkillsCollection } from '../../../../api/SkillsApi'
+import { SquadCollection } from '../../../../api/SquadApi'
 import { MembersPromotionChecks } from './MemberComponent'
 import { runTierCheck } from './member.lib'
 
@@ -326,7 +326,9 @@ const UserDashboardComponent = ({ userProp }) => {
           return (
             <Col
               key={card.title}
-              lg={6}
+              xxl={6}
+              xl={6}
+              lg={12}
               md={12}
               sm={24}
               xs={24}
