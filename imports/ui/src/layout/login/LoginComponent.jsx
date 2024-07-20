@@ -1,7 +1,7 @@
-import { Col, Row, Button, Form, Input, Typography, message, Divider } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import React, { useState } from 'react'
+import { Button, Col, Divider, Form, Input, Row, Typography, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
+import React, { useState } from 'react'
 import RecruitingModal from '../../modules/recruitment/RecruitingModal'
 
 export const LegalInfo = ({ style = {} }) => {
@@ -124,7 +124,7 @@ const LoginComponent = () => {
                 </Button>
               </Col>
               <Col flex='auto'>
-                Oder <a onClick={() => setOpen(true)}>jetzt bewerben!</a>
+                oder <a onClick={() => setOpen(true)}>jetzt bewerben!</a>
               </Col>
             </Row>
           </Form.Item>
