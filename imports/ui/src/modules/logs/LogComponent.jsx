@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { Meteor } from 'meteor/meteor'
-import { useTracker } from 'meteor/react-meteor-data'
-import { LoggingCollection } from '../../../../api/LoggingApi'
 import { Col, DatePicker, Modal, Row, Segmented, Spin, Table } from 'antd'
-import { LOG_COLUMNS } from './LOG_COLUMNS'
 import dayjs from 'dayjs'
 import { diffJson } from 'diff'
+import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState } from 'react'
+import { LoggingCollection } from '../../../../api/LoggingApi'
+import { LOG_COLUMNS } from './LOG_COLUMNS'
 const { RangePicker } = DatePicker
 
 const LogComponent = () => {
@@ -13,7 +13,7 @@ const LogComponent = () => {
   const [open, setOpen] = useState(false)
   const [segmentedSelection, setSegmentedSelection] = useState('all')
   const { ready, loggings } = useTracker(() => {
-    const sub = Meteor.subscribe('users')
+    const sub = Meteor.subscribe('users', {})
     const subLogging = Meteor.subscribe('logging')
     const loggings = LoggingCollection.find(
       dateRange
