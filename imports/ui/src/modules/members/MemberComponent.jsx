@@ -250,6 +250,10 @@ const MembersTable = ({ props }) => {
     openUserDeleteModal,
     openPasswordResetModal,
   } = props
+  const switchModal = () => {
+    setOpenUserUpdateModal(openUserUpdateModal ? false : openUserDisplayModal)
+    setOpenUserDisplayModal(openUserDisplayModal ? false : openUserUpdateModal)
+  }
   return (
     <Col span={24}>
       <Table
@@ -317,12 +321,14 @@ const MembersTable = ({ props }) => {
         <UserUpdateModal
           openUserUpdateModal={openUserUpdateModal}
           setOpenUserUpdateModal={setOpenUserUpdateModal}
+          switchModal={switchModal}
         />
       )}
       {openUserDisplayModal && (
         <UserDisplayModal
           openUserDisplayModal={openUserDisplayModal}
           setOpenUserDisplayModal={setOpenUserDisplayModal}
+          switchModal={switchModal}
         />
       )}
       {openUserArchiveModal && (
@@ -531,13 +537,13 @@ const MembersComponent = () => {
             value: 'new',
             label: 'Anwärter',
           },
+          {
+            key: 'inactive',
+            value: 'inactive',
+            label: 'Inaktiv',
+          },
         ]
       : []),
-    {
-      key: 'inactive',
-      value: 'inactive',
-      label: 'Inaktiv',
-    },
   ]
   const data = users?.filter((user) => {
     const userProfile = user?.profile

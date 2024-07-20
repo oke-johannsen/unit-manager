@@ -1,10 +1,11 @@
-import { Modal, Tabs, message } from 'antd'
+import { AppstoreFilled, EditFilled } from '@ant-design/icons'
+import { Col, Modal, Row, Segmented, Tabs, message } from 'antd'
 import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
 import React, { useState } from 'react'
 import UserForm from './UserForm'
 
-const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
+const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal, switchModal }) => {
   const [forms, setForms] = useState({})
   const submitForms = () => {
     let error = false
@@ -49,11 +50,32 @@ const UserUpdateModal = ({ openUserUpdateModal, setOpenUserUpdateModal }) => {
   }
   return (
     <Modal
-      title='Mitglied bearbeiten'
+      title={
+        Meteor.user()?.profile?.securityClearance > 1 ? (
+          <Row
+            style={{ width: 'calc(100% - 20px)' }}
+            gutter={[8, 8]}
+            justify='space-between'
+            align='middle'
+          >
+            <Col>Mitglieder bearbeiten</Col>
+            <Col>
+              <Segmented
+                defaultValue='Formular'
+                options={[
+                  { label: <EditFilled style={{ color: '#5f1d1d' }} />, value: 'Formular' },
+                  { label: <AppstoreFilled />, value: 'Dashboard' },
+                ]}
+                onChange={switchModal}
+              />
+            </Col>
+          </Row>
+        ) : (
+          'Mitglieder bearbeiten'
+        )
+      }
       open={openUserUpdateModal}
       onCancel={() => setOpenUserUpdateModal(false)}
-      width={'85vw'}
-      styles={{ body: { maxHeight: '85vh', overflow: 'hidden auto', paddingRight: 10 } }}
       footer={false}
       centered
       destroyOnClose
