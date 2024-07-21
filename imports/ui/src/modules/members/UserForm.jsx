@@ -95,7 +95,6 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
       item?.value
     )
   }
-  const [checked, setChecked] = useState(true)
   const securityClearance = Number(Meteor.user()?.profile?.securityClearance)
   return (
     <Form
@@ -326,6 +325,7 @@ const UserForm = ({ userId, closeModal, forms, setForms, submitForms }) => {
             <DatePicker
               style={{ width: '100%' }}
               format='DD.MM.YYYY'
+              disabled={securityClearance < 3}
             />
           </Form.Item>
         </Col>
