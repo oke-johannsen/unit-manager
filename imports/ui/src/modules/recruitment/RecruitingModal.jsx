@@ -15,9 +15,9 @@ import {
   Tooltip,
   message,
 } from 'antd'
-import React, { useState } from 'react'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState } from 'react'
 
 const RecruitingModal = ({ open, setOpen, finishHandler }) => {
   const { usersReady, members } = useTracker(() => {
@@ -283,9 +283,12 @@ const RecruitingModal = ({ open, setOpen, finishHandler }) => {
           )}
           <Divider />
           {finishHandler && (
-            <Form.Item name='description'>
+            <Form.Item
+              name='description'
+              label='Notizen'
+            >
               <Input.TextArea
-                placeholder='Beschreibung'
+                placeholder='Notizen'
                 style={{ width: '100%' }}
               />
             </Form.Item>

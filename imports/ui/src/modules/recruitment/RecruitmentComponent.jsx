@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { Meteor } from 'meteor/meteor'
-import { useTracker } from 'meteor/react-meteor-data'
+import { InfoCircleOutlined } from '@ant-design/icons'
+import { values } from '@babel/runtime/regenerator'
 import {
   Button,
   Col,
@@ -20,10 +19,11 @@ import {
   Tooltip,
   message,
 } from 'antd'
+import { Meteor } from 'meteor/meteor'
+import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState } from 'react'
 import { RecruitmentCollection } from '../../../../api/RecruitmentsApi'
-import { InfoCircleOutlined } from '@ant-design/icons'
 import RecruitingModal from './RecruitingModal'
-import { values } from '@babel/runtime/regenerator'
 
 const RecruitmentComponent = () => {
   const [selected, setSelected] = useState('open')
@@ -84,7 +84,7 @@ const RecruitmentComponent = () => {
               <Col span={24}>
                 <List.Item
                   actions={
-                    !breakpoints.lg
+                    !breakpoints.xl
                       ? []
                       : [
                           <Dropdown
@@ -131,44 +131,96 @@ const RecruitmentComponent = () => {
                   <List.Item.Meta
                     title={item.preferredName}
                     description={
-                      <Row style={{ width: '100%' }}>
-                        <Col span={!breakpoints.lg ? 24 : 8}>Alter:</Col>
-                        <Col span={!breakpoints.lg ? 24 : 16}>{item.age}</Col>
-                        <Col span={!breakpoints.lg ? 24 : 8}>Discord:</Col>
-                        <Col span={!breakpoints.lg ? 24 : 16}>{item.discordId}</Col>
-                        <Col span={!breakpoints.lg ? 24 : 8}>Steam:</Col>
-                        <Col
-                          span={!breakpoints.lg ? 24 : 16}
-                          style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
-                        >
-                          <a
-                            href={item.steamProfile}
-                            target='_blank'
-                            rel='noopener noreferrer'
+                      <Row
+                        gutter={[8, 8]}
+                        style={{ width: '100%' }}
+                      >
+                        <Col span={breakpoints.xl && item.description ? 12 : 24}>
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
                           >
-                            {item.steamProfile}
-                          </a>
-                        </Col>
-                        <Col span={!breakpoints.lg ? 24 : 8}>Stunden:</Col>
-                        <Col span={!breakpoints.lg ? 24 : 16}>{item.amountOfHours}</Col>
-                        <Col span={!breakpoints.lg ? 24 : 8}>Anwesenheit:</Col>
-                        <Col span={!breakpoints.lg ? 24 : 16}>{item.attendenceBehaviour}</Col>
-                        <Col span={!breakpoints.lg ? 24 : 8}>MilSim Erfahrung:</Col>
-                        <Col
-                          span={!breakpoints.lg ? 24 : 16}
-                          style={{ whiteSpace: 'pre-wrap' }}
-                        >
-                          {item.experience}
-                        </Col>
-                        {item.referred && (
-                          <>
-                            <Col span={!breakpoints.lg ? 24 : 8}>Rekrutiert durch:</Col>
-                            <Col span={!breakpoints.lg ? 24 : 16}>
-                              {Meteor.users.findOne(item.referrer)?.profile?.name}
+                            <Col>Alter:</Col>
+                            <Col flex='auto'>{item.age}</Col>
+                          </Row>
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
+                          >
+                            <Col>Discord:</Col>
+                            <Col flex='auto'>{item.discordId}</Col>
+                          </Row>
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
+                          >
+                            <Col>Steam:</Col>
+                            <Col
+                              flex='auto'
+                              style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+                            >
+                              <a
+                                href={item.steamProfile}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                              >
+                                {item.steamProfile}
+                              </a>
                             </Col>
-                          </>
+                          </Row>
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
+                          >
+                            <Col>Stunden:</Col>
+                            <Col flex='auto'>{item.amountOfHours}</Col>
+                          </Row>
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
+                          >
+                            <Col>Anwesenheit:</Col>
+                            <Col flex='auto'>{item.attendenceBehaviour}</Col>
+                          </Row>
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
+                          >
+                            <Col>MilSim Erfahrung:</Col>
+                            <Col
+                              flex='auto'
+                              style={{ whiteSpace: 'pre-wrap' }}
+                            >
+                              {item.experience}
+                            </Col>
+                          </Row>
+                          {item.referred && (
+                            <Row
+                              gutter={[8, 8]}
+                              style={{ width: '100%' }}
+                            >
+                              <Col>Rekrutiert durch:</Col>
+                              <Col flex='auto'>{Meteor.users.findOne(item.referrer)?.profile?.name}</Col>
+                            </Row>
+                          )}
+                        </Col>
+                        {item.description && (
+                          <Col span={breakpoints.xl ? 12 : 24}>
+                            <Row
+                              gutter={[8, 8]}
+                              style={{ width: '100%' }}
+                            >
+                              <Col span={24}>Notizen:</Col>
+                              <Col
+                                flex='auto'
+                                style={{ whiteSpace: 'pre-wrap' }}
+                              >
+                                {item.description}
+                              </Col>
+                            </Row>
+                          </Col>
                         )}
-                        {!breakpoints.lg && (
+                        {!breakpoints.xl && (
                           <Col span={24}>
                             <Row
                               gutter={[8, 8]}
