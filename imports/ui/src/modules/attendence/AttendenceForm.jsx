@@ -1,8 +1,8 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Col, DatePicker, Form, Input, Row, Select, Spin, Switch } from 'antd'
-import { Meteor, Meteor } from 'meteor/meteor'
+import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AttendenceTypeModal from './AttendenceTypeModal'
 
 const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTypeOptions }) => {
