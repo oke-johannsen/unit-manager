@@ -20,7 +20,6 @@ const HeaderComponent = () => {
         }}
         fetchpriority='high'
         rel='preload'
-        onClick={() => handleClick}
       />
     </a>
   )
