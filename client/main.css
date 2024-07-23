@@ -66,7 +66,7 @@ body {
 }
 
 .recruitment-list .ant-list-items {
-  max-height: 75vh;
+  max-height: calc(100vh - 302px);
   overflow-y: auto;
 }
 

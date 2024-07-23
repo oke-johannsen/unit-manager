@@ -67,7 +67,8 @@ const RecruitmentComponent = () => {
                     onChange={setSelected}
                     options={[
                       { value: 'open', label: 'Offen' },
-                      { value: 'closed', label: 'Abgeschlossen' },
+                      { value: 'closed', label: 'Angenommen' },
+                      { value: 'rejected', label: 'Abgelehnt' },
                     ]}
                   />
                 </Col>
@@ -91,10 +92,13 @@ const RecruitmentComponent = () => {
                             key='actions-dropdown'
                             menu={{
                               items: [
-                                {
-                                  key: selected === 'open' ? 'close' : 'open',
-                                  label: selected === 'open' ? 'Abschließen' : 'Wiedereröffnen',
-                                },
+                                ...(selected === 'open'
+                                  ? [
+                                      { key: 'close', label: 'Annehmen' },
+                                      { key: 'rejected', label: 'Ablehnen', danger: true },
+                                    ]
+                                  : [{ key: 'open', label: 'Wiedereröffnen' }]),
+                                { type: 'divider' },
                                 { key: 'edit', label: 'Bearbeiten' },
                                 { key: 'delete', label: 'Löschen', danger: true },
                               ],
@@ -103,12 +107,12 @@ const RecruitmentComponent = () => {
                                   setDeleteModal(true)
                                 } else if (key === 'edit') {
                                   setEditModal(item)
-                                } else if (key === 'close' || key === 'open') {
+                                } else {
                                   Meteor.call(
                                     'recruitment.update',
                                     item.key,
                                     {
-                                      status: item.status === 'open' ? 'closed' : 'open',
+                                      status: key,
                                     },
                                     (err, res) => {
                                       if (!err) {
@@ -230,10 +234,13 @@ const RecruitmentComponent = () => {
                                 key='actions-dropdown'
                                 menu={{
                                   items: [
-                                    {
-                                      key: selected === 'open' ? 'close' : 'open',
-                                      label: selected === 'open' ? 'Abschließen' : 'Wiedereröffnen',
-                                    },
+                                    ...(selected === 'open'
+                                      ? [
+                                          { key: 'close', label: 'Annehmen' },
+                                          { key: 'rejected', label: 'Ablehnen', danger: true },
+                                        ]
+                                      : [{ key: 'open', label: 'Wiedereröffnen' }]),
+                                    { type: 'divider' },
                                     { key: 'edit', label: 'Bearbeiten' },
                                     { key: 'delete', label: 'Löschen', danger: true },
                                   ],
@@ -242,12 +249,12 @@ const RecruitmentComponent = () => {
                                       setDeleteModal(true)
                                     } else if (key === 'edit') {
                                       setEditModal(item)
-                                    } else if (key === 'close' || key === 'open') {
+                                    } else {
                                       Meteor.call(
                                         'recruitment.update',
                                         item.key,
                                         {
-                                          status: item.status === 'open' ? 'closed' : 'open',
+                                          status: key,
                                         },
                                         (err, res) => {
                                           if (!err) {
@@ -275,7 +282,6 @@ const RecruitmentComponent = () => {
             </Row>
           )
         }}
-        style={{ margin: '2rem' }}
         bordered
       />
       {deleteModal && (
