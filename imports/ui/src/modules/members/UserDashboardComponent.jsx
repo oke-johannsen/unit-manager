@@ -11,7 +11,8 @@ import { runTierCheck } from './member.lib'
 
 const UserDashboardComponent = ({ userProp }) => {
   const { user, trainings, operations, ready } = useTracker(() => {
-    const user = userProp
+    Meteor.subscribe('users', { _id: userProp?._id ?? null })
+    const user = Meteor.users.findOne({ _id: userProp?._id ?? null })
     const squadSub = Meteor.subscribe('squads')
     const skillsSub = Meteor.subscribe('skills')
     const sub = Meteor.subscribe('attendence.by.user', user?._id)
@@ -55,6 +56,10 @@ const UserDashboardComponent = ({ userProp }) => {
             <Col span={12}>Trupp:</Col>
             <Col span={12}>
               {SquadCollection?.findOne(user?.profile?.squad)?.squadName || 'Keinen Trupp ausgewählt!'}
+            </Col>
+            <Col span={12}>Beitrittsdatum (Einheit):</Col>
+            <Col span={12}>
+              {user?.createdAt ? dayjs(user?.createdAt).format('DD.MM.YYYY') : 'Kein Beitrittsdatum!'}
             </Col>
           </Row>
         ),
