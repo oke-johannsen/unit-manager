@@ -45,7 +45,7 @@ if (Meteor.isServer) {
     }
   }
   Meteor.publish('attendence.by.user', function (userId) {
-    return AttendenceCollection.find({ userIds: userId })
+    return AttendenceCollection.find({ $or: [{ userIds: userId }, { zeusUserIds: userId }] })
   })
   Meteor.publish('attendence', function () {
     return AttendenceCollection.find({})
@@ -53,13 +53,14 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'attendence.create': (payload) => {
-      const { userIds, type, date, promotedMembers, title, wholeDay } = payload
+      const { userIds, zeusUserIds, type, date, promotedMembers, title, wholeDay } = payload
       setPromotionForUsers(promotedMembers, date)
       Meteor.call('logging.create', {
         key: 'attendence.create',
         before: null,
         after: {
           userIds,
+          zeusUserIds,
           type,
           date,
           promotedMembers,
@@ -68,7 +69,7 @@ if (Meteor.isServer) {
         },
         userId: Meteor.user()?._id,
       })
-      AttendenceCollection.insert({ userIds, type, date, promotedMembers, title, wholeDay }, (err, res) => {
+      AttendenceCollection.insert({ userIds, zeusUserIds, type, date, promotedMembers, title, wholeDay }, (err, res) => {
         if (!err) {
           return true
         } else {
@@ -78,7 +79,7 @@ if (Meteor.isServer) {
       })
     },
     'attendence.update': (id, payload) => {
-      const { userIds, type, date, promotedMembers, spentPoints, title, wholeDay } = payload
+      const { userIds, zeusUserIds, type, date, promotedMembers, spentPoints, title, wholeDay } = payload
       setPromotionForUsers(promotedMembers, date, id)
       Meteor.call('logging.create', {
         key: 'attendence.update',
@@ -86,6 +87,7 @@ if (Meteor.isServer) {
         after: {
           id,
           userIds,
+          zeusUserIds,
           type,
           date,
           promotedMembers,
@@ -97,7 +99,7 @@ if (Meteor.isServer) {
       })
       AttendenceCollection.update(
         id,
-        { $set: { userIds, type, date, promotedMembers, spentPoints, title, wholeDay } },
+        { $set: { userIds, zeusUserIds, type, date, promotedMembers, spentPoints, title, wholeDay } },
         (err, res) => {
           if (!err) {
             return true

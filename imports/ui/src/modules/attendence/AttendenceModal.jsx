@@ -1,10 +1,10 @@
 import { Col, List, Modal, Row, Tabs, message } from 'antd'
-import React, { useState } from 'react'
-import AttendenceForm from './AttendenceForm'
 import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
-import { AttendenceCollection } from '../../../../api/AttendenceApi'
 import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState } from 'react'
+import { AttendenceCollection } from '../../../../api/AttendenceApi'
+import AttendenceForm from './AttendenceForm'
 
 const AttendenceModal = ({
   openAttendenceCreateModal,
@@ -38,6 +38,7 @@ const AttendenceModal = ({
     date: date || dayjs(),
     type: 'mission',
     userIds: [],
+    zeusUserIds: [],
     promotedMembers: [],
     title: '',
     wholeDay: false,
@@ -55,6 +56,7 @@ const AttendenceModal = ({
               date: dayjs(attendence?.date),
               type: attendence?.type,
               userIds: attendence?.userIds,
+              zeusUserIds: attendence?.zeusUserIds,
               promotedMembers: attendence?.promotedMembers,
               title: attendence?.title,
               wholeDay: attendence?.wholeDay,

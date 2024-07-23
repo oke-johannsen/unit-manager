@@ -1,3 +1,4 @@
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Button,
   Calendar,
@@ -16,17 +17,16 @@ import {
   Tag,
   message,
 } from 'antd'
-import React, { useState } from 'react'
+import locale from 'antd/es/calendar/locale/de_DE'
+import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
+import React, { useState } from 'react'
 import { AttendenceCollection } from '../../../../api/AttendenceApi'
+import { AttendenceTypeCollection } from '../../../../api/AttendenceTypesApi'
 import { ATTENDENCE_TABLE_COLUMNS } from './ATTENDENCE_TABLE_COLUMNS'
 import AttendenceModal from './AttendenceModal'
-import dayjs from 'dayjs'
-import { AttendenceTypeCollection } from '../../../../api/AttendenceTypesApi'
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import AttendenceTypeModal from './AttendenceTypeModal'
-import locale from 'antd/es/calendar/locale/de_DE'
 import BriefingsComponent from './briefings/BrifingsComponent'
 
 const AttendenceComponent = () => {
@@ -48,7 +48,10 @@ const AttendenceComponent = () => {
     }
   }, [selected])
   const { attendenceTypeOptions, attendenceTypes } = useTracker(() => {
-    const userIds = [...new Set(attendences?.map((attendence) => attendence.userIds)?.flat())]
+    let userIds = []
+    userIds.push(...(attendences?.map((attendence) => attendence.userIds)?.flat() ?? []))
+    userIds.push(...(attendences?.map((attendence) => attendence.zeusUserIds ?? [])?.flat() ?? []))
+    userIds = [...new Set(userIds)]
     const subs = [
       Meteor.subscribe('users', { _id: { $in: userIds } }),
       Meteor.subscribe('attendenceTypes'),
@@ -143,13 +146,28 @@ const AttendenceComponent = () => {
             const user = Meteor.users.findOne(id)
             if (user) {
               const newUser = { ...user }
-              newUser.profile.points = newUser?.profile?.points + (attendence.type === 'mission' ? 5 : 10)
+              newUser.profile.points = newUser?.profile?.points + (attendence.type === 'mission' ? 5 : 0)
               Meteor.call('users.update', newUser)
             }
           }
-          const { userIds, type, date, promotedMembers } = attendence
+          for (const id of attendence.zeusUserIds) {
+            const user = Meteor.users.findOne(id)
+            if (user) {
+              const newUser = { ...user }
+              let factor = 0
+              if (attendence.type === 'mission') {
+                factor = 20
+              } else if (attendence.type === 'Ausbildung') {
+                factor = 5 * attendence.userIds?.length
+              }
+              newUser.profile.points = newUser?.profile?.points + factor
+              Meteor.call('users.update', newUser)
+            }
+          }
+          const { userIds, zeusUserIds, type, date, promotedMembers } = attendence
           Meteor.call('attendence.update', attendence._id, {
             userIds,
+            zeusUserIds,
             type,
             date,
             promotedMembers,
@@ -163,7 +181,7 @@ const AttendenceComponent = () => {
     if (attendences?.length) {
       const { totalParticipants, totalEntries } = attendences.reduce(
         (accumulator, entry) => {
-          accumulator.totalParticipants += entry.userIds.length
+          accumulator.totalParticipants += entry.userIds.length + (entry.zeusUserIds?.length ?? 0)
           accumulator.totalEntries += 1
           return accumulator
         },

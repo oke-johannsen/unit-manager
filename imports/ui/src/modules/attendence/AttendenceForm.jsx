@@ -21,12 +21,16 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
   let render
   const defaults = activeKey ? form?.filter((item) => item._id === activeKey)[0] : form
   defaults.userIds = (defaults.userIds || [])?.filter((id) => userOptions.find((user) => user.value === id))
+  defaults.zeusUserIds = (defaults.zeusUserIds || [])?.filter((id) => userOptions.find((user) => user.value === id))
   defaults.promotedMembers = (defaults.promotedMembers || [])?.filter((id) =>
     userOptions.find((user) => user.value === id)
   )
   const formDefaults = defaults
   const [userIds, setUserIds] = useState(
     (activeKey ? form?.filter((item) => item._id === activeKey)[0]?.userIds : form.userIds) || []
+  )
+  const [zeusUserIds, setZeusUserIds] = useState(
+    (activeKey ? form?.filter((item) => item._id === activeKey)[0]?.zeusUserIds : form.zeusUserIds) || []
   )
   const handleValuesChange = (allValues) => {
     if (type === 'update') {
@@ -142,6 +146,19 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
           </Row>
         </Col>
       </Row>
+      <Form.Item
+        label='Zeuse'
+        name='zeusUserIds'
+        rules={[{ required: true, message: 'Bitte wähle Zeuse aus!' }]}
+      >
+        <Select
+          optionFilterProp='label'
+          mode='multiple'
+          value={zeusUserIds?.filter((id) => userOptions?.find((user) => user?.key === id))}
+          onChange={setZeusUserIds}
+          options={userOptions}
+        />
+      </Form.Item>
       <Form.Item
         label='Teilnehmer'
         name='userIds'
