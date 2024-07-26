@@ -137,7 +137,7 @@ const AttendenceComponent = () => {
       },
     },
   ]
-  const handleAddPoints = () => {
+  const handleAddPoints = async () => {
     if (rowSelection?.selectedRowKeys?.length) {
       for (const item of rowSelection.selectedRowKeys) {
         const attendence = AttendenceCollection.findOne(item)
@@ -146,8 +146,8 @@ const AttendenceComponent = () => {
             const user = Meteor.users.findOne(id)
             if (user) {
               const newUser = { ...user }
-              newUser.profile.points = newUser?.profile?.points + (attendence.type === 'mission' ? 5 : 0)
-              Meteor.call('users.update', newUser)
+              newUser.profile.points = (newUser?.profile?.points ?? 0) + (attendence.type === 'mission' ? 5 : 0)
+              await Meteor.callAsync('users.update', newUser)
             }
           }
           for (const id of attendence.zeusUserIds) {
@@ -160,8 +160,8 @@ const AttendenceComponent = () => {
               } else if (attendence.type === 'Ausbildung') {
                 factor = 5 * attendence.userIds?.length
               }
-              newUser.profile.points = newUser?.profile?.points + factor
-              Meteor.call('users.update', newUser)
+              newUser.profile.points = (newUser?.profile?.points ?? 0) + factor
+              await Meteor.callAsync('users.update', newUser)
             }
           }
           const { userIds, zeusUserIds, type, date, promotedMembers } = attendence

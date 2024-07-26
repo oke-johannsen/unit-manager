@@ -2,6 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import { values } from '@babel/runtime/regenerator'
 import {
   Button,
+  Card,
   Col,
   Divider,
   Dropdown,
@@ -137,9 +138,9 @@ const RecruitmentComponent = () => {
                     description={
                       <Row
                         gutter={[8, 8]}
-                        style={{ width: '100%' }}
+                        style={{ width: '100%', flexWrap: !breakpoints.xl ? 'wrap' : 'nowrap' }}
                       >
-                        <Col span={breakpoints.xl && item.description ? 12 : 24}>
+                        <Col span={breakpoints.xl ? 15 : 24}>
                           <Row
                             gutter={[8, 8]}
                             style={{ width: '100%' }}
@@ -208,22 +209,30 @@ const RecruitmentComponent = () => {
                             </Row>
                           )}
                         </Col>
-                        {item.description && (
-                          <Col span={breakpoints.xl ? 12 : 24}>
-                            <Row
-                              gutter={[8, 8]}
-                              style={{ width: '100%' }}
+                        <Col
+                          flex='auto'
+                          style={{
+                            borderRadius: '8px',
+                            paddingLeft: '2rem',
+                            paddingTop: '1rem',
+                            backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                          }}
+                        >
+                          <Row
+                            gutter={[8, 8]}
+                            style={{ width: '100%' }}
+                          >
+                            <Col span={24}>
+                              <b>Notizen:</b>
+                            </Col>
+                            <Col
+                              flex='auto'
+                              style={{ whiteSpace: 'pre-wrap' }}
                             >
-                              <Col span={24}>Notizen:</Col>
-                              <Col
-                                flex='auto'
-                                style={{ whiteSpace: 'pre-wrap' }}
-                              >
-                                {item.description}
-                              </Col>
-                            </Row>
-                          </Col>
-                        )}
+                              {item.description}
+                            </Col>
+                          </Row>
+                        </Col>
                         {!breakpoints.xl && (
                           <Col span={24}>
                             <Row
