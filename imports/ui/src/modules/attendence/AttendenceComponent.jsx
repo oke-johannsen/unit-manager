@@ -321,9 +321,7 @@ const AttendenceComponent = () => {
                             {!breakpoints.xs &&
                               `: ${dayjs(attendence.date).format('HH:mm')} ${attendence.wholeDay ? '(Ganztägig)' : ''}`}
                             {breakpoints.xs && (
-                              <Tag color='#842121'>{`${dayjs(attendence.date).format('HH:mm')} ${
-                                attendence.wholeDay ? '(Ganztägig)' : ''
-                              }`}</Tag>
+                              <Tag color='#842121'>{attendence?.type?.substring(0, 1).toUpperCase()}</Tag>
                             )}
                           </Col>
                         )
