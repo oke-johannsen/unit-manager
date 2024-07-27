@@ -1,11 +1,14 @@
 import dayjs from 'dayjs'
 import { Meteor } from 'meteor/meteor'
 
-export const LOG_COLUMNS = [
+export const LOG_COLUMNS = (users = []) => [
   {
     title: 'Benutzer',
     dataIndex: 'userId',
     key: 'userId',
+    filters: users.map((user) => ({ text: user?.username + ' / ' + user?.profile?.name, value: user?._id })),
+    onFilter: (value, record) => record.userId === value,
+    filterSearch: true,
     render: (userId) => {
       const user = Meteor.users.findOne(userId)
       return user ? user.username + ' / ' + user.profile?.name : 'deleted-user'
