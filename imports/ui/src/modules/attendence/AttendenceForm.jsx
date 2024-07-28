@@ -68,7 +68,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
       layout='vertical'
       labelCol={24}
       onValuesChange={(_, allValues) => handleValuesChange(allValues)}
-      disabled={disabled}
+      disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2}
     >
       <Row gutter={8}>
         <Form.Item
@@ -76,14 +76,14 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
           name='_id'
           hidden
         >
-          <Input />
+          <Input disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2} />
         </Form.Item>
         <Col span={24}>
           <Form.Item
             label='Einsatzname'
             name='title'
           >
-            <Input />
+            <Input disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2} />
           </Form.Item>
         </Col>
         <Col span={10}>
@@ -98,6 +98,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
                 rules={[{ required: true }]}
               >
                 <Select
+                  disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2}
                   options={attendenceTypeOptions}
                   optionFilterProp='label'
                   style={{ width: '100%' }}
@@ -106,6 +107,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
             </Col>
             <Col>
               <Button
+                disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2}
                 onClick={() => setOpen(true)}
                 style={{
                   display: 'flex',
@@ -127,6 +129,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
                 rules={[{ required: true }]}
               >
                 <DatePicker
+                  disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2}
                   style={{ width: '100%' }}
                   format='DD.MM.YYYY HH:mm'
                   allowClear={false}
@@ -140,7 +143,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
                 label='Ganztägig'
                 name='wholeDay'
               >
-                <Switch />
+                <Switch disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2} />
               </Form.Item>
             </Col>
           </Row>
@@ -152,6 +155,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
         rules={[{ required: true, message: 'Bitte wähle Zeuse aus!' }]}
       >
         <Select
+          disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2}
           optionFilterProp='label'
           mode='multiple'
           value={zeusUserIds?.filter((id) => userOptions?.find((user) => user?.key === id))}
@@ -165,6 +169,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
         rules={[{ required: true, message: 'Bitte wähle Teilnehmer aus!' }]}
       >
         <Select
+          disabled={disabled || (Number(Meteor.user()?.profile?.securityClearance) ?? 0) < 2}
           optionFilterProp='label'
           mode='multiple'
           value={userIds?.filter((id) => userOptions?.find((user) => user?.key === id))}
