@@ -102,7 +102,13 @@ const AttendenceModal = ({
     form.length !== undefined &&
     form?.map((item) => {
       const attendence = AttendenceCollection.findOne(item._id)
-      const name = attendence.type === 'mission' ? 'Mission ' : 'Training '
+      const name =
+        attendence?.title ??
+        (attendence.type === 'mission'
+          ? 'Mission '
+          : attendence.type === 'training'
+          ? 'Training '
+          : attendence.type + ' ')
       return {
         key: attendence?._id,
         label: name + dayjs(attendence.date).format('DD.MM.YYYY'),
