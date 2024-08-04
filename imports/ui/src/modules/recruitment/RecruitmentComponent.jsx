@@ -1,25 +1,5 @@
-import { InfoCircleOutlined } from '@ant-design/icons'
-import { values } from '@babel/runtime/regenerator'
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Dropdown,
-  Form,
-  Grid,
-  Input,
-  InputNumber,
-  List,
-  Modal,
-  Radio,
-  Row,
-  Segmented,
-  Select,
-  Switch,
-  Tooltip,
-  message,
-} from 'antd'
+import { DownOutlined, UpOutlined } from '@ant-design/icons'
+import { Button, Col, Dropdown, Grid, List, Modal, Row, Segmented, Tooltip, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import React, { useState } from 'react'
@@ -30,10 +10,14 @@ const RecruitmentComponent = () => {
   const [selected, setSelected] = useState('open')
   const [deleteModal, setDeleteModal] = useState(false)
   const [editModal, setEditModal] = useState(false)
+  const [sortDirection, setSortDirection] = useState('desc')
   const { ready, recruitment } = useTracker(() => {
     const sub = Meteor.subscribe('users')
     const subRecruitments = Meteor.subscribe('recruitments')
-    const recruitment = RecruitmentCollection.find({ status: selected }).map((item) => {
+    const recruitment = RecruitmentCollection.find(
+      { status: selected },
+      { sort: { createdAt: sortDirection === 'desc' ? -1 : 1 } }
+    ).map((item) => {
       return {
         key: item?._id,
         ...item,
@@ -43,7 +27,7 @@ const RecruitmentComponent = () => {
       ready: sub.ready() && subRecruitments.ready(),
       recruitment,
     }
-  }, [selected])
+  }, [selected, sortDirection])
   const breakpoints = Grid.useBreakpoint()
   return (
     <>
@@ -60,12 +44,24 @@ const RecruitmentComponent = () => {
             <Col>
               <Row
                 align='middle'
-                gutter={16}
+                gutter={[10, 10]}
               >
-                <Col>
+                <Col span={breakpoints.xl ? undefined : 24}>
+                  <Segmented
+                    value={sortDirection}
+                    onChange={setSortDirection}
+                    block={!breakpoints.xl}
+                    options={[
+                      { value: 'desc', label: 'Absteigend' },
+                      { value: 'asc', label: 'Aufsteigend' },
+                    ]}
+                  />
+                </Col>
+                <Col span={breakpoints.xl ? undefined : 24}>
                   <Segmented
                     value={selected}
                     onChange={setSelected}
+                    block={!breakpoints.xl}
                     options={[
                       { value: 'open', label: 'Offen' },
                       { value: 'closed', label: 'Angenommen' },
@@ -206,6 +202,21 @@ const RecruitmentComponent = () => {
                             >
                               <Col>Rekrutiert durch:</Col>
                               <Col flex='auto'>{Meteor.users.findOne(item.referrer)?.profile?.name}</Col>
+                            </Row>
+                          )}
+                          {item.createdAt && (
+                            <Row
+                              gutter={[8, 8]}
+                              style={{ width: '100%' }}
+                            >
+                              <Col>Datum:</Col>
+                              <Col flex='auto'>
+                                {new Date(item.createdAt).toLocaleDateString('de-DE', {
+                                  year: 'numeric',
+                                  month: 'numeric',
+                                  day: 'numeric',
+                                })}
+                              </Col>
                             </Row>
                           )}
                         </Col>
