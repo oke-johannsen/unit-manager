@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
-import { Meteor } from 'meteor/meteor'
 import { Form, Input, Modal, message } from 'antd'
+import { Meteor } from 'meteor/meteor'
+import React, { useRef, useState } from 'react'
 
 const AttendenceTypeModal = ({ open, setOpen, value, title }) => {
   const ref = useRef()
@@ -20,25 +20,34 @@ const AttendenceTypeModal = ({ open, setOpen, value, title }) => {
   const handleOk = () => {
     if (validate()) {
       if (value?._id) {
-        Meteor.call('attendenceTypes.update', value._id, { name: ref?.current?.getFieldValue('name') }, (err, res) => {
-          if (!err) {
-            message.success('Einsatzart wurde erstellt!')
-            handleCancel()
-          } else {
-            console.error(err, res)
-            message.error('Einsatzart erstellen fehlgeschlagen!')
+        Meteor.call(
+          'attendenceTypes.update',
+          value._id,
+          { name: ref?.current?.getFieldValue('name'), zeusLabel: ref?.current?.getFieldValue('zeusLabel') },
+          (err, res) => {
+            if (!err) {
+              message.success('Einsatzart wurde erstellt!')
+              handleCancel()
+            } else {
+              console.error(err, res)
+              message.error('Einsatzart erstellen fehlgeschlagen!')
+            }
           }
-        })
+        )
       } else {
-        Meteor.call('attendenceTypes.create', { name: ref?.current?.getFieldValue('name') }, (err, res) => {
-          if (!err) {
-            message.success('Einsatzart wurde erstellt!')
-            handleCancel()
-          } else {
-            console.error(err, res)
-            message.error('Einsatzart erstellen fehlgeschlagen!')
+        Meteor.call(
+          'attendenceTypes.create',
+          { name: ref?.current?.getFieldValue('name'), zeusLabel: ref?.current?.getFieldValue('zeusLabel') },
+          (err, res) => {
+            if (!err) {
+              message.success('Einsatzart wurde erstellt!')
+              handleCancel()
+            } else {
+              console.error(err, res)
+              message.error('Einsatzart erstellen fehlgeschlagen!')
+            }
           }
-        })
+        )
       }
     }
   }
@@ -55,7 +64,7 @@ const AttendenceTypeModal = ({ open, setOpen, value, title }) => {
       <Form
         ref={ref}
         layout='vertical'
-        initialValues={{ name: value?.label || null }}
+        initialValues={{ name: value?.label || null, zeusLabel: value?.zeusLabel || null }}
       >
         <Form.Item
           name='name'
@@ -70,6 +79,12 @@ const AttendenceTypeModal = ({ open, setOpen, value, title }) => {
                 : undefined
             }
           />
+        </Form.Item>
+        <Form.Item
+          name='zeusLabel'
+          label='Zeus Benennung'
+        >
+          <Input placeholder='Zeus Benennung' />
         </Form.Item>
       </Form>
     </Modal>

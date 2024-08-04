@@ -3,6 +3,7 @@ import { Button, Col, DatePicker, Form, Input, Row, Select, Spin, Switch } from 
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import React, { useEffect, useState } from 'react'
+import { AttendenceTypeCollection } from '../../../../api/AttendenceTypesApi'
 import AttendenceTypeModal from './AttendenceTypeModal'
 
 const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTypeOptions }) => {
@@ -62,6 +63,13 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
     }
   }, [userIds])
   const [open, setOpen] = useState(false)
+  const getLabel = () => {
+    let label = 'Zeuse'
+    const values = activeKey ? form?.filter((item) => item._id === activeKey)[0] : form
+    const typeLabel = AttendenceTypeCollection.findOne({ value: values?.type })?.zeusLabel
+    if (typeLabel) label = typeLabel
+    return label
+  }
   const formComponent = (
     <Form
       initialValues={formDefaults}
@@ -150,7 +158,7 @@ const AttendenceForm = ({ type, form, setForm, disabled, activeKey, attendenceTy
         </Col>
       </Row>
       <Form.Item
-        label='Zeuse'
+        label={getLabel()}
         name='zeusUserIds'
         rules={[{ required: true, message: 'Bitte wähle Zeuse aus!' }]}
       >

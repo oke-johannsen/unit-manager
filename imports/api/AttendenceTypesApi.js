@@ -9,29 +9,31 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'attendenceTypes.create': (payload) => {
-      const { name } = payload
+      const { name, zeusLabel } = payload
       Meteor.call('logging.create', {
         key: 'attendenceTypes.create',
         before: null,
         after: {
           name,
+          zeusLabel,
         },
         userId: Meteor.user()?._id,
       })
-      AttendenceTypeCollection.insert({ value: name, label: name }, (err, res) => {
+      AttendenceTypeCollection.insert({ value: name, label: name, zeusLabel }, (err, res) => {
         if (err) {
           console.error(err, res)
         }
       })
     },
     'attendenceTypes.update': (id, payload) => {
-      const { name } = payload
+      const { name, zeusLabel } = payload
       const attendenceTypes = AttendenceTypeCollection.findOne(id)
       Meteor.call('logging.create', {
         key: 'attendenceTypes.update',
         before: attendenceTypes,
         after: {
           name,
+          zeusLabel,
         },
         userId: Meteor.user()?._id,
       })
@@ -41,6 +43,7 @@ if (Meteor.isServer) {
           $set: {
             value: name,
             label: name,
+            zeusLabel,
           },
         },
         (err, res) => {
