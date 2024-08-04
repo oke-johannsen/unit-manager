@@ -1,15 +1,17 @@
-import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
-import { UsersCollection } from '../imports/api/UsersApi'
-import '../imports/api/UsersApi'
+import { Meteor } from 'meteor/meteor'
 import '../imports/api/AttendenceApi'
 import '../imports/api/AttendenceTypesApi'
-import '../imports/api/LoggingApi'
-import '../imports/api/SquadApi'
-import '../imports/api/RecruitmentsApi'
-import '../imports/api/SkillsApi'
 import '../imports/api/BriefingsApi'
+import '../imports/api/LoggingApi'
+import { LoggingCollection } from '../imports/api/LoggingApi'
 import '../imports/api/PromotionSettingsApi'
+import '../imports/api/RecruitmentsApi'
+import { RecruitmentCollection } from '../imports/api/RecruitmentsApi'
+import '../imports/api/SkillsApi'
+import '../imports/api/SquadApi'
+import '../imports/api/UsersApi'
+import { UsersCollection } from '../imports/api/UsersApi'
 
 Meteor.startup(async () => {
   const defaultAdmin = UsersCollection.findOne({ username: 'mando' })
@@ -54,6 +56,15 @@ Meteor.startup(async () => {
         skills: [],
         promotionHistory: [],
       },
+    })
+  }
+
+  // migration: add createdAt to existing recruitments
+  const recruitments = RecruitmentCollection.find({ $or: [{ createdAt: null }, { createdAt: { $exists: false } }] }).fetch()
+  if (recruitments.length) {
+    recruitments.forEach((recruitment) => {
+      const logEntry = LoggingCollection.findOne({ key: 'recruitment.create', 'after.preferedName': recruitment.preferedName, 'after.discordId': recruitment.discordId, 'after.steamProfile': recruitment.steamProfile })
+      if (logEntry?.timestamp) RecruitmentCollection.update({ _id: recruitment._id }, { $set: { createdAt: logEntry?.timestamp } })
     })
   }
 })

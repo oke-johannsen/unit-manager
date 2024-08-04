@@ -16,7 +16,7 @@ if (Meteor.isServer) {
         after: { ...payload, status: 'open' },
         userId: Meteor.user()?._id,
       })
-      RecruitmentCollection.insert({ ...payload, status: 'open' }, (err, res) => {
+      RecruitmentCollection.insert({ ...payload, status: 'open', createdAt: new Date() }, (err, res) => {
         if (!err) {
           return true
         } else {
