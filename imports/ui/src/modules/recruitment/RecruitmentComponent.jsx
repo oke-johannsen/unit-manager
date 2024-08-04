@@ -1,5 +1,4 @@
-import { DownOutlined, UpOutlined } from '@ant-design/icons'
-import { Button, Col, Dropdown, Grid, List, Modal, Row, Segmented, Tooltip, message } from 'antd'
+import { Button, Col, Dropdown, Grid, List, Modal, Row, Segmented, message } from 'antd'
 import { Meteor } from 'meteor/meteor'
 import { useTracker } from 'meteor/react-meteor-data'
 import React, { useState } from 'react'
